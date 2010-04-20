@@ -7,7 +7,7 @@ dos dados convertendo-o para um formato aceito pelo banco de dados escolhido.
 h2. Autor e Copyright
 
 * Autor - "*Cauan Cabral*":http://cauancabral.net
-* *Copyright 2009-2010, Radig - "Soluções em TI":htt://www.radig.com.br*
+* *Copyright 2009-2010,* "*Radig - Soluções em TI*":htt://www.radig.com.br
 * Licença MIT - Isto quer dizer que o código está disponível sem nenhuma garantia, ao mesmo tempo que
 você pode usa-lo de forma isolada ou em conjunto com seu próprio código.
 
