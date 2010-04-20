@@ -1,0 +1,29 @@
+h1. CakePHP Locale Behavior
+
+O objetivo deste behavior é permitir que usuários de seu sistema possam inserir
+valores em formatos locais/regionais ao mesmo tempo que garante a consistência
+dos dados convertendo-o para um formato aceito pelo banco de dados escolhido.
+
+h2. Autor e Copyright
+
+* Autor - *Cauan Cabral:"http://cauancabral.net"*
+* *Copyright 2009-2010, Radig - Soluções em TI, www.radig.com.br*
+* Licença MIT - Isto quer dizer que o código está disponível sem nenhuma garantia, ao mesmo tempo que
+você pode usa-lo de forma isolada ou em conjunto com seu próprio código.
+
+h2. Observações
+
+* Este behavior requer PHP versão >= 5.2.4
+
+h2. Como usar
+
+* Primeiro é preciso que defina no seu core.php a variável Language:
+
+bc. Config::write('Language.default', 'pt-br');
+
+* Por último, basta definir no model que deseja ativa-lo a seguinte linha:
+
+bc. $actsAs = array('Locale');
+
+* A partir daí o behavior vai converter seus dados antes da validação e antes de salvar.
+* Leia o código fonte caso tenha mais dúvidas sobre funcionamento.
