@@ -67,13 +67,13 @@ class LocaleTest extends CakeTestCase {
 	public function testFindActionWithFloat()
 	{	
 		$result = $this->Employee->find('all',
-			array('conditions' => array('salary' => '559,85'))
+			array('conditions' => array('(salary - 559.85) <=' => '0.000001'))
 		);
-		
+				
 		$expected = array(
 			array(
 				'Employee' => array(
-					'id' => 1,
+					'id' => '1',
 					'birthday' => '1987-03-01',
 					'salary' => 559.85
 				)
