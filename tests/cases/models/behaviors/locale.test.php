@@ -17,7 +17,7 @@ class Employee extends CakeTestModel {
 		)
 	);
 	
-	public $actsAs = array('Locale');
+	public $actsAs = array('Locale.Locale');
 }
 
 
