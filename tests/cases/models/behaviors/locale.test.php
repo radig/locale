@@ -25,7 +25,7 @@ class LocaleTest extends CakeTestCase {
 	
 	public $name = 'Locale';
 	
-	public $fixtures = array('app.employee');
+	public $fixtures = array('plugin.locale.employee');
 	
 	public function startTest()
 	{
