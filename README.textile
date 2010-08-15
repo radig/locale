@@ -1,6 +1,6 @@
-h1. CakePHP Locale Behavior
+h1. CakePHP Locale
 
-O objetivo deste behavior é permitir que usuários de seu sistema possam inserir
+O objetivo deste plugin é permitir que usuários de seu sistema possam inserir
 valores em formatos locais/regionais ao mesmo tempo que garante a consistência
 dos dados convertendo-o para um formato aceito pelo banco de dados escolhido.
 
