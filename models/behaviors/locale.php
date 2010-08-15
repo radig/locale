@@ -73,10 +73,11 @@ class LocaleBehavior extends ModelBehavior
 		{
 			// varre os dados setados
 			foreach($this->model->data[$this->model->name] as $field => $value)
-			{
+			{				
 				// caso o campo esteja vazio E não tenha um array como valor E o campo faz parte do schema
 				if(!empty($value) && !is_array($value) && !in_array($field, $this->cakeAutomagicFields) && isset($this->model->_schema[$field]))
 				{
+					
 					switch($this->model->_schema[$field]['type'])
 					{
 						case 'date':
