@@ -6,12 +6,12 @@ class Employee extends CakeTestModel {
 	
 	public $validate = array(
 		'birthday' => array(
-			'rule' => 'date',
+			'rule' => array('date'),
 			'allowEmpty' => false,
 			'requirerd' => true
 		),
 		'salary' => array(
-			'rule' => 'numeric',
+			'rule' => array('numeric'),
 			'allowEmpty' => false,
 			'requirerd' => true
 		)
