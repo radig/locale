@@ -1,7 +1,7 @@
 h1. CakePHP Locale
 
-O objetivo deste plugin é permitir que usuários de seu sistema possam inserir
-valores em formatos locais/regionais ao mesmo tempo que garante a consistência
+Este plugin permite que usuários de seu sistema visualizem e insiram
+dados em formatos locais/regionais ao mesmo tempo que garante a consistência
 dos dados convertendo-o para um formato aceito pelo banco de dados escolhido.
 
 h2. Autor e Copyright
@@ -14,6 +14,7 @@ você pode usa-lo de forma isolada ou em conjunto com seu próprio código.
 h2. Observações
 
 * Este behavior requer PHP versão >= 5.2.4
+* Consulte os testes incluído no plugin para ver melhor seu funcionamento
 
 h2. Como usar
 
@@ -21,9 +22,24 @@ h2. Como usar
 
 bc. Config::write('Language.default', 'pt-br');
 
-* Por último, basta definir no model que deseja ativa-lo a seguinte linha:
+* Utilize a função _setlocale_ para que o PHP trabalhe internamente regionalizado (necessário para traduzir nomes de meses e semana)
 
-bc. $actsAs = array('Locale');
+bc. setlocale(LC_ALL, 'pt_BR.utf-8', 'pt_BR', 'pt-br');
+
+h3. Utilizando o Behavior
+
+* Basta definir, no model que deseja ativa-lo, a seguinte linha:
+
+bc. $actsAs = array('Locale.Locale');
 
 * A partir daí o behavior vai converter seus dados antes da validação e antes de salvar.
-* Leia o código fonte caso tenha mais dúvidas sobre funcionamento.
+
+h3. Utilizando o Helper
+
+* Nos controladores de interesse, adicione o helper _Locale.Locale_, deixando similar a linha abaixo:
+
+bc. $helpers = array('Locale.Locale');
+
+* Agora nas views de seu controlador, você pode chamar o helper, como abaixo:
+
+bc. echo $this->Locale->dateTime('2010-08-26');
