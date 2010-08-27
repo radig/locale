@@ -25,7 +25,7 @@ class LocaleBehavior extends ModelBehavior
 
 	public function setup(&$model, $config = array())
 	{
-		$this->model = $model;
+		$this->model =& $model;
 		$this->settings = $config;
 		
 		$this->systemLang = Configure::read('Language.default');
@@ -66,7 +66,7 @@ class LocaleBehavior extends ModelBehavior
 	
 	public function localizeData(&$query = null)
 	{
-		$status = TRUE;
+		$status = true;
 		
 		// verifica se há dados setados no modelo
 		if(isset($this->model->data) && !empty($this->model->data))
@@ -77,7 +77,6 @@ class LocaleBehavior extends ModelBehavior
 				// caso o campo esteja vazio E não tenha um array como valor E o campo faz parte do schema
 				if(!empty($value) && !is_array($value) && !in_array($field, $this->cakeAutomagicFields) && isset($this->model->_schema[$field]))
 				{
-					
 					switch($this->model->_schema[$field]['type'])
 					{
 						case 'date':
@@ -167,19 +166,22 @@ class LocaleBehavior extends ModelBehavior
 			 * Caso não tenha sido possível converter o formato, retorna false
 			 */
 			if( $value == null )
-				return FALSE;
+				return false;
 		}
-		
-		$dt = new DateTime($value);
-		
-		if($dt === FALSE)
+
+		try {
+			$dt = new DateTime($value);
+		}
+		catch(Exception $e)
 		{
-			return FALSE;
+			trigger_error(sprintf(__('Não foi possível converter a data %s no Behavior Locale', true), $value), E_USER_WARNING);
+
+			return false;
 		}
 		
 		$value = $dt->format($this->typesFormat[$type]);
 		
-		return ($value !== FALSE);
+		return ($value !== false);
 	}
 	
 	/**
@@ -195,8 +197,13 @@ class LocaleBehavior extends ModelBehavior
 	 */
 	private function __stringToFloat(&$value)
 	{
+		$isValid = false;
+
+		// guarda o locale atual para restauração posterior
+		$curLocale = setlocale(LC_NUMERIC, NULL);
+
 		// garante que o separador de decimal será o ponto (dot)
-		setlocale('LC_NUMERIC', 'en_US');
+		setlocale(LC_NUMERIC, 'en_US');
 		
 		if(!empty($value))
 		{
@@ -218,10 +225,12 @@ class LocaleBehavior extends ModelBehavior
 			// monta o número final, como float
 			$value = (float)($i . '.' . $d);
 			
-			return !empty($value);
+			$isValid = !empty($value);
 		}
+
+		setlocale(LC_NUMERIC, $curLocale);
 		
-		return FALSE;
+		return $isValid;
 	}
 }
 ?>

@@ -1,7 +1,19 @@
 <?php
 App::import('Behavior', 'Locale');
 
-class Employee extends CakeTestModel {
+/**
+ * Testes do Behavior Locale
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @filesource
+ * @author        Cauan Cabral <cauan@radig.com.br>, José Agripino <jose@radig.com.br>
+ * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
+
+class Employee extends CakeTestModel
+{
 	public $name = 'Employee';
 	
 	public $validate = array(
@@ -52,11 +64,26 @@ class LocaleTest extends CakeTestCase {
 				'Employee' => array(
 					'id' => 1,
 					'birthday' => '1987-03-01',
-					'salary' => 559.85
+					'salary' => 559.00
 				)
 			)
 		);
 		
+		$this->assertEqual($result, $expected);
+	}
+
+	/**
+	 * Testa uma ação de busca, com o critério tendo
+	 * um valor de data (inválida) localizada
+	 */
+	public function testFindActionWithBogusDate()
+	{
+		$result = $this->Employee->find('all',
+			array('conditions' => array('birthday' => '21/23/1987'))
+		);
+
+		$expected = array();
+
 		$this->assertEqual($result, $expected);
 	}
 	
@@ -67,7 +94,7 @@ class LocaleTest extends CakeTestCase {
 	public function testFindActionWithFloat()
 	{	
 		$result = $this->Employee->find('all',
-			array('conditions' => array('(salary - 559.85) <=' => '0.000001'))
+			array('conditions' => array('salary' => '559.00'))
 		);
 				
 		$expected = array(
@@ -75,7 +102,7 @@ class LocaleTest extends CakeTestCase {
 				'Employee' => array(
 					'id' => '1',
 					'birthday' => '1987-03-01',
-					'salary' => 559.85
+					'salary' => 559.00
 				)
 			)
 		);
@@ -83,6 +110,28 @@ class LocaleTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 	
+	/**
+	 * Testa uma ação de busca, com o critério sendo um inteiro,
+	 * enquanto o banco espera um valor decimal/float
+	 */
+	public function testFindActionWithFloatWithoutDot()
+	{
+		$result = $this->Employee->find('all',
+			array('conditions' => array('salary' => '559'))
+		);
+
+		$expected = array(
+			array(
+				'Employee' => array(
+					'id' => '1',
+					'birthday' => '1987-03-01',
+					'salary' => 559.00
+				)
+			)
+		);
+
+		$this->assertEqual($result, $expected);
+	}
 	
 	/**
 	 * Testa o behavio para a ação save, com dados não localizados
@@ -145,7 +194,7 @@ class LocaleTest extends CakeTestCase {
 				'Employee' => array(
 					'id' => 1,
 					'birthday' => '1987-03-01',
-					'salary' => 559.85
+					'salary' => 559.00
 				)
 			),
 			array(

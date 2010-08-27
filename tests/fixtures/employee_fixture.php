@@ -13,7 +13,7 @@ class EmployeeFixture extends CakeTestFixture {
 		array(
 			'id'  => 1,
 			'birthday'  => '1987-03-01',
-			'salary'  => '559.85'
+			'salary'  => '559.00'
 		)
 	);
 }
