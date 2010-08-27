@@ -69,6 +69,30 @@ class LocaleCase extends CakeTestCase
 		$this->assertEqual($this->Locale->dateLiteral('2010-08-26 16:12:40', true), 'quinta, 26 de agosto de 2010, 16:12:40');
 	}
 
+	public function testCurrency()
+	{
+		$this->assertEqual($this->Locale->currency('12.45'), 'R$ 12,45');
+
+		$this->assertEqual($this->Locale->currency('-'), '');
+	}
+
+	public function testNumber()
+	{
+		$this->assertEqual($this->Locale->number('12.45'), '12,45');
+
+		$this->assertEqual($this->Locale->number('12.82319', 4), '12,8231');
+
+		$this->assertEqual($this->Locale->number('350020.123', 4, true), '350020,123');
+
+		$this->assertEqual($this->Locale->number('-'), 0);
+	}
+
+	/**
+	 * testLocaleWithParameter
+	 *
+	 * @retun void
+	 * @access public
+	 */
 	public function testLocaleWithParameter()
 	{
 		$this->Locale = new LocaleHelper('br');
