@@ -22,84 +22,62 @@ class LocaleCase extends CakeTestCase
 	 * @retun void
 	 * @access public
 	 */
-	public function setUp()
+	public function startCase()
 	{
-		parent::setUp();
+		parent::startCase();
 
 		Configure::write('Config.language', 'pt-br');
+		setlocale(LC_ALL, 'pt_BR.utf-8', 'pt_BR', 'pt-br', 'pt_BR.iso-8859-1');
 
 		$this->Locale = new LocaleHelper();
 	}
 
 	/**
-	 * testData
+	 * testDate
 	 *
 	 * @retun void
 	 * @access public
 	 */
-	function testDate()
+	public function testDate()
 	{
 		$this->assertEqual($this->Locale->date(), date('d/m/Y'));
 		$this->assertEqual($this->Locale->date('2009-04-21'), '21/04/2009');
-		$this->assertEqual($this->Locale->date('invalido'), date('invalido'));
+		$this->assertEqual($this->Locale->date('invalido'), date('d/m/Y'));
 	}
 
 	/**
-	 * testDataHora
+	 * testDateTime
 	 *
 	 * @retun void
 	 * @access public
 	 */
-	function testDateTime()
+	public function testDateTime()
 	{
 		$this->assertEqual($this->Locale->dateTime('2010-08-26 16:12:40'), '26/08/2010 16:12:40');
 		$this->assertEqual($this->Locale->dateTime('2010-08-26 16:12:40', false), '26/08/2010 16:12');
 	}
 
 	/**
-	 * testDataCompleta
+	 * testDateLiteral
 	 *
 	 * @retun void
 	 * @access public
 	 */
-	function testDateLiteral()
+	public function testDateLiteral()
 	{
-		$this->assertEqual($this->Locale->dateLiteral('2010-08-26 16:12:00'), 'Quinta-feira, 26 de Agosto de 2010, 16:12:00');
+		$this->assertEqual($this->Locale->dateLiteral('2010-08-26 16:12:40'), 'quinta, 26 de agosto de 2010');
+		$this->assertEqual($this->Locale->dateLiteral('2010-08-26 16:12:40', true), 'quinta, 26 de agosto de 2010, 16:12:40');
 	}
 
-	/**
-	 * testPrecisao
-	 *
-	 * @retun void
-	 * @access public
-	 *
-	function testPrecisao() {
-		$this->assertIdentical($this->Formatacao->precisao(-10), '-10,000');
-		$this->assertIdentical($this->Formatacao->precisao(0), '0,000');
-		$this->assertIdentical($this->Formatacao->precisao(10), '10,000');
-		$this->assertIdentical($this->Formatacao->precisao(10.323), '10,323');
-		$this->assertIdentical($this->Formatacao->precisao(10.56486), '10,565');
-		$this->assertIdentical($this->Formatacao->precisao(10.56486, 2), '10,56');
-		$this->assertIdentical($this->Formatacao->precisao(10.56486, 0), '11');
-	}
+	public function testLocaleWithParameter()
+	{
+		$this->Locale = new LocaleHelper('br');
 
-	/**
-	 * testMoeda
-	 *
-	 * @retun void
-	 * @access public
-	 *
-	function testMoeda() {
-		$this->assertEqual($this->Formatacao->moeda(-10), '(R$ 10,00)');
-		$this->assertEqual($this->Formatacao->moeda(-10.12), '(R$ 10,12)');
-		$this->assertEqual($this->Formatacao->moeda(-0.12), '(R$ 0,12)');
-		$this->assertEqual($this->Formatacao->moeda(-0.12, array('negative' => '-')), 'R$ -0,12');
-		$this->assertEqual($this->Formatacao->moeda(0), 'R$ 0,00');
-		$this->assertEqual($this->Formatacao->moeda(0.5), 'R$ 0,50');
-		$this->assertEqual($this->Formatacao->moeda(0.52), 'R$ 0,52');
-		$this->assertEqual($this->Formatacao->moeda(10), 'R$ 10,00');
-		$this->assertEqual($this->Formatacao->moeda(10.12), 'R$ 10,12');
+		$this->assertEqual($this->Locale->date(), date('d/m/Y'));
+		$this->assertEqual($this->Locale->date('2009-04-21'), '21/04/2009');
+		$this->assertEqual($this->Locale->dateTime('2010-08-26 16:12:40'), '26/08/2010 16:12:40');
+		$this->assertEqual($this->Locale->dateTime('2010-08-26 16:12:40', false), '26/08/2010 16:12');
+		$this->assertEqual($this->Locale->dateLiteral('2010-08-26 16:12:40'), 'quinta, 26 de agosto de 2010');
+		$this->assertEqual($this->Locale->dateLiteral('2010-08-26 16:12:40', true), 'quinta, 26 de agosto de 2010, 16:12:40');
 	}
-	 * 
-	 */
 }

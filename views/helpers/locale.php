@@ -17,15 +17,15 @@ class LocaleHelper extends AppHelper
 	private $currentLocale;
 	
 	protected $_dateFormats = array(
-		'en' => array('small' => 'Y-m-d', 'literal' => '', 'full' => 'Y-m-d H:i:s'),
-		'pt' => array('small' => 'd/m/Y', 'literal' => 'l, d \d\e F \d\e Y', 'full' => 'd/m/Y H:i:s')
+		'us' => array('small' => 'Y-m-d', 'literal' => '%a %d %b %Y', 'literalWithTime' => '%a %d %b %Y %T', 'full' => 'Y-m-d H:i:s'),
+		'br' => array('small' => 'd/m/Y', 'literal' => '%A, %e de %B de %Y', 'literalWithTime' => '%A, %e de %B de %Y, %T', 'full' => 'd/m/Y H:i:s')
 	);
 	
 	public function __construct( $locale = null )
 	{
 		if($locale == null)
 		{
-			$this->currentLocale = substr(Configure::read('Config.language'), 0, 2);
+			$this->currentLocale = substr(Configure::read('Config.language'), -2);
 		}
 		else
 		{
@@ -53,16 +53,29 @@ class LocaleHelper extends AppHelper
 		if ($seconds !== true)
 		{
 			// considera que último caracter  do formato representa os segundos
-			$format = substr($format, 0, -1);
+			$format = substr($format, 0, -2);
 		}
 		
 		return $dateTime->format($format);
 	}
 
-	function dateLiteral($dateTime = null)
+	function dateLiteral($dateTime = null, $displayTime = false, $format = null)
 	{
 		$dateTime = $this->__adjustDateTime($dateTime);
-		return $dateTime->format($this->_dateFormats[$this->currentLocale]['literal']);
+
+		if($format == null)
+		{
+			if($displayTime)
+			{
+				$format = $this->_dateFormats[$this->currentLocale]['literalWithTime'];
+			}
+			else
+			{
+				$format = $this->_dateFormats[$this->currentLocale]['literal'];
+			}
+		}
+
+		return strftime($format, $dateTime->format('U'));
 	}
 
 	function __adjustDateTime($d)
@@ -72,8 +85,15 @@ class LocaleHelper extends AppHelper
 			return new DateTime();
 		}
 		
-		return new DateTime($d);
+		try{
+			$dt = new DateTime($d);
+		}
+		catch(Exception $e)
+		{
+			$dt = new DateTime();
+		}
+
+		return $dt;
 	}
 }
-
 ?>
