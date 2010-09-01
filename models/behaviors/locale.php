@@ -201,7 +201,7 @@ class LocaleBehavior extends ModelBehavior
 		$isValid = false;
 
 		// guarda o locale atual para restauração posterior
-		$curLocale = setlocale(LC_NUMERIC, NULL);
+		$curLocale = setlocale(LC_NUMERIC, "0");
 
 		// garante que o separador de decimal será o ponto (dot)
 		setlocale(LC_NUMERIC, 'en_US');

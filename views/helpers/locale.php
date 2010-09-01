@@ -190,6 +190,12 @@ class LocaleHelper extends AppHelper
 	 */
 	private function __number_format($value, $precision, $thousands)
 	{
+		// guarda o locale atual para restauração posterior
+		$curLocale = setlocale(LC_NUMERIC, "0");
+
+		// garante que o separador de decimal será o ponto (dot)
+		setlocale(LC_NUMERIC, 'en_US');
+
 		// remove o separador de milhar (se houver)
 		$value = str_replace(',', '', $value);
 		
@@ -222,6 +228,9 @@ class LocaleHelper extends AppHelper
 		// atualizo $parts
 		$parts[0] = $int;
 		$parts[1] = $dec;
+
+		// restaura locale anterior
+		setlocale(LC_NUMERIC, $curLocale);
 
 		// retorna os valores unidos pelo separador de decimal localizado
 		return implode($this->_settings['numbers']['decimal_point'], $parts);
