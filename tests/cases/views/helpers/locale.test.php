@@ -95,7 +95,7 @@ class LocaleCase extends CakeTestCase
 	 */
 	public function testLocaleWithParameter()
 	{
-		$this->Locale = new LocaleHelper('br');
+		$this->Locale = new LocaleHelper(array('locale' => 'br', 'numbers' => array('decimal_point' => '!')));
 
 		$this->assertEqual($this->Locale->date(), date('d/m/Y'));
 		$this->assertEqual($this->Locale->date('2009-04-21'), '21/04/2009');
@@ -103,5 +103,7 @@ class LocaleCase extends CakeTestCase
 		$this->assertEqual($this->Locale->dateTime('2010-08-26 16:12:40', false), '26/08/2010 16:12');
 		$this->assertEqual($this->Locale->dateLiteral('2010-08-26 16:12:40'), 'quinta, 26 de agosto de 2010');
 		$this->assertEqual($this->Locale->dateLiteral('2010-08-26 16:12:40', true), 'quinta, 26 de agosto de 2010, 16:12:40');
+
+		$this->assertEqual($this->Locale->number('12.53'), '12!53');
 	}
 }

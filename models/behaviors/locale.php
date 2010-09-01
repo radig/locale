@@ -42,7 +42,7 @@ class LocaleBehavior extends ModelBehavior
 	}
 
 	public function beforeValidate(&$model)
-	{	
+	{
 		parent::beforeValidate($model);
 		
 		return $this->localizeData();
@@ -85,6 +85,7 @@ class LocaleBehavior extends ModelBehavior
 						case 'timestamp':
 							$status = ($status && $this->__dateConvert($this->model->data[$this->model->name][$field], $this->model->_schema[$field]['type']));
 							break;
+						case 'number':
 						case 'decimal':
 						case 'float':
 						case 'double':
@@ -214,7 +215,7 @@ class LocaleBehavior extends ModelBehavior
 			}
 			else
 			{
-				// caso contrário, seta casas decimais com valor zero, por conveniência
+				// caso contrário, seta casas decimais com valor zero, por conveniência utilizando duas casas
 				$d = '00';
 			}
 			

@@ -14,29 +14,54 @@
 
 class LocaleHelper extends AppHelper
 {
-	private $currentLocale;
-	
+	/**
+	 * Lista de formatos padrões para datas de acordo com locale
+	 * 
+	 * @var array
+	 */
 	protected $_dateFormats = array(
 		'us' => array('small' => 'Y-m-d', 'literal' => '%a %d %b %Y', 'literalWithTime' => '%a %d %b %Y %T', 'full' => 'Y-m-d H:i:s'),
 		'br' => array('small' => 'd/m/Y', 'literal' => '%A, %e de %B de %Y', 'literalWithTime' => '%A, %e de %B de %Y, %T', 'full' => 'd/m/Y H:i:s')
 	);
 
-	protected $_numberFormats;
+	/**
+	 * Configurações que sobreescrevem as definições do locale
+	 *
+	 * @var array
+	 */
+	protected $_settings = array(
+		'locale' => null,
+		'numbers' => array(),
+		'dates' => array()
+	);
 	
-	public function __construct( $locale = null )
+	public function __construct()
 	{
-		if($locale == null)
+		parent::__construct();
+
+		// caso tenha sido passado um parâmetro
+		if(func_num_args() == 1)
 		{
-			$this->currentLocale = substr(Configure::read('Config.language'), -2);
-		}
-		else
-		{
-			$this->currentLocale = $locale;
+			$settings = func_get_arg(0);
 		}
 
-		$this->_numberFormats = localeconv();
-		
-		parent::__construct();
+		// recupera lista de configuração definida como argumento do helper
+		if(isset($settings) && is_array($settings))
+		{
+			$this->_settings = array_merge($this->_settings, $settings);
+		}
+
+		// se não tiver sido passado o locale desejado, busca o locale na configuração do Cake
+		if(empty($this->_settings['locale']))
+		{
+			$this->_settings['locale'] = substr(Configure::read('Config.language'), -2);
+		}
+
+		// mescla configurações passadas com configurações de numeração para o locale atual
+		$this->_settings['numbers'] = array_merge(localeconv(), $this->_settings['numbers']);
+
+		// mescla configurações passadas com configurações de datas para o locale atual
+		$this->_settings['dates'] = array_merge($this->_dateFormats[$this->_settings['locale']], $this->_settings['dates']);
 	}
 	
 	/* Datas */
@@ -45,14 +70,14 @@ class LocaleHelper extends AppHelper
 	{
 		$d = $this->__adjustDateTime($d);
 		
-		return $d->format($this->_dateFormats[$this->currentLocale]['small']);
+		return $d->format($this->_settings['dates']['small']);
 	}
 
 	public function dateTime($dateTime = null, $seconds = true)
 	{
 		$dateTime = $this->__adjustDateTime($dateTime);
 		
-		$format = $this->_dateFormats[$this->currentLocale]['full'];
+		$format = $this->_settings['dates']['full'];
 		
 		if ($seconds !== true)
 		{
@@ -71,35 +96,22 @@ class LocaleHelper extends AppHelper
 		{
 			if($displayTime)
 			{
-				$format = $this->_dateFormats[$this->currentLocale]['literalWithTime'];
+				$format = $this->_settings['dates']['literalWithTime'];
 			}
 			else
 			{
-				$format = $this->_dateFormats[$this->currentLocale]['literal'];
+				$format = $this->_settings['dates']['literal'];
 			}
 		}
 
 		return strftime($format, $dateTime->format('U'));
 	}
 
-	public function __adjustDateTime($d)
-	{
-		if ($d === null)
-		{
-			return new DateTime();
-		}
-		
-		try{
-			$dt = new DateTime($d);
-		}
-		catch(Exception $e)
-		{
-			$dt = new DateTime();
-		}
-
-		return $dt;
-	}
-
+	/**
+	 *
+	 * @param number $value
+	 * @return string
+	 */
 	public function currency($value)
 	{
 		if(!empty($value) && is_numeric($value))
@@ -116,11 +128,18 @@ class LocaleHelper extends AppHelper
 		}
 	}
 
+	/**
+	 *
+	 * @param number $value
+	 * @param int $precision
+	 * @param boolean $thousands
+	 * @return number
+	 */
 	public function number($value, $precision = 2, $thousands = false)
 	{
 		if(!empty($value) && is_numeric($value))
 		{
-			$value = $this->number_format($value, $precision, $thousands);
+			$value = $this->__number_format($value, $precision, $thousands);
 			
 			return $value;
 		}
@@ -130,6 +149,32 @@ class LocaleHelper extends AppHelper
 			
 			return 0;
 		}
+	}
+	
+	/** Métodos para uso interno **/
+
+	/**
+	 * Recebe uma string de data e retorna um objeto DateTime para a data
+	 *
+	 * @param string $d
+	 * @return DateTime
+	 */
+	protected function __adjustDateTime($d)
+	{
+		if ($d === null)
+		{
+			return new DateTime();
+		}
+
+		try{
+			$dt = new DateTime($d);
+		}
+		catch(Exception $e)
+		{
+			$dt = new DateTime();
+		}
+
+		return $dt;
 	}
 
 	/**
@@ -143,7 +188,7 @@ class LocaleHelper extends AppHelper
 	 *
 	 * @return numeric
 	 */
-	private function number_format($value, $precision, $thousands)
+	private function __number_format($value, $precision, $thousands)
 	{
 		// remove o separador de milhar (se houver)
 		$value = str_replace(',', '', $value);
@@ -167,7 +212,7 @@ class LocaleHelper extends AppHelper
 				
 				if($i%3 == 0 && $i != 0)
 				{
-					$v .= $this->_numberFormats['thousands_sep'];
+					$v .= $this->_settings['numbers']['thousands_sep'];
 				}
 			}
 
@@ -179,7 +224,7 @@ class LocaleHelper extends AppHelper
 		$parts[1] = $dec;
 
 		// retorna os valores unidos pelo separador de decimal localizado
-		return implode($this->_numberFormats['decimal_point'], $parts);
+		return implode($this->_settings['numbers']['decimal_point'], $parts);
 	}
 }
 ?>
