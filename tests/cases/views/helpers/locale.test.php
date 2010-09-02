@@ -78,13 +78,17 @@ class LocaleCase extends CakeTestCase
 
 	public function testNumber()
 	{
-		$this->assertEqual($this->Locale->number('12.45'), '12,45');
+		$this->assertEqual($this->Locale->number('12'), '12,00'); // teste de inteiro, esperando real
 
-		$this->assertEqual($this->Locale->number('12.82319', 4), '12,8231');
+		$this->assertEqual($this->Locale->number('12', 0), '12'); // teste de inteiro
 
-		$this->assertEqual($this->Locale->number('350020.123', 4, true), '350020,123');
+		$this->assertEqual($this->Locale->number('12.45'), '12,45'); // teste de real
 
-		$this->assertEqual($this->Locale->number('-'), 0);
+		$this->assertEqual($this->Locale->number('12.82319', 4), '12,8231'); // teste de real com precisão 4
+
+		$this->assertEqual($this->Locale->number('350020.123', 4, true), '350020,1230'); // teste de real com separador de milhar
+
+		$this->assertEqual($this->Locale->number('-'), 0); // teste de um número inválido
 	}
 
 	/**

@@ -206,7 +206,7 @@ class LocaleHelper extends AppHelper
 		if(count($parts) == 2)
 		{
 			$int = (string)$parts[0];
-			$dec = str_pad((string)$parts[1], $precision, '0', STR_PAD_LEFT);
+			$dec = str_pad((string)$parts[1], $precision, '0', STR_PAD_RIGHT);
 		}
 		// caso não possua
 		else
@@ -236,15 +236,22 @@ class LocaleHelper extends AppHelper
 			$int = $v;
 		}
 
-		// atualizo $parts
-		$parts[0] = $int;
-		$parts[1] = $dec;
+		// caso posssua decimais, faz a junção usando separador localizado
+		if(!empty($dec))
+		{
+			$number = $int . $this->_settings['numbers']['decimal_point'] . $dec;
+		}
+		// caso contrário o número é um inteiro
+		else
+		{
+			$number = $int;
+		}
 
 		// restaura locale anterior
 		setlocale(LC_NUMERIC, $curLocale);
 
-		// retorna os valores unidos pelo separador de decimal localizado
-		return implode($this->_settings['numbers']['decimal_point'], $parts);
+		// retorna número resultante
+		return $number;
 	}
 }
 ?>
