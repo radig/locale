@@ -146,7 +146,7 @@ class LocaleBehavior extends ModelBehavior
 	 */
 	private function __dateConvert(&$value, $type = 'date')
 	{
-		
+	
 		if($this->systemLang == 'pt-br')
 		{
 			/*
@@ -223,8 +223,8 @@ class LocaleBehavior extends ModelBehavior
 			$arrTmp = preg_split('/([\.|,])([0-9]*)$/', $value);
 			$i = preg_replace('/[\.|,]/', '', $arrTmp[0]);
 
-			// monta o número final, como float
-			$value = (float)($i . '.' . $d);
+			// monta o número final
+			$value = ($i . '.' . $d);
 			
 			$isValid = !empty($value);
 		}
