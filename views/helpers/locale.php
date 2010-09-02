@@ -137,7 +137,7 @@ class LocaleHelper extends AppHelper
 	 */
 	public function number($value, $precision = 2, $thousands = false)
 	{
-		if(!empty($value) && is_numeric($value))
+		if(is_numeric($value))
 		{
 			$value = $this->__number_format($value, $precision, $thousands);
 			
@@ -201,8 +201,19 @@ class LocaleHelper extends AppHelper
 		
 		// separa a parte decimal
 		$parts = explode('.', $value);
-		$int = (string)$parts[0];
-		$dec = (string)$parts[1];
+
+		// caso o número possua parte decimal
+		if(count($parts) == 2)
+		{
+			$int = (string)$parts[0];
+			$dec = str_pad((string)$parts[1], $precision, '0', STR_PAD_LEFT);
+		}
+		// caso não possua
+		else
+		{
+			$int = (string)$parts[0];
+			$dec = str_repeat('0', $precision);
+		}
 
 		// trunca o número
 		$dec = substr($dec, 0, $precision);
