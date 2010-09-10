@@ -32,12 +32,34 @@ class Employee extends CakeTestModel
 	public $actsAs = array('Locale.Locale');
 }
 
+class Task extends CakeTestModel
+{
+	public $name = 'Task';
+
+	public $validate = array(
+		'term' => array(
+			'rule' => array('date'),
+			'allowEmpty' => false,
+			'required' => true
+		),
+		'title' => array(
+			'rule' => array('minLength', 4),
+			'allowEmpty' => false,
+			'required' => true
+		)
+	);
+
+	public $belongsTo = array('Employee');
+
+	public $actsAs = array('Locale.Locale');
+}
+
 
 class LocaleTest extends CakeTestCase {
 	
 	public $name = 'Locale';
 	
-	public $fixtures = array('plugin.locale.employee');
+	public $fixtures = array('plugin.locale.employee', 'plugin.locale.task');
 	
 	public function startTest()
 	{
@@ -221,5 +243,63 @@ class LocaleTest extends CakeTestCase {
 		);
 		
 		$this->assertEqual($result, $expected);
+	}
+
+	public function testModelRelation()
+	{
+		$Task =& ClassRegistry::init('Task');
+
+		$employee = $this->Employee->find('first');
+
+		$employee['Employee']['salary'] = '3640,30';
+
+		$task = array(
+			'Task' => array(
+				'title' => 'Terminar o trabalho',
+				'term' => '12/06/2012'
+			),
+			'Employee' => $employee['Employee']
+		);
+
+		$result = $Task->saveAll($task);
+		
+		$expected = true;
+
+		$this->assertEqual($result, $expected);
+
+		$result = $Task->find('all');
+
+		$expected = array(
+			array(
+				'Task' => array(
+					'id' => 100,
+					'title' => 'The Mayan Prophecy',
+					'term' => '2012-12-21',
+					'employee_id' => 1
+				),
+				'Employee' => array(
+					'id' => 1,
+					'birthday' => '1987-03-01',
+					'salary' => 3640.3
+				)
+			),
+			array(
+				'Task' => array(
+					'id' => 1,
+					'title' => 'Terminar o trabalho',
+					'term' => '2012-06-12',
+					'employee_id' => 1
+				),
+				'Employee' => array(
+					'id' => 1,
+					'birthday' => '1987-03-01',
+					'salary' => 3640.3
+				)
+			),
+		);
+
+		$this->assertEqual($expected, $result);
+
+		unset($Task);
 	}
 }
