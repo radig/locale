@@ -66,8 +66,19 @@ class LocaleHelper extends AppHelper
 	
 	/* Datas */
 	
-	public function date($d = null)
+	/**
+	 * 
+	 * @param string $d - Uma data
+	 * @param bool $empty - Se deve retornar valor vazio caso uma data não seja fornecida
+	 */
+	public function date($d = null, $empty = false)
 	{
+		// caso não tenha sido passado uma data e o retorno deva ser vazio, apenas retorna
+		if(empty($d) && $empty === true)
+		{
+			return '';
+		}
+		
 		$d = $this->__adjustDateTime($d);
 		
 		return $d->format($this->_settings['dates']['small']);
@@ -173,7 +184,7 @@ class LocaleHelper extends AppHelper
 		{
 			$dt = new DateTime();
 		}
-
+		
 		return $dt;
 	}
 

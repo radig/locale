@@ -152,7 +152,6 @@ class LocaleBehavior extends ModelBehavior
 	 */
 	private function __dateConvert(&$value, $type = 'date')
 	{
-	
 		if($this->systemLang == 'pt-br')
 		{
 			/*
@@ -185,7 +184,6 @@ class LocaleBehavior extends ModelBehavior
 
 			return false;
 		}
-		
 		$value = $dt->format($this->typesFormat[$type]);
 		
 		return ($value !== false);
