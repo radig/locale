@@ -84,8 +84,19 @@ class LocaleHelper extends AppHelper
 		return $d->format($this->_settings['dates']['small']);
 	}
 
-	public function dateTime($dateTime = null, $seconds = true)
+	/**
+	 * 
+	 * @param string $dateTime
+	 * @param bool $seconds
+	 * @param bool $empty
+	 */
+	public function dateTime($dateTime = null, $seconds = true, $empty = false)
 	{
+		if(empty($d) && $empty === true)
+		{
+			return '';
+		}
+		
 		$dateTime = $this->__adjustDateTime($dateTime);
 		
 		$format = $this->_settings['dates']['full'];
@@ -99,8 +110,20 @@ class LocaleHelper extends AppHelper
 		return $dateTime->format($format);
 	}
 
-	public function dateLiteral($dateTime = null, $displayTime = false, $format = null)
+	/**
+	 * 
+	 * @param string $dateTime
+	 * @param string $displayTime
+	 * @param string $format
+	 * @param bool $empty
+	 */
+	public function dateLiteral($dateTime = null, $displayTime = false, $format = null, $empty = false)
 	{
+		if(empty($d) && $empty === true)
+		{
+			return '';
+		}
+		
 		$dateTime = $this->__adjustDateTime($dateTime);
 
 		if($format == null)
