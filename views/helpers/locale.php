@@ -74,7 +74,7 @@ class LocaleHelper extends AppHelper
 	public function date($d = null, $empty = false)
 	{
 		// caso não tenha sido passado uma data e o retorno deva ser vazio, apenas retorna
-		if(empty($d) && $empty === true)
+		if($this->__isNullDate($d) && $empty === true)
 		{
 			return '';
 		}
@@ -92,7 +92,7 @@ class LocaleHelper extends AppHelper
 	 */
 	public function dateTime($dateTime = null, $seconds = true, $empty = false)
 	{
-		if(empty($d) && $empty === true)
+		if( $this->__isNullDate($dateTime) && $empty === true)
 		{
 			return '';
 		}
@@ -119,7 +119,7 @@ class LocaleHelper extends AppHelper
 	 */
 	public function dateLiteral($dateTime = null, $displayTime = false, $format = null, $empty = false)
 	{
-		if(empty($d) && $empty === true)
+		if($this->__isNullDate($dateTime) && $empty === true)
 		{
 			return '';
 		}
@@ -188,6 +188,29 @@ class LocaleHelper extends AppHelper
 	/** Métodos para uso interno **/
 
 	/**
+	 * Retorna true caso a data passada represente um valor nulo
+	 * - Formato da data é dependente do BD utilizado
+	 * 
+	 * @param string $d
+	 */
+	protected function __isNullDate($d)
+	{
+		// Empty | null
+		if(empty($d))
+		{
+			return true;
+		}
+		
+		// MySQL null date format
+		if(is_int(strpos($d, '0000-00-00')))
+		{
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
 	 * Recebe uma string de data e retorna um objeto DateTime para a data
 	 *
 	 * @param string $d
@@ -195,7 +218,7 @@ class LocaleHelper extends AppHelper
 	 */
 	protected function __adjustDateTime($d)
 	{
-		if ($d === null)
+		if ($this->__isNullDate($d))
 		{
 			return new DateTime();
 		}
