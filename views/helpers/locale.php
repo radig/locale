@@ -66,15 +66,37 @@ class LocaleHelper extends AppHelper
 	
 	/* Datas */
 	
-	public function date($d = null)
+	/**
+	 * 
+	 * @param string $d - Uma data
+	 * @param bool $empty - Se deve retornar valor vazio caso uma data não seja fornecida
+	 */
+	public function date($d = null, $empty = false)
 	{
+		// caso não tenha sido passado uma data e o retorno deva ser vazio, apenas retorna
+		if($this->__isNullDate($d) && $empty === true)
+		{
+			return '';
+		}
+		
 		$d = $this->__adjustDateTime($d);
 		
 		return $d->format($this->_settings['dates']['small']);
 	}
 
-	public function dateTime($dateTime = null, $seconds = true)
+	/**
+	 * 
+	 * @param string $dateTime
+	 * @param bool $seconds
+	 * @param bool $empty
+	 */
+	public function dateTime($dateTime = null, $seconds = true, $empty = false)
 	{
+		if( $this->__isNullDate($dateTime) && $empty === true)
+		{
+			return '';
+		}
+		
 		$dateTime = $this->__adjustDateTime($dateTime);
 		
 		$format = $this->_settings['dates']['full'];
@@ -88,8 +110,20 @@ class LocaleHelper extends AppHelper
 		return $dateTime->format($format);
 	}
 
-	public function dateLiteral($dateTime = null, $displayTime = false, $format = null)
+	/**
+	 * 
+	 * @param string $dateTime
+	 * @param string $displayTime
+	 * @param string $format
+	 * @param bool $empty
+	 */
+	public function dateLiteral($dateTime = null, $displayTime = false, $format = null, $empty = false)
 	{
+		if($this->__isNullDate($dateTime) && $empty === true)
+		{
+			return '';
+		}
+		
 		$dateTime = $this->__adjustDateTime($dateTime);
 
 		if($format == null)
@@ -154,6 +188,29 @@ class LocaleHelper extends AppHelper
 	/** Métodos para uso interno **/
 
 	/**
+	 * Retorna true caso a data passada represente um valor nulo
+	 * - Formato da data é dependente do BD utilizado
+	 * 
+	 * @param string $d
+	 */
+	protected function __isNullDate($d)
+	{
+		// Empty | null
+		if(empty($d))
+		{
+			return true;
+		}
+		
+		// MySQL null date format
+		if(is_int(strpos($d, '0000-00-00')))
+		{
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
 	 * Recebe uma string de data e retorna um objeto DateTime para a data
 	 *
 	 * @param string $d
@@ -161,7 +218,7 @@ class LocaleHelper extends AppHelper
 	 */
 	protected function __adjustDateTime($d)
 	{
-		if ($d === null)
+		if ($this->__isNullDate($d))
 		{
 			return new DateTime();
 		}
@@ -173,7 +230,7 @@ class LocaleHelper extends AppHelper
 		{
 			$dt = new DateTime();
 		}
-
+		
 		return $dt;
 	}
 

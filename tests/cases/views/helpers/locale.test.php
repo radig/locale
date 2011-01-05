@@ -44,6 +44,17 @@ class LocaleCase extends CakeTestCase
 		$this->assertEqual($this->Locale->date('2009-04-21'), '21/04/2009');
 		$this->assertEqual($this->Locale->date('invalido'), date('d/m/Y'));
 	}
+	
+	/**
+	 * testNullDate
+	 * 
+	 * @return void
+	 */
+	public function testNullDate()
+	{
+		$this->assertEqual($this->Locale->date('0000-00-00'), date('d/m/Y'));
+		$this->assertEqual($this->Locale->date('0000-00-00', true), '');
+	}
 
 	/**
 	 * testDateTime
@@ -55,6 +66,8 @@ class LocaleCase extends CakeTestCase
 	{
 		$this->assertEqual($this->Locale->dateTime('2010-08-26 16:12:40'), '26/08/2010 16:12:40');
 		$this->assertEqual($this->Locale->dateTime('2010-08-26 16:12:40', false), '26/08/2010 16:12');
+		$this->assertEqual($this->Locale->dateTime('0000-00-00 00:00:00', false), date('d/m/Y H:i'));
+		$this->assertEqual($this->Locale->dateTime('0000-00-00 00:00:00', false, true), '');
 	}
 
 	/**
@@ -67,6 +80,10 @@ class LocaleCase extends CakeTestCase
 	{
 		$this->assertEqual($this->Locale->dateLiteral('2010-08-26 16:12:40'), 'quinta, 26 de agosto de 2010');
 		$this->assertEqual($this->Locale->dateLiteral('2010-08-26 16:12:40', true), 'quinta, 26 de agosto de 2010, 16:12:40');
+		
+		$dateTime = new DateTime();
+		$this->assertEqual($this->Locale->dateLiteral('0000-00-00 00:00:00', false), strftime('%A, %e de %B de %Y', $dateTime->format('U')));
+		$this->assertEqual($this->Locale->dateLiteral('0000-00-00 00:00:00', false, null, true), '');
 	}
 
 	public function testCurrency()
