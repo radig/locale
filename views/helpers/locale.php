@@ -116,7 +116,7 @@ class LocaleHelper extends AppHelper
 	{
 		if(!empty($value) && is_numeric($value))
 		{
-			$currency = money_format("%.2n",$value);
+			$currency = money_format("%.2n", $value);
 
 			return $currency;
 		}
