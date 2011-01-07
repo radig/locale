@@ -1,28 +1,66 @@
 <?php
 /** 
- * @author Cauan Cabral - cauan@radig.com.br
- *
- * @copyright 2009-2010, Radig - Soluções em TI, www.radig.com.br
- * @license MIT
- *
- * @package Radig
- * @subpackage L10n
+ * Behavior to automagic convert dates, numbers and currency from
+ * any localized format to DB format for security store.
  * 
- * Este behavior requer PHP versão >= 5.2.4
+ * Code comments in brazilian portuguese.
+ * -----
+ * Behavior para converter automagicamente datas, números decimais e valores
+ * monetários de qualquer formato localizado para o formato aceito pelo BD
+ * em uso.
+ * 
+ * PHP version > 5.2.4
+ * 
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ * 
+ * @copyright 2009-2011, Radig - Soluções em TI, www.radig.com.br
+ * @link http://www.radig.com.br
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ *
+ * @package radig
+ * @subpackage radig.l10n.models.behaviors
  */
 
 App::import('CORE', 'ConnectionManager');
 
 class LocaleBehavior extends ModelBehavior
 {
+	/**
+	 * Referência para o modelo que está utilizando o behavior
+	 * @var Model
+	 */
 	protected $model;
 	
+	/**
+	 * Lista de campos que devem ser ignorados por serem inseridos
+	 * automagicamente pelo CakePHP
+	 * 
+	 * @var array
+	 */
 	private $cakeAutomagicFields = array('created', 'updated', 'modified');
 	
+	/**
+	 * Lista de formatos para os dados suportados pelo BD em uso.
+	 * É recuperado automáticamente pela conexão com o banco.
+	 * 
+	 * @var array
+	 */
 	private $typesFormat;
 	
+	/**
+	 * Cópia do valor da configuração 'Language.default' armazenada pela classe
+	 * Configure.
+	 * 
+	 * @var string
+	 */
 	private $systemLang;
 
+	/**
+	 * Inicializa os dados do behavior
+	 * 
+	 * @see ModelBehavior::setup()
+	 */
 	public function setup(&$model, $config = array())
 	{
 		$this->model =& $model;
@@ -41,6 +79,11 @@ class LocaleBehavior extends ModelBehavior
 		}
 	}
 
+	/**
+	 * Invoca localização das informações no callback beforeValidate
+	 * 
+	 * @see ModelBehavior::beforeValidate()
+	 */
 	public function beforeValidate(&$model)
 	{
 		$this->model =& $model;
@@ -50,6 +93,11 @@ class LocaleBehavior extends ModelBehavior
 		return $this->localizeData();
 	}
 	
+	/**
+	 * Invoca localização das informaçõs no callback beforeSave
+	 * 
+	 * @see ModelBehavior::beforeSave()
+	 */
 	public function beforeSave(&$model)
 	{
 		$this->model =& $model;
@@ -59,6 +107,11 @@ class LocaleBehavior extends ModelBehavior
 		return $this->localizeData();
 	}
 	
+	/**
+	 * Invoca localização das informações no callback beforeFind
+	 * 
+	 * @see ModelBehavior::beforeFind()
+	 */
 	public function beforeFind(&$model, $query)
 	{
 		$this->model =& $model;
@@ -70,6 +123,16 @@ class LocaleBehavior extends ModelBehavior
 		return $query;
 	}
 	
+	/**
+	 * Faz a localização das informações, convertendo-as de um formato
+	 * arbitrário (localizado para o usuário) para o formato aceito pelo
+	 * DB em uso.
+	 * 
+	 * @param array $query utilizado no caso do callback beforeFind.
+	 * Valor é passado por referência e é alterado no método.
+	 * 
+	 * @return bool $status caso não haja falha retorna true, false caso contrário 
+	 */
 	public function localizeData(&$query = null)
 	{
 		$status = true;
