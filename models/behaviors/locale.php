@@ -166,7 +166,7 @@ class LocaleBehavior extends ModelBehavior
 		}
 
 		// caso tenha sido invocado em um Find (haja query de busca)
-		if(!empty($query))
+		if(!empty($query) && is_array($query))
 		{
 			// varre os campos da condição
 			foreach($query as $field => &$value)
