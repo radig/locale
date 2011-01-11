@@ -285,7 +285,7 @@ class LocaleTest extends CakeTestCase {
 			),
 			array(
 				'Task' => array(
-					'id' => 1,
+					'id' => 101,
 					'title' => 'Terminar o trabalho',
 					'term' => '2012-06-12',
 					'employee_id' => 1
