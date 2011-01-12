@@ -148,7 +148,7 @@ class LocaleBehavior extends ModelBehavior
 			foreach($this->model->data[$this->model->name] as $field => $value)
 			{
 				// caso o campo esteja vazio E não tenha um array como valor E o campo faz parte do schema
-				if(!empty($value) && !is_array($value) && ($this->settings['ignoreAutomagic'] && !in_array($field, $this->cakeAutomagicFields)) && isset($this->model->_schema[$field]))
+				if(!empty($value) && !is_array($value) && isset($this->model->_schema[$field]) && (!$this->settings['ignoreAutomagic'] || ($this->settings['ignoreAutomagic'] && !in_array($field, $this->cakeAutomagicFields))))
 				{
 					switch($this->model->_schema[$field]['type'])
 					{
@@ -185,11 +185,8 @@ class LocaleBehavior extends ModelBehavior
 				if(strpos($field, '.') !== false)
 				{
 					$pos = strpos($field, '.');
-					$field = substr($field, $pos + 1);
 					$len = strpos($field, ' ');
-					
-					if($len > 0)
-						$field = substr($field, 0, $len);
+					$field = substr($field, $pos + 1, $len - $pos);
 				}
 				
 				// caso o campo esteja vazio E não tenha um array como valor E o campo faz parte do schema
