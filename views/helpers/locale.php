@@ -159,7 +159,11 @@ class LocaleHelper extends AppHelper
 	 */
 	public function currency($value)
 	{
-		if(!empty($value) && is_numeric($value))
+		if(empty($value))
+			return '';
+		
+		
+		if(is_numeric($value))
 		{
 			$currency = money_format("%.2n", $value);
 
@@ -169,7 +173,7 @@ class LocaleHelper extends AppHelper
 		{
 			trigger_error(sprintf(__('Falha ao converter o valor monetário "%s"', true), $value), E_USER_NOTICE);
 			
-			return '';
+			return $value;
 		}
 	}
 
@@ -185,15 +189,13 @@ class LocaleHelper extends AppHelper
 		if(is_numeric($value))
 		{
 			$value = $this->__number_format($value, $precision, $thousands);
-			
-			return $value;
 		}
 		else
 		{
 			trigger_error(sprintf(__('Falha ao converter o número "%s"', true), $value), E_USER_NOTICE);
-			
-			return 0;
 		}
+		
+		return $value;
 	}
 	
 	/** Métodos para uso interno **/
