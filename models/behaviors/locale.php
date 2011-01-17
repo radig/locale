@@ -190,7 +190,7 @@ class LocaleBehavior extends ModelBehavior
 				}
 				
 				// caso o campo esteja vazio E não tenha um array como valor E o campo faz parte do schema
-				if(!empty($value) && !is_array($value) && isset($this->model->_schema[$field]) && (!$this->settings['ignoreAutomagic'] || ($this->settings['ignoreAutomagic'] && !in_array($field, $this->cakeAutomagicFields))))
+				if(!empty($value) && isset($this->model->_schema[$field]) && (!$this->settings['ignoreAutomagic'] || ($this->settings['ignoreAutomagic'] && !in_array($field, $this->cakeAutomagicFields))))
 				{
 					switch($this->model->_schema[$field]['type'])
 					{
@@ -198,12 +198,32 @@ class LocaleBehavior extends ModelBehavior
 						case 'datetime':
 						case 'time':
 						case 'timestamp':
-							$status = ($status && $this->__dateConvert($value, $this->model->_schema[$field]['type']));
+							if(is_array($value))
+							{
+								foreach($value as $v)
+								{
+									$status = ($status && $this->__dateConvert($value, $this->model->_schema[$field]['type']));
+								}
+							}
+							else
+							{
+								$status = ($status && $this->__dateConvert($value, $this->model->_schema[$field]['type']));
+							}
 							break;
 						case 'decimal':
 						case 'float':
 						case 'double':
-							$status = ($status && $this->__stringToFloat($value));
+							if(is_array($value))
+							{
+								foreach($value as $v)
+								{
+									$status = ($status && $this->__stringToFloat($value));
+								}
+							}
+							else
+							{
+								$status = ($status && $this->__stringToFloat($value));
+							}
 							break;
 					}
 				}
