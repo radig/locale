@@ -182,11 +182,18 @@ class LocaleBehavior extends ModelBehavior
 					return $status;
 				}
 				
+				// caso sejam campos com a notação Model.field
 				if(strpos($field, '.') !== false)
 				{
-					$pos = strpos($field, '.');
+					$ini = strpos($field, '.');
 					$len = strpos($field, ' ');
-					$field = substr($field, $pos + 1, $len - $pos);
+					
+					$modelName = substr($field, 0, $ini - 1);
+					
+					if($len !== false)
+						$field = substr($field, $ini + 1, $len - $ini);
+					else
+						$field = substr($field, $ini + 1);
 				}
 				
 				// caso o campo esteja vazio E não tenha um array como valor E o campo faz parte do schema
