@@ -191,7 +191,7 @@ class LocaleBehavior extends ModelBehavior
 					$modelName = substr($field, 0, $ini - 1);
 					
 					if($len !== false)
-						$field = substr($field, $ini + 1, $len - $ini);
+						$field = substr($field, $ini + 1, $len - $ini - 1);
 					else
 						$field = substr($field, $ini + 1);
 				}
@@ -206,31 +206,19 @@ class LocaleBehavior extends ModelBehavior
 						case 'time':
 						case 'timestamp':
 							if(is_array($value))
-							{
-								foreach($value as $v)
-								{
-									$status = ($status && $this->__dateConvert($value, $this->model->_schema[$field]['type']));
-								}
-							}
+								foreach($value as &$v)
+									$status = ($status && $this->__dateConvert($v, $this->model->_schema[$field]['type']));
 							else
-							{
 								$status = ($status && $this->__dateConvert($value, $this->model->_schema[$field]['type']));
-							}
 							break;
 						case 'decimal':
 						case 'float':
 						case 'double':
 							if(is_array($value))
-							{
-								foreach($value as $v)
-								{
-									$status = ($status && $this->__stringToFloat($value));
-								}
-							}
+								foreach($value as &$v)
+									$status = ($status && $this->__stringToFloat($v));
 							else
-							{
 								$status = ($status && $this->__stringToFloat($value));
-							}
 							break;
 					}
 				}
