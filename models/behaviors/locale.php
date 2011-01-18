@@ -175,7 +175,7 @@ class LocaleBehavior extends ModelBehavior
 			// varre os campos da condição
 			foreach($query as $field => &$value)
 			{
-				if(strtolower($field) === 'or' || strtolower($field) === 'and')
+				if(strtolower($field) === 'or' || strtolower($field) === 'and' || is_numeric($field))
 				{
 					$status = $status && $this->localizeData($value);
 					
