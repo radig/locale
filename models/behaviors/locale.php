@@ -178,8 +178,7 @@ class LocaleBehavior extends ModelBehavior
 				if(strtolower($field) === 'or' || strtolower($field) === 'and' || is_numeric($field))
 				{
 					$status = $status && $this->localizeData($value);
-					
-					return $status;
+					continue;
 				}
 				
 				// caso sejam campos com a notação Model.field
@@ -248,6 +247,12 @@ class LocaleBehavior extends ModelBehavior
 	 */
 	private function __dateConvert(&$value, $type = 'date')
 	{
+		// caso a data seja nula, não efetua conversão
+		if(empty($value) || strpos('0000-00-00', $value) !== false)
+		{
+			return true;
+		}
+		
 		if($this->systemLang == 'pt-br')
 		{
 			/*
@@ -267,7 +272,7 @@ class LocaleBehavior extends ModelBehavior
 			/*
 			 * Caso não tenha sido possível converter o formato, retorna false
 			 */
-			if( $value == null )
+			if( $value == null  )
 				return false;
 		}
 
