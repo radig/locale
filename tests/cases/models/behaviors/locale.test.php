@@ -302,4 +302,70 @@ class LocaleTest extends CakeTestCase {
 
 		unset($Task);
 	}
+	
+	public function testFindWithRecursiveConditions()
+	{
+		$result = $this->Employee->find('all', array(
+			'conditions' => array(
+				'or' => array(
+					'and' => array(
+						'Employee.birthday >= ' => '01/01/1987',
+						'Employee.salary >' => '600'
+						),
+					array('birthday <= ' => '01/08/1987')
+				)
+			)
+		));
+		
+		$expected = array(
+			0 => array(
+				'Employee' => array(
+					'id' => 2,
+					'birthday' => '1987-09-01',
+					'salary' => '699'
+				)
+			)
+		);
+		
+		$this->assertEqual($expected, $result);
+	}
+	
+	public function testFindWithNullDate()
+	{
+		$result = $this->Employee->find('all', array(
+			'conditions' => array(
+				'birthday' => '0000-00-00'
+			)
+		));
+		
+		$expected = array();
+		
+		$this->assertEqual($expected, $result);
+	}
+	
+	public function testFindArrayOfDates()
+	{
+		$result = $this->Employee->find('all', array(
+			'conditions' => array(
+				'birthday' => array('0000-00-00', '1987-01-11')
+			)
+		));
+		
+		$expected = array();
+		
+		$this->assertEqual($expected, $result);
+	}
+	
+	public function testFindArrayOfFloats()
+	{
+		$result = $this->Employee->find('all', array(
+			'conditions' => array(
+				'salary' => array('665', '444')
+			)
+		));
+		
+		$expected = array();
+		
+		$this->assertEqual($expected, $result);
+	}
 }
