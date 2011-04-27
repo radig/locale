@@ -333,6 +333,10 @@ class LocaleBehavior extends ModelBehavior
 			
 			$isValid = !empty($value);
 		}
+		else
+		{
+			$value = 0;
+		}
 
 		setlocale(LC_NUMERIC, $curLocale);
 		
