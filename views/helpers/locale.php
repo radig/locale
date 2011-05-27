@@ -291,19 +291,7 @@ class LocaleHelper extends AppHelper
 		// caso requerido, insere separador de milhar
 		if($thousands)
 		{
-			$v = '';
-
-			for($i = (strlen($int) - 1); $i >= 0; --$i)
-			{
-				$v = $int[$i] . $v;
-				
-				if($i%3 == 0 && $i != 0)
-				{
-					$v .= $this->_settings['numbers']['thousands_sep'];
-				}
-			}
-
-			$int = $v;
+			$int = number_format($int, 0, $this->_settings['numbers']['decimal_point'], $this->_settings['numbers']['thousands_sep']);
 		}
 
 		// caso posssua decimais, faz a junção usando separador localizado
