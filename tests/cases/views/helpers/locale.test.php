@@ -90,7 +90,7 @@ class LocaleCase extends CakeTestCase
 	{
 		$this->assertEqual($this->Locale->currency('12.45'), 'R$ 12,45');
 
-		$this->assertEqual($this->Locale->currency('-'), '');
+		$this->assertEqual($this->Locale->currency('-'), '-');
 	}
 
 	public function testNumber()

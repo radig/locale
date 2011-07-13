@@ -168,12 +168,8 @@ class LocaleHelper extends AppHelper
 
 			return $currency;
 		}
-		else
-		{
-			trigger_error(sprintf(__('Falha ao converter o valor monetário "%s"', true), $value), E_USER_NOTICE);
-			
-			return $value;
-		}
+
+		return $value;
 	}
 
 	/**
@@ -188,10 +184,6 @@ class LocaleHelper extends AppHelper
 		if(is_numeric($value))
 		{
 			$value = $this->__number_format($value, $precision, $thousands);
-		}
-		else
-		{
-			trigger_error(sprintf(__('Falha ao converter o número "%s"', true), $value), E_USER_NOTICE);
 		}
 		
 		return $value;
