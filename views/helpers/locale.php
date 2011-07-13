@@ -159,9 +159,8 @@ class LocaleHelper extends AppHelper
 	 */
 	public function currency($value)
 	{
-		if(empty($value))
+		if(empty($value) && !is_numeric($value))
 			return '';
-		
 		
 		if(is_numeric($value))
 		{
