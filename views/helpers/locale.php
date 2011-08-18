@@ -65,7 +65,7 @@ class LocaleHelper extends AppHelper
 		// se não tiver sido passado o locale desejado, busca o locale na configuração do Cake
 		if(empty($this->_settings['locale']))
 		{
-			$this->_settings['locale'] = substr(Configure::read('Config.language'), -2);
+			$this->_settings['locale'] = substr(Configure::read('Language.default'), -2);
 		}
 
 		// mescla configurações passadas com configurações de numeração para o locale atual
