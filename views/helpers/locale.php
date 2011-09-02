@@ -159,17 +159,26 @@ class LocaleHelper extends AppHelper
 	 */
 	public function currency($value)
 	{
-		if(empty($value) && !is_numeric($value))
-			return '';
+		// guarda o locale atual para restauração posterior
+		$curLocale = setlocale(LC_NUMERIC, "0");
 		
-		if(is_numeric($value))
+		// garante que o separador de decimal será o ponto (dot) enquanto separador de milhar será vírgula (period)
+		setlocale(LC_NUMERIC, 'en_US');
+		
+		// remove o separador de milhar (se houver)
+		$value = str_replace(',', '', $value);
+		
+		if(empty($value) || !is_numeric($value))
 		{
-			$currency = money_format("%.2n", $value);
-
-			return $currency;
+			return $value;
 		}
+		
+		$currency = money_format("%.2n", $value);
+		
+		// restaura locale anterior
+		setlocale(LC_NUMERIC, $curLocale);
 
-		return $value;
+		return $currency;
 	}
 
 	/**

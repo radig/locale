@@ -26,7 +26,7 @@ class LocaleCase extends CakeTestCase
 	{
 		parent::startCase();
 
-		Configure::write('Config.language', 'pt-br');
+		Configure::write('Language.default', 'pt-br');
 		setlocale(LC_ALL, 'pt_BR.utf-8', 'pt_BR', 'pt-br', 'pt_BR.iso-8859-1');
 
 		$this->Locale = new LocaleHelper();
@@ -89,6 +89,10 @@ class LocaleCase extends CakeTestCase
 	public function testCurrency()
 	{
 		$this->assertEqual($this->Locale->currency('12.45'), 'R$ 12,45');
+		
+		$this->assertEqual($this->Locale->currency('1,234.45'), 'R$ 1.234,45');
+		
+		$this->assertEqual($this->Locale->currency('1,234,567.45'), 'R$ 1.234.567,45');
 
 		$this->assertEqual($this->Locale->currency('-'), '-');
 	}
@@ -103,7 +107,7 @@ class LocaleCase extends CakeTestCase
 
 		$this->assertEqual($this->Locale->number('12.82319', 4), '12,8231'); // teste de real com precisão 4
 
-		$this->assertEqual($this->Locale->number('350020.123', 4, true), '350020,1230'); // teste de real com separador de milhar
+		$this->assertEqual($this->Locale->number('350020.123', 4, true), '350.020,1230'); // teste de real com separador de milhar
 
 		$this->assertEqual($this->Locale->number('-'), 0); // teste de um número inválido
 	}
