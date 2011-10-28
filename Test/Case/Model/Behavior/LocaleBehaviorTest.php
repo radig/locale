@@ -88,7 +88,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 			)
 		);
 		
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 
 	/**
@@ -103,7 +103,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 
 		$expected = array();
 
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 	
 	/**
@@ -126,7 +126,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 			)
 		);
 		
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 	
 	/**
@@ -149,7 +149,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 			)
 		);
 
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 	
 	/**
@@ -162,7 +162,14 @@ class LocaleBehaviorTest extends CakeTestCase {
 			array('id' => '2', 'birthday' => '2001-01-01', 'salary' => '650.30')
 		);
 		
-		$this->assertEqual($result, true);
+		$expected = array('Employee' => array(
+			'id' => '2',
+			'birthday' => '2001-01-01',
+			'salary' => '650.30'
+			)
+		);
+		
+		$this->assertEquals($result, $expected);
 	}
 	
 	/**
@@ -174,7 +181,14 @@ class LocaleBehaviorTest extends CakeTestCase {
 			array('id' => '2', 'birthday' => '01-01-2001', 'salary' => '650,30')
 		);
 		
-		$this->assertEqual($result, true);
+		$expected = array('Employee' => array(
+			'id' => '2',
+			'birthday' => '2001-01-01',
+			'salary' => '650.30'
+			)
+		);
+		
+		$this->assertEquals($result, $expected);
 	}
 	
 	/**
@@ -190,7 +204,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 				array('id' => '4', 'birthday' => '21-04-1975', 'salary' => '0,3')
 			)
 		);
-		$this->assertEqual($result, true);
+		$this->assertEquals($result, true);
 	}
 	
 	/**
@@ -208,38 +222,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 			)
 		);
 		
-		$expected = array(
-			array(
-				'Employee' => array(
-					'id' => 1,
-					'birthday' => '1987-03-01',
-					'salary' => 559.00
-				)
-			),
-			array(
-				'Employee' => array(
-					'id' => 2,
-					'birthday' => '2001-01-01',
-					'salary' => 650.3
-				)
-			),
-			array(
-				'Employee' => array(
-					'id' => 3,
-					'birthday' => '1920-03-29',
-					'salary' => 0.99
-				)
-			)
-			,array(
-				'Employee' => array(
-					'id' => 4,
-					'birthday' => '1975-04-21',
-					'salary' => 0.3
-				)
-			)
-		);
-		
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, true);
 	}
 
 	public function testModelRelation()
@@ -262,7 +245,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 		
 		$expected = true;
 
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		$result = $Task->find('all');
 
@@ -295,7 +278,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 			),
 		);
 
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 
 		unset($Task);
 	}
@@ -324,7 +307,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 			)
 		);
 		
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 	
 	public function testFindWithNullDate()
@@ -337,7 +320,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 		
 		$expected = array();
 		
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 	
 	public function testFindArrayOfDates()
@@ -350,7 +333,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 		
 		$expected = array();
 		
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 	
 	public function testFindArrayOfFloats()
@@ -363,6 +346,6 @@ class LocaleBehaviorTest extends CakeTestCase {
 		
 		$expected = array();
 		
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 }

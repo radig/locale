@@ -30,7 +30,14 @@ class LocaleBehavior extends ModelBehavior
 	 * Referência para o modelo que está utilizando o behavior
 	 * @var Model
 	 */
-	protected $model;
+	protected $_model;
+	
+	/**
+	 * Lista de campos com o seu respectivo tipo para o modelo em uso
+	 * 
+	 * @var array
+	 */
+	private $_modelFields;
 	
 	/**
 	 * Lista de campos que devem ser ignorados por serem inseridos
@@ -61,18 +68,24 @@ class LocaleBehavior extends ModelBehavior
 	 * 
 	 * @see ModelBehavior::setup()
 	 */
-	public function setup(&$model, $config = array())
+	public function setup(Model &$model, $config = array())
 	{
 		$this->settings = array(
 			'ignoreAutomagic' => true
 		);
 		
-		$this->model =& $model;
+		$this->_model =& $model;
+		$this->_modelFields = $this->_model->getColumnTypes();
 		$this->settings = Set::merge($this->settings, $config);
 		
 		$this->systemLang = Configure::read('Language.default');
 		
-		$db =& ConnectionManager::getDataSource($this->model->useDbConfig);
+		if($this->systemLang === null)
+		{
+			throw new ConfigureException("Você precisa definir a Configuração 'Langhage.default' para usar o Behavior Locale");
+		}
+		
+		$db =& ConnectionManager::getDataSource($this->_model->useDbConfig);
 		
 		foreach($db->columns as $type => $info)
 		{
@@ -88,9 +101,10 @@ class LocaleBehavior extends ModelBehavior
 	 * 
 	 * @see ModelBehavior::beforeValidate()
 	 */
-	public function beforeValidate(&$model)
+	public function beforeValidate(Model &$model)
 	{
-		$this->model =& $model;
+		$this->_model =& $model;
+		$this->_modelFields = $this->_model->getColumnTypes();
 
 		parent::beforeValidate($model);
 		
@@ -102,9 +116,10 @@ class LocaleBehavior extends ModelBehavior
 	 * 
 	 * @see ModelBehavior::beforeSave()
 	 */
-	public function beforeSave(&$model)
+	public function beforeSave(Model &$model)
 	{
-		$this->model =& $model;
+		$this->_model =& $model;
+		$this->_modelFields = $this->_model->getColumnTypes();
 
 		parent::beforeSave($model);
 		
@@ -118,9 +133,10 @@ class LocaleBehavior extends ModelBehavior
 	 */
 	public function beforeFind(&$model, $query)
 	{
-		$this->model =& $model;
+		$this->_model =& $model;
+		$this->_modelFields = $this->_model->getColumnTypes();
 		
-		parent::beforeFind($mode, $query);
+		parent::beforeFind($model, $query);
 		
 		$this->localizeData($query['conditions']);
 		
@@ -142,27 +158,27 @@ class LocaleBehavior extends ModelBehavior
 		$status = true;
 		
 		// verifica se há dados setados no modelo
-		if(isset($this->model->data) && !empty($this->model->data))
+		if(isset($this->_model->data) && !empty($this->_model->data))
 		{
 			// varre os dados setados
-			foreach($this->model->data[$this->model->name] as $field => $value)
+			foreach($this->_model->data[$this->_model->name] as $field => $value)
 			{
 				// caso o campo esteja vazio E não tenha um array como valor E o campo faz parte do schema
-				if(!empty($value) && !is_array($value) && isset($this->model->_schema[$field]) && (!$this->settings['ignoreAutomagic'] || ($this->settings['ignoreAutomagic'] && !in_array($field, $this->cakeAutomagicFields))))
+				if(!empty($value) && !is_array($value) && isset($this->_modelFields[$field]) && (!$this->settings['ignoreAutomagic'] || ($this->settings['ignoreAutomagic'] && !in_array($field, $this->cakeAutomagicFields))))
 				{
-					switch($this->model->_schema[$field]['type'])
+					switch($this->_modelFields[$field])
 					{
 						case 'date':
 						case 'datetime':
 						case 'time':
 						case 'timestamp':
-							$status = ($status && $this->__dateConvert($this->model->data[$this->model->name][$field], $this->model->_schema[$field]['type']));
+							$status = ($status && $this->__dateConvert($this->_model->data[$this->_model->name][$field], $this->_modelFields[$field]));
 							break;
 						case 'number':
 						case 'decimal':
 						case 'float':
 						case 'double':
-							$status = ($status && $this->__stringToFloat($this->model->data[$this->model->name][$field]));
+							$status = ($status && $this->__stringToFloat($this->_model->data[$this->_model->name][$field]));
 							break;
 					}
 				}
@@ -196,9 +212,9 @@ class LocaleBehavior extends ModelBehavior
 				}
 				
 				// caso o campo esteja vazio E não tenha um array como valor E o campo faz parte do schema
-				if(!empty($value) && isset($this->model->_schema[$field]) && (!$this->settings['ignoreAutomagic'] || ($this->settings['ignoreAutomagic'] && !in_array($field, $this->cakeAutomagicFields))))
+				if(!empty($value) && isset($this->_modelFields[$field]) && (!$this->settings['ignoreAutomagic'] || ($this->settings['ignoreAutomagic'] && !in_array($field, $this->cakeAutomagicFields))))
 				{
-					switch($this->model->_schema[$field]['type'])
+					switch($this->_modelFields[$field])
 					{
 						case 'date':
 						case 'datetime':
@@ -206,9 +222,9 @@ class LocaleBehavior extends ModelBehavior
 						case 'timestamp':
 							if(is_array($value))
 								foreach($value as &$v)
-									$status = ($status && $this->__dateConvert($v, $this->model->_schema[$field]['type']));
+									$status = ($status && $this->__dateConvert($v, $this->_modelFields[$field]));
 							else
-								$status = ($status && $this->__dateConvert($value, $this->model->_schema[$field]['type']));
+								$status = ($status && $this->__dateConvert($value, $this->_modelFields[$field]));
 							break;
 						case 'decimal':
 						case 'float':
@@ -272,8 +288,10 @@ class LocaleBehavior extends ModelBehavior
 			/*
 			 * Caso não tenha sido possível converter o formato, retorna false
 			 */
-			if( $value == null  )
+			if($value == null)
+			{
 				return false;
+			}
 		}
 
 		try {
@@ -281,10 +299,9 @@ class LocaleBehavior extends ModelBehavior
 		}
 		catch(Exception $e)
 		{
-			trigger_error(sprintf(__('Não foi possível converter a data %s no Behavior Locale', true), $value), E_USER_WARNING);
-
 			return false;
 		}
+		
 		$value = $dt->format($this->typesFormat[$type]);
 		
 		return ($value !== false);
@@ -343,4 +360,3 @@ class LocaleBehavior extends ModelBehavior
 		return $isValid;
 	}
 }
-?>
