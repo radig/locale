@@ -1,5 +1,5 @@
 <?php
-App::import('Behavior', 'Locale');
+App::uses('LocaleBehavior', 'Locale.Model/Behavior');
 
 /**
  * Testes do Behavior Locale
@@ -55,20 +55,17 @@ class Task extends CakeTestModel
 }
 
 
-class LocaleTest extends CakeTestCase {
+class LocaleBehaviorTest extends CakeTestCase {
 	
 	public $name = 'Locale';
 	
 	public $fixtures = array('plugin.locale.employee', 'plugin.locale.task');
 	
-	public function startTest()
+	public function setUp()
 	{
-		$this->Employee =& ClassRegistry::init('Employee');
-	}
-
-	public function endTest()
-	{
-		unset($this->Employee);
+		parent::setUp();
+		
+		$this->Employee = new Employee();
 	}
 	
 	/**
@@ -247,7 +244,7 @@ class LocaleTest extends CakeTestCase {
 
 	public function testModelRelation()
 	{
-		$Task =& ClassRegistry::init('Task');
+		$Task = new Task();
 
 		$employee = $this->Employee->find('first');
 

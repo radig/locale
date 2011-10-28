@@ -22,7 +22,7 @@
  * @subpackage radig.l10n.models.behaviors
  */
 
-App::import('CORE', 'ConnectionManager');
+App::uses('ConnectionManager', 'Model');
 
 class LocaleBehavior extends ModelBehavior
 {

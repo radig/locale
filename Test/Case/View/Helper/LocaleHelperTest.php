@@ -10,9 +10,11 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-App::import('Helper', 'Locale.Locale');
+App::uses('LocaleHelper', 'Locale.View/Helper');
+App::uses('Controller', 'Controller');
+App::uses('View', 'View');
 
-class LocaleCase extends CakeTestCase
+class LocaleHelperCase extends CakeTestCase
 {
 	public $Locale = null;
 
@@ -22,14 +24,16 @@ class LocaleCase extends CakeTestCase
 	 * @retun void
 	 * @access public
 	 */
-	public function startCase()
+	public function setUp()
 	{
-		parent::startCase();
+		parent::setUp();
 
 		Configure::write('Language.default', 'pt-br');
 		setlocale(LC_ALL, 'pt_BR.utf-8', 'pt_BR', 'pt-br', 'pt_BR.iso-8859-1');
 
-		$this->Locale = new LocaleHelper();
+		$this->Controller = new Controller(null);
+		$this->View = new View($this->Controller);
+		$this->Locale = new LocaleHelper($this->View);
 	}
 
 	/**
@@ -109,7 +113,7 @@ class LocaleCase extends CakeTestCase
 
 		$this->assertEqual($this->Locale->number('350020.123', 4, true), '350.020,1230'); // teste de real com separador de milhar
 
-		$this->assertEqual($this->Locale->number('-'), 0); // teste de um número inválido
+		$this->assertEqual($this->Locale->number('-'), '-'); // teste de um número inválido
 	}
 
 	/**
@@ -120,7 +124,10 @@ class LocaleCase extends CakeTestCase
 	 */
 	public function testLocaleWithParameter()
 	{
-		$this->Locale = new LocaleHelper(array('locale' => 'br', 'numbers' => array('decimal_point' => '!')));
+		$this->Locale = new LocaleHelper($this->View, array(
+			'locale' => 'br',
+			'numbers' => array('decimal_point' => '!'))
+		);
 
 		$this->assertEqual($this->Locale->date(), date('d/m/Y'));
 		$this->assertEqual($this->Locale->date('2009-04-21'), '21/04/2009');

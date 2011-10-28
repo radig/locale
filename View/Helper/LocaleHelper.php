@@ -23,6 +23,8 @@
  * @subpackage radig.l10n.views.helpers
  */
 
+App::uses('AppHelper', 'View/Helper');
+
 class LocaleHelper extends AppHelper
 {
 	/**
@@ -46,15 +48,9 @@ class LocaleHelper extends AppHelper
 		'dates' => array()
 	);
 	
-	public function __construct()
+	public function __construct(View $View, $settings = array())
 	{
-		parent::__construct();
-
-		// caso tenha sido passado um parâmetro
-		if(func_num_args() == 1)
-		{
-			$settings = func_get_arg(0);
-		}
+		parent::__construct($View, $settings);
 
 		// recupera lista de configuração definida como argumento do helper
 		if(isset($settings) && is_array($settings))
