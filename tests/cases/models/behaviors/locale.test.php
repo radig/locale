@@ -165,7 +165,7 @@ class LocaleTest extends CakeTestCase {
 			array('id' => '2', 'birthday' => '2001-01-01', 'salary' => '650.30')
 		);
 		
-		$this->assertEqual($result, true);
+		$this->assertTrue($result);
 	}
 	
 	/**
@@ -177,7 +177,14 @@ class LocaleTest extends CakeTestCase {
 			array('id' => '2', 'birthday' => '01-01-2001', 'salary' => '650,30')
 		);
 		
-		$this->assertEqual($result, true);
+		$this->assertTrue($result);
+		
+		$result = $this->Employee->save(
+			array('id' => '20', 'birthday' => '01-01-2001', 'salary' => '1.650,30')
+		);
+		
+		$this->assertTrue($result);
+		$this->Employee->delete(20);
 	}
 	
 	/**
@@ -193,7 +200,8 @@ class LocaleTest extends CakeTestCase {
 				array('id' => '4', 'birthday' => '21-04-1975', 'salary' => '0,3')
 			)
 		);
-		$this->assertEqual($result, true);
+		
+		$this->assertTrue($result);
 	}
 	
 	/**
@@ -255,6 +263,7 @@ class LocaleTest extends CakeTestCase {
 
 		$task = array(
 			'Task' => array(
+				'id' => 101,
 				'title' => 'Terminar o trabalho',
 				'term' => '12/06/2012'
 			),
@@ -263,11 +272,9 @@ class LocaleTest extends CakeTestCase {
 
 		$result = $Task->saveAll($task);
 		
-		$expected = true;
+		$this->assertTrue($result);
 
-		$this->assertEqual($result, $expected);
-
-		$result = $Task->find('all');
+		$result = $Task->find('all', array('order' => array('Task.id')));
 
 		$expected = array(
 			array(
@@ -318,7 +325,14 @@ class LocaleTest extends CakeTestCase {
 		));
 		
 		$expected = array(
-			0 => array(
+			array(
+				'Employee' => array(
+					'id' => 1,
+					'birthday' => '1987-03-01',
+					'salary' => '559'
+				)
+			),
+			array(
 				'Employee' => array(
 					'id' => 2,
 					'birthday' => '1987-09-01',
@@ -360,7 +374,7 @@ class LocaleTest extends CakeTestCase {
 	{
 		$result = $this->Employee->find('all', array(
 			'conditions' => array(
-				'salary' => array('665', '444')
+				'salary' => array('650', '444')
 			)
 		));
 		
