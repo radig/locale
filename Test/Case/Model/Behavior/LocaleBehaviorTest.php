@@ -1,21 +1,22 @@
 <?php
 App::uses('LocaleBehavior', 'Locale.Model/Behavior');
-
 /**
  * Testes do Behavior Locale
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @author        Cauan Cabral <cauan@radig.com.br>, José Agripino <jose@radig.com.br>
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @copyright 2009-2012, Radig - Soluções em TI, www.radig.com.br
+ * @link http://www.radig.com.br
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ *
+ * @package Radig.Locale
+ * @subpackage Radig.Locale.Test.Case.Model.Behavior
  */
-
 class Employee extends CakeTestModel
 {
 	public $name = 'Employee';
-	
+
 	public $validate = array(
 		'birthday' => array(
 			'rule' => array('date'),
@@ -28,7 +29,7 @@ class Employee extends CakeTestModel
 			'requirerd' => true
 		)
 	);
-	
+
 	public $actsAs = array('Locale.Locale');
 }
 
@@ -56,28 +57,28 @@ class Task extends CakeTestModel
 
 
 class LocaleBehaviorTest extends CakeTestCase {
-	
+
 	public $name = 'Locale';
-	
+
 	public $fixtures = array('plugin.locale.employee', 'plugin.locale.task');
-	
+
 	public function setUp()
 	{
 		parent::setUp();
-		
+
 		$this->Employee = new Employee();
 	}
-	
+
 	/**
 	 * Testa uma ação de busca, com o critério tendo
 	 * um valor de data localizada
 	 */
 	public function testFindActionWithDate()
-	{	
+	{
 		$result = $this->Employee->find('all',
 			array('conditions' => array('birthday' => '01/03/1987'))
 		);
-		
+
 		$expected = array(
 			array(
 				'Employee' => array(
@@ -87,7 +88,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 				)
 			)
 		);
-		
+
 		$this->assertEquals($result, $expected);
 	}
 
@@ -105,17 +106,17 @@ class LocaleBehaviorTest extends CakeTestCase {
 
 		$this->assertEquals($result, $expected);
 	}
-	
+
 	/**
 	 * Testa uma ação de busca, com o critério tendo
 	 * um valor decimal localizado
 	 */
 	public function testFindActionWithFloat()
-	{	
+	{
 		$result = $this->Employee->find('all',
 			array('conditions' => array('salary' => '559.00'))
 		);
-				
+
 		$expected = array(
 			array(
 				'Employee' => array(
@@ -125,10 +126,10 @@ class LocaleBehaviorTest extends CakeTestCase {
 				)
 			)
 		);
-		
+
 		$this->assertEquals($result, $expected);
 	}
-	
+
 	/**
 	 * Testa uma ação de busca, com o critério sendo um inteiro,
 	 * enquanto o banco espera um valor decimal/float
@@ -151,7 +152,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 
 		$this->assertEquals($result, $expected);
 	}
-	
+
 	/**
 	 * Testa o behavio para a ação save, com dados não localizados
 	 * (já no formato alvo - do DB)
@@ -161,17 +162,17 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$result = $this->Employee->save(
 			array('id' => '2', 'birthday' => '2001-01-01', 'salary' => '650.30')
 		);
-		
+
 		$expected = array('Employee' => array(
 			'id' => '2',
 			'birthday' => '2001-01-01',
 			'salary' => '650.30'
 			)
 		);
-		
+
 		$this->assertEquals($result, $expected);
 	}
-	
+
 	/**
 	 * Testa o behavior para a ação save, com dados localizados
 	 */
@@ -180,17 +181,17 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$result = $this->Employee->save(
 			array('id' => '2', 'birthday' => '01-01-2001', 'salary' => '650,30')
 		);
-		
+
 		$expected = array('Employee' => array(
 			'id' => '2',
 			'birthday' => '2001-01-01',
 			'salary' => '650.30'
 			)
 		);
-		
+
 		$this->assertEquals($result, $expected);
 	}
-	
+
 	/**
 	 * Testa se o behavior converte todos os dados
 	 * salvos em um saveAll
@@ -206,7 +207,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 		);
 		$this->assertEquals($result, true);
 	}
-	
+
 	/**
 	 * Testa se os dados enviados pelo usuário serão
 	 * convertidos do formato local para um formato padrão (do DB)
@@ -221,7 +222,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 				array('id' => '4', 'birthday' => '21-04-1975', 'salary' => '0,3')
 			)
 		);
-		
+
 		$this->assertEquals($result, true);
 	}
 
@@ -242,7 +243,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 		);
 
 		$result = $Task->saveAll($task);
-		
+
 		$expected = true;
 
 		$this->assertEquals($result, $expected);
@@ -282,7 +283,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 
 		unset($Task);
 	}
-	
+
 	public function testFindWithRecursiveConditions()
 	{
 		$result = $this->Employee->find('all', array(
@@ -296,7 +297,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 				)
 			)
 		));
-		
+
 		$expected = array(
 			0 => array(
 				'Employee' => array(
@@ -306,10 +307,10 @@ class LocaleBehaviorTest extends CakeTestCase {
 				)
 			)
 		);
-		
+
 		$this->assertEquals($expected, $result);
 	}
-	
+
 	public function testFindWithNullDate()
 	{
 		$result = $this->Employee->find('all', array(
@@ -317,12 +318,12 @@ class LocaleBehaviorTest extends CakeTestCase {
 				'birthday' => '0000-00-00'
 			)
 		));
-		
+
 		$expected = array();
-		
+
 		$this->assertEquals($expected, $result);
 	}
-	
+
 	public function testFindArrayOfDates()
 	{
 		$result = $this->Employee->find('all', array(
@@ -330,12 +331,12 @@ class LocaleBehaviorTest extends CakeTestCase {
 				'birthday' => array('0000-00-00', '1987-01-11')
 			)
 		));
-		
+
 		$expected = array();
-		
+
 		$this->assertEquals($expected, $result);
 	}
-	
+
 	public function testFindArrayOfFloats()
 	{
 		$result = $this->Employee->find('all', array(
@@ -343,9 +344,9 @@ class LocaleBehaviorTest extends CakeTestCase {
 				'salary' => array('665', '444')
 			)
 		));
-		
+
 		$expected = array();
-		
+
 		$this->assertEquals($expected, $result);
 	}
 }
