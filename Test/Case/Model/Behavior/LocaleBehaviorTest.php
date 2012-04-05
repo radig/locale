@@ -182,10 +182,11 @@ class LocaleBehaviorTest extends CakeTestCase {
 			array('id' => '2', 'birthday' => '01-01-2001', 'salary' => '650,30')
 		);
 
-		$expected = array('Employee' => array(
-			'id' => '2',
-			'birthday' => '2001-01-01',
-			'salary' => '650.30'
+		$expected = array('Employee' =>
+			array(
+				'id' => '2',
+				'birthday' => '2001-01-01',
+				'salary' => '650.30'
 			)
 		);
 
@@ -219,11 +220,22 @@ class LocaleBehaviorTest extends CakeTestCase {
 			array(
 				array('id' => '2', 'birthday' => '01/01/2001', 'salary' => '650,30'),
 				array('id' => '3', 'birthday' => '29/03/1920', 'salary' => '0,99'),
-				array('id' => '4', 'birthday' => '21-04-1975', 'salary' => '0,3')
+				array('id' => '4', 'birthday' => '21-04-1975', 'salary' => '0,3'),
+				array('id' => '5', 'birthday' => '28-02-2001', 'salary' => '123.456,78')
 			)
 		);
 
 		$this->assertEquals($result, true);
+
+		$saved = $this->Employee->find('all', array('conditions' => array('id' => array(2,3,4,5))));
+		$expected = array(
+			array('id' => '2', 'birthday' => '2001-01-01', 'salary' => '650.3'),
+			array('id' => '3', 'birthday' => '1920-03-29', 'salary' => '0.99'),
+			array('id' => '4', 'birthday' => '1975-04-21', 'salary' => '0.3'),
+			array('id' => '5', 'birthday' => '2001-02-28', 'salary' => '123456.78')
+		);
+
+		$this->assertEquals($saved, $expected);
 	}
 
 	public function testModelRelation()

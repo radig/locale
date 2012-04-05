@@ -48,10 +48,10 @@ class LocaleHelperCase extends CakeTestCase
 		$this->assertEquals($this->Locale->date('2009-04-21'), '21/04/2009');
 		$this->assertEquals($this->Locale->date('invalido'), date('d/m/Y'));
 	}
-	
+
 	/**
 	 * testNullDate
-	 * 
+	 *
 	 * @return void
 	 */
 	public function testNullDate()
@@ -84,7 +84,7 @@ class LocaleHelperCase extends CakeTestCase
 	{
 		$this->assertEquals($this->Locale->dateLiteral('2010-08-26 16:12:40'), 'quinta, 26 de agosto de 2010');
 		$this->assertEquals($this->Locale->dateLiteral('2010-08-26 16:12:40', true), 'quinta, 26 de agosto de 2010, 16:12:40');
-		
+
 		$dateTime = new DateTime();
 		$this->assertEquals($this->Locale->dateLiteral('0000-00-00 00:00:00', false), strftime('%A, %e de %B de %Y', $dateTime->format('U')));
 		$this->assertEquals($this->Locale->dateLiteral('0000-00-00 00:00:00', false, null, true), '');
@@ -93,26 +93,27 @@ class LocaleHelperCase extends CakeTestCase
 	public function testCurrency()
 	{
 		$this->assertEquals($this->Locale->currency('12.45'), 'R$ 12,45');
-		
 		$this->assertEquals($this->Locale->currency('1,234.45'), 'R$ 1.234,45');
-		
 		$this->assertEquals($this->Locale->currency('1,234,567.45'), 'R$ 1.234.567,45');
-
 		$this->assertEquals($this->Locale->currency('-'), '-');
+	}
+
+	public function testUSACurrency()
+	{
+		setlocale(LC_ALL, 'en_US');
+		$this->Locale = new LocaleHelper($this->View);
+
+		$this->assertEquals($this->Locale->currency('12.45'), '$ 12.45');
+		$this->assertEquals($this->Locale->currency('1,234.45'), '$ 1,234.45');
 	}
 
 	public function testNumber()
 	{
 		$this->assertEquals($this->Locale->number('12'), '12,00'); // teste de inteiro, esperando real
-
 		$this->assertEquals($this->Locale->number('12', 0), '12'); // teste de inteiro
-
 		$this->assertEquals($this->Locale->number('12.45'), '12,45'); // teste de real
-
 		$this->assertEquals($this->Locale->number('12.82319', 4), '12,8231'); // teste de real com precisão 4
-
 		$this->assertEquals($this->Locale->number('350020.123', 4, true), '350.020,1230'); // teste de real com separador de milhar
-
 		$this->assertEquals($this->Locale->number('-'), '-'); // teste de um número inválido
 	}
 
@@ -135,7 +136,6 @@ class LocaleHelperCase extends CakeTestCase
 		$this->assertEquals($this->Locale->dateTime('2010-08-26 16:12:40', false), '26/08/2010 16:12');
 		$this->assertEquals($this->Locale->dateLiteral('2010-08-26 16:12:40'), 'quinta, 26 de agosto de 2010');
 		$this->assertEquals($this->Locale->dateLiteral('2010-08-26 16:12:40', true), 'quinta, 26 de agosto de 2010, 16:12:40');
-
 		$this->assertEquals($this->Locale->number('12.53'), '12!53');
 	}
 }
