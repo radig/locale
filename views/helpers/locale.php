@@ -160,23 +160,21 @@ class LocaleHelper extends AppHelper
 	public function currency($value)
 	{
 		// guarda o locale atual para restauração posterior
-		$curLocale = setlocale(LC_NUMERIC, "0");
+		$curLocale = setlocale(LC_MONETARY, "0");
 		
 		// garante que o separador de decimal será o ponto (dot) enquanto separador de milhar será vírgula (period)
-		setlocale(LC_NUMERIC, 'en_US');
+		setlocale(LC_MONETARY, 'en_US');
 		
 		// remove o separador de milhar (se houver)
 		$value = str_replace(',', '', $value);
 		
 		if(empty($value) || !is_numeric($value))
-		{
 			return $value;
-		}
 		
-		$currency = money_format("%.2n", $value);
+		$currency = $this->_settings['numbers']['currency_symbol'] . ' ' . $this->__number_format($value, 2, true);
 		
 		// restaura locale anterior
-		setlocale(LC_NUMERIC, $curLocale);
+		setlocale(LC_MONETARY, $curLocale);
 
 		return $currency;
 	}
@@ -278,7 +276,7 @@ class LocaleHelper extends AppHelper
 			$int = (string)$parts[0];
 			$dec = str_pad((string)$parts[1], $precision, '0', STR_PAD_RIGHT);
 		}
-		// caso não possua
+		// caso não possua, gera ela com zeros
 		else
 		{
 			$int = (string)$parts[0];
@@ -291,7 +289,7 @@ class LocaleHelper extends AppHelper
 		// caso requerido, insere separador de milhar
 		if($thousands)
 		{
-			$int = number_format($int, 0, $this->_settings['numbers']['decimal_point'], '.');
+			$int = number_format($int, 0, $this->_settings['numbers']['decimal_point'], $this->_settings['numbers']['thousands_sep']);
 		}
 
 		// caso posssua decimais, faz a junção usando separador localizado
