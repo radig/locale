@@ -215,7 +215,8 @@ class LocaleTest extends CakeTestCase {
 			array(
 				array('id' => '2', 'birthday' => '01/01/2001', 'salary' => '650,30'),
 				array('id' => '3', 'birthday' => '29/03/1920', 'salary' => '0,99'),
-				array('id' => '4', 'birthday' => '21-04-1975', 'salary' => '0,3')
+				array('id' => '4', 'birthday' => '21-04-1975', 'salary' => '0,3'),
+				array('id' => '5', 'birthday' => '28-02-2001', 'salary' => '123.456,78')
 			)
 		);
 		
