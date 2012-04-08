@@ -255,17 +255,6 @@ class LocaleBehavior extends ModelBehavior
 	}
 
 	/**
-	 * Converte uma string para um decimal localizado
-	 *
-	 * @param string $value
-	 * @return bool
-	 */
-	private function __decimalConvert(&$value)
-	{
-		//TODO implementar um método específico para conversão de decimais, sem depender de extensão
-	}
-
-	/**
 	 * Converte uma data localizada para padrão de banco de dados (americano)
 	 *
 	 * @param string $value
@@ -358,7 +347,6 @@ class LocaleBehavior extends ModelBehavior
 
 			// monta o número final
 			$value = ($i . '.' . $d);
-
 			$isValid = !empty($value);
 		}
 		else
