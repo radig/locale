@@ -1,19 +1,19 @@
 <?php
-/** 
+/**
  * Behavior to automagic convert dates, numbers and currency from
  * any localized format to DB format for security store.
- * 
+ *
  * Code comments in brazilian portuguese.
  * -----
  * Behavior para converter automagicamente datas, números decimais e valores
  * monetários de qualquer formato localizado para o formato aceito pelo BD
  * em uso.
- * 
+ *
  * PHP version > 5.2.4
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
- * 
+ *
  * @copyright 2009-2011, Radig - Soluções em TI, www.radig.com.br
  * @link http://www.radig.com.br
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
@@ -23,7 +23,7 @@
  */
 
 App::import('CORE', 'ConnectionManager');
-
+App::import('Lib', 'Locale.Localize');
 class LocaleBehavior extends ModelBehavior
 {
 	/**
@@ -31,34 +31,34 @@ class LocaleBehavior extends ModelBehavior
 	 * @var Model
 	 */
 	protected $model;
-	
+
 	/**
 	 * Lista de campos que devem ser ignorados por serem inseridos
 	 * automagicamente pelo CakePHP
-	 * 
+	 *
 	 * @var array
 	 */
 	private $cakeAutomagicFields = array('created', 'updated', 'modified');
-	
+
 	/**
 	 * Lista de formatos para os dados suportados pelo BD em uso.
 	 * É recuperado automáticamente pela conexão com o banco.
-	 * 
+	 *
 	 * @var array
 	 */
 	private $typesFormat;
-	
+
 	/**
 	 * Cópia do valor da configuração 'Language.default' armazenada pela classe
 	 * Configure.
-	 * 
+	 *
 	 * @var string
 	 */
 	private $systemLang;
 
 	/**
 	 * Inicializa os dados do behavior
-	 * 
+	 *
 	 * @see ModelBehavior::setup()
 	 */
 	public function setup(&$model, $config = array())
@@ -66,14 +66,14 @@ class LocaleBehavior extends ModelBehavior
 		$this->settings = array(
 			'ignoreAutomagic' => true
 		);
-		
+
 		$this->model =& $model;
 		$this->settings = Set::merge($this->settings, $config);
-		
+
 		$this->systemLang = Configure::read('Language.default');
-		
+
 		$db =& ConnectionManager::getDataSource($this->model->useDbConfig);
-		
+
 		foreach($db->columns as $type => $info)
 		{
 			if(isset($info['format']))
@@ -85,7 +85,7 @@ class LocaleBehavior extends ModelBehavior
 
 	/**
 	 * Invoca localização das informações no callback beforeValidate
-	 * 
+	 *
 	 * @see ModelBehavior::beforeValidate()
 	 */
 	public function beforeValidate(&$model)
@@ -93,13 +93,13 @@ class LocaleBehavior extends ModelBehavior
 		$this->model =& $model;
 
 		parent::beforeValidate($model);
-		
+
 		return $this->localizeData();
 	}
-	
+
 	/**
 	 * Invoca localização das informaçõs no callback beforeSave
-	 * 
+	 *
 	 * @see ModelBehavior::beforeSave()
 	 */
 	public function beforeSave(&$model)
@@ -107,40 +107,40 @@ class LocaleBehavior extends ModelBehavior
 		$this->model =& $model;
 
 		parent::beforeSave($model);
-		
+
 		return $this->localizeData();
 	}
-	
+
 	/**
 	 * Invoca localização das informações no callback beforeFind
-	 * 
+	 *
 	 * @see ModelBehavior::beforeFind()
 	 */
 	public function beforeFind(&$model, $query)
 	{
 		$this->model =& $model;
-		
+
 		parent::beforeFind($mode, $query);
-		
+
 		$this->localizeData($query['conditions']);
-		
+
 		return $query;
 	}
-	
+
 	/**
 	 * Faz a localização das informações, convertendo-as de um formato
 	 * arbitrário (localizado para o usuário) para o formato aceito pelo
 	 * DB em uso.
-	 * 
+	 *
 	 * @param array $query utilizado no caso do callback beforeFind.
 	 * Valor é passado por referência e é alterado no método.
-	 * 
-	 * @return bool $status caso não haja falha retorna true, false caso contrário 
+	 *
+	 * @return bool $status caso não haja falha retorna true, false caso contrário
 	 */
 	public function localizeData(&$query = null)
 	{
 		$status = true;
-		
+
 		// verifica se há dados setados no modelo
 		if(isset($this->model->data) && !empty($this->model->data))
 		{
@@ -180,21 +180,21 @@ class LocaleBehavior extends ModelBehavior
 					$status = $status && $this->localizeData($value);
 					continue;
 				}
-				
+
 				// caso sejam campos com a notação Model.field
 				if(strpos($field, '.') !== false)
 				{
 					$ini = strpos($field, '.');
 					$len = strpos($field, ' ');
-					
+
 					$modelName = substr($field, 0, $ini - 1);
-					
+
 					if($len !== false)
 						$field = substr($field, $ini + 1, $len - $ini - 1);
 					else
 						$field = substr($field, $ini + 1);
 				}
-				
+
 				// caso o campo esteja vazio E não tenha um array como valor E o campo faz parte do schema
 				if(!empty($value) && isset($this->model->_schema[$field]) && (!$this->settings['ignoreAutomagic'] || ($this->settings['ignoreAutomagic'] && !in_array($field, $this->cakeAutomagicFields))))
 				{
@@ -223,81 +223,43 @@ class LocaleBehavior extends ModelBehavior
 				}
 			}
 		}
-		
+
 		return $status;
 	}
 
 	/**
-	 * Converte uma string para um decimal localizado
-	 * 
-	 * @param string $value
-	 * @return bool
-	 */
-	private function __decimalConvert(&$value)
-	{
-		//TODO implementar um método específico para conversão de decimais, sem depender de extensão
-	}
-
-	/**
 	 * Converte uma data localizada para padrão de banco de dados (americano)
-	 * 
+	 *
 	 * @param string $value
-	 * @param string $type -> a valid schema date type, like: 'date', 'datetime', 'timestamp' or 'time'
+	 * @param string $type -> a valid schema date type, like: 'date', 'datetime' or 'timestamp'
 	 * @return bool
 	 */
 	private function __dateConvert(&$value, $type = 'date')
 	{
-		// caso a data seja nula, não efetua conversão
-		if(empty($value) || strpos('0000-00-00', $value) !== false)
-		{
-			return true;
-		}
-		
-		if($this->systemLang == 'pt-br')
-		{
-			/*
-			 * @FIXME remover redundância de busca de padrão
-			 * 
-			 * Identifica padrão de data (pt-br) e converte para padrão en_US
-			 */
-			if( preg_match('/^\d{1,2}\/\d{1,2}\/\d{2,4}/', $value) )
-			{
-				$value = preg_replace('/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/', '$3-$2-$1', $value);
-			}
-			else if( preg_match('/^\d{1,2}\-\d{1,2}\-\d{2,4}/', $value) )
-			{
-				$value = preg_replace('/^(\d{1,2})\-(\d{1,2})\-(\d{2,4})/', "$3-$2-$1", $value);
-			}
-			
-			/*
-			 * Caso não tenha sido possível converter o formato, retorna false
-			 */
-			if( $value == null  )
-				return false;
-		}
+		// both have same string format
+		if($type == 'datetime')
+			$type = 'timestamp';
 
-		try {
-			$dt = new DateTime($value);
-		}
-		catch(Exception $e)
+		try
 		{
-			trigger_error(sprintf(__('Não foi possível converter a data %s no Behavior Locale', true), $value), E_USER_WARNING);
-
+			$value = Localize::setLocale($this->systemLang)->date($value, $this->typesFormat[$type]['format']);
+		}
+		catch(LocaleException $e)
+		{
 			return false;
 		}
-		$value = $dt->format($this->typesFormat[$type]);
-		
-		return ($value !== false);
+
+		return true;
 	}
-	
+
 	/**
 	 * Converte uma string que representa um número em um float válido
-	 * 
+	 *
 	 * Ex.:
 	 *  '1.000.000,22' vira '1000000.22'
 	 *  '1.12' continua '1.12'
 	 *  '1,12' vira '1.12'
-	 * 
+	 *
 	 * @param string $value
 	 * @return bool
 	 */
@@ -310,7 +272,7 @@ class LocaleBehavior extends ModelBehavior
 
 		// garante que o separador de decimal será o ponto (dot)
 		setlocale(LC_NUMERIC, 'en_US');
-		
+
 		if(!empty($value))
 		{
 			// busca casas decimais
@@ -323,14 +285,14 @@ class LocaleBehavior extends ModelBehavior
 				// caso contrário, seta casas decimais com valor zero, por conveniência utilizando duas casas
 				$d = '00';
 			}
-			
+
 			// recupera os digitos "inteiros"
 			$arrTmp = preg_split('/([\.|,])([0-9]*)$/', $value);
 			$i = preg_replace('/[\.|,]/', '', $arrTmp[0]);
 
 			// monta o número final
 			$value = ($i . '.' . $d);
-			
+
 			$isValid = !empty($value);
 		}
 		else
@@ -339,8 +301,7 @@ class LocaleBehavior extends ModelBehavior
 		}
 
 		setlocale(LC_NUMERIC, $curLocale);
-		
+
 		return $isValid;
 	}
 }
-?>
