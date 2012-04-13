@@ -242,7 +242,7 @@ class LocaleBehavior extends ModelBehavior
 
 		try
 		{
-			$value = Localize::setLocale($this->systemLang)->date($value, $this->typesFormat[$type]['format']);
+			$value = Localize::setLocale($this->systemLang)->date($value, $this->typesFormat[$type]);
 		}
 		catch(LocaleException $e)
 		{
@@ -253,55 +253,21 @@ class LocaleBehavior extends ModelBehavior
 	}
 
 	/**
-	 * Converte uma string que representa um número em um float válido
+	 * Convert a numeric value from a localized value to another
+	 * locale.
 	 *
 	 * Ex.:
-	 *  '1.000.000,22' vira '1000000.22'
-	 *  '1.12' continua '1.12'
-	 *  '1,12' vira '1.12'
+	 *  '1.000.000,22' -> '1000000.22'
+	 *  '1.12' -> '1.12'
+	 *  '1,12' -> '1.12'
 	 *
 	 * @param string $value
-	 * @return bool
+	 * @return bool success
 	 */
 	private function __stringToFloat(&$value)
 	{
-		$isValid = false;
+		$value = Localize::decimal($value);
 
-		// guarda o locale atual para restauração posterior
-		$curLocale = setlocale(LC_NUMERIC, "0");
-
-		// garante que o separador de decimal será o ponto (dot)
-		setlocale(LC_NUMERIC, 'en_US');
-
-		if(!empty($value))
-		{
-			// busca casas decimais
-			if(preg_match('/([\.|,])([0-9]*)$/', $value, $d))
-			{
-				$d = $d[2];
-			}
-			else
-			{
-				// caso contrário, seta casas decimais com valor zero, por conveniência utilizando duas casas
-				$d = '00';
-			}
-
-			// recupera os digitos "inteiros"
-			$arrTmp = preg_split('/([\.|,])([0-9]*)$/', $value);
-			$i = preg_replace('/[\.|,]/', '', $arrTmp[0]);
-
-			// monta o número final
-			$value = ($i . '.' . $d);
-
-			$isValid = !empty($value);
-		}
-		else
-		{
-			$value = 0;
-		}
-
-		setlocale(LC_NUMERIC, $curLocale);
-
-		return $isValid;
+		return true;
 	}
 }
