@@ -96,6 +96,16 @@ class LocaleCase extends CakeTestCase
 
 		$this->assertEqual($this->Locale->currency('-'), '-');
 	}
+	
+	
+	public function testUSACurrency() {
+
+		setlocale(LC_ALL, 'en_US');
+		$this->Locale = new LocaleHelper($this->View);
+
+		$this->assertEquals($this->Locale->currency('12.45'), '$ 12.45');
+		$this->assertEquals($this->Locale->currency('1,234.45'), '$ 1,234.45');
+	}
 
 	public function testNumber()
 	{
