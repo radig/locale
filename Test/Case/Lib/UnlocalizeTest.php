@@ -19,9 +19,9 @@ class UnlocalizeCase extends CakeTestCase
 	 * @retun void
 	 * @access public
 	 */
-	public function startCase()
+	public function setUp()
 	{
-		parent::startCase();
+		parent::setUp();
 	}
 
 	/**

@@ -1,5 +1,6 @@
 <?php
 App::uses('LocaleBehavior', 'Locale.Model/Behavior');
+App::uses('LocaleException', 'Locale.Lib');
 /**
  * Testes do Behavior Locale
  *
@@ -179,11 +180,11 @@ class LocaleBehaviorTest extends CakeTestCase {
 	public function testSaveLocalizedDataAction()
 	{
 		$result = $this->Employee->save(
-			array('id' => '2', 'birthday' => '01-01-2001', 'salary' => '650,30')
+			array('id' => '2', 'birthday' => '01/01/2001', 'salary' => '650,30')
 		);
 
-		$expected = array('Employee' =>
-			array(
+		$expected = array(
+			'Employee' => array(
 				'id' => '2',
 				'birthday' => '2001-01-01',
 				'salary' => '650.30'
@@ -191,6 +192,30 @@ class LocaleBehaviorTest extends CakeTestCase {
 		);
 
 		$this->assertEquals($result, $expected);
+
+		$result = $this->Employee->save(
+			array('id' => '20', 'birthday' => '01/01/2001', 'salary' => '1.650,30')
+		);
+
+		$this->assertTrue(is_array($result));
+	}
+
+	/**
+	 * Testa salvar dados com dados mal-formatados
+	 */
+	public function testSaveWrongDate()
+	{
+		try{
+			$result = $this->Employee->save(
+				array('id' => '2', 'birthday' => '01-01-2001', 'salary' => '650.30')
+			);
+
+			$this->assertFalse($result);
+		}
+		catch(LocaleException $e)
+		{
+			$this->assertEqual($e->getMessage(), 'Data inválida para localização');
+		}
 	}
 
 	/**
@@ -203,7 +228,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 			array(
 				array('id' => '2', 'birthday' => '01/01/2001', 'salary' => '650,30'),
 				array('id' => '3', 'birthday' => '29/03/1920', 'salary' => '0,99'),
-				array('id' => '4', 'birthday' => '21-04-1975', 'salary' => '0,3')
+				array('id' => '4', 'birthday' => '21/04/1975', 'salary' => '0,3')
 			)
 		);
 		$this->assertEquals($result, true);
@@ -220,8 +245,8 @@ class LocaleBehaviorTest extends CakeTestCase {
 			array(
 				array('id' => '2', 'birthday' => '01/01/2001', 'salary' => '650,30'),
 				array('id' => '3', 'birthday' => '29/03/1920', 'salary' => '0,99'),
-				array('id' => '4', 'birthday' => '21-04-1975', 'salary' => '0,3'),
-				array('id' => '5', 'birthday' => '28-02-2001', 'salary' => '123.456,78')
+				array('id' => '4', 'birthday' => '21/04/1975', 'salary' => '0,3'),
+				array('id' => '5', 'birthday' => '28/02/2001', 'salary' => '123.456,78')
 			)
 		);
 

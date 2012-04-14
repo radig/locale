@@ -1,5 +1,6 @@
 <?php
-App::uses('Unlocalize', 'Locale.Lib');
+App::import('CORE', 'ConnectionManager');
+App::import('Lib', 'Locale.Unlocalize');
 
 /**
  * Behavior to automagic convert dates, numbers and currency from
@@ -11,7 +12,7 @@ App::uses('Unlocalize', 'Locale.Lib');
  * monetários de qualquer formato localizado para o formato aceito pelo BD
  * em uso.
  *
- * PHP version > 5.3
+ * PHP version > 5.2.4
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
@@ -20,24 +21,16 @@ App::uses('Unlocalize', 'Locale.Lib');
  * @link http://www.radig.com.br
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  *
- * @package Radig.Locale
- * @subpackage Radig.Locale.Model.Behavior
+ * @package radig
+ * @subpackage radig.l10n.models.behaviors
  */
 class LocaleBehavior extends ModelBehavior
 {
 	/**
-	 * Modelo corrente
-	 *
+	 * Referência para o modelo que está utilizando o behavior
 	 * @var Model
 	 */
-	private $_model;
-
-	/**
-	 * Lista de campos com o seu respectivo tipo para o modelo em uso
-	 *
-	 * @var array
-	 */
-	private $_modelFields;
+	protected $model;
 
 	/**
 	 * Lista de campos que devem ser ignorados por serem inseridos
@@ -63,16 +56,12 @@ class LocaleBehavior extends ModelBehavior
 	 */
 	private $systemLang;
 
-	private $_defaultSettings = array(
-		'ignoreAutomagic' => true
-	);
-
 	/**
 	 * Inicializa os dados do behavior
 	 *
 	 * @see ModelBehavior::setup()
 	 */
-	public function setup(Model &$model, $config = array())
+	public function setup(&$model, $config = array())
 	{
 		$this->settings = array(
 			'ignoreAutomagic' => true
@@ -83,34 +72,14 @@ class LocaleBehavior extends ModelBehavior
 
 		$this->systemLang = substr(setlocale(LC_ALL, null), 0, 5);
 
-		$this->__checkConfig($model, $config);
-	}
-
-	/**
-	 * Verifica e seta configurações pendentes
-	 *
-	 * @param  Model  $model
-	 * @param  array  $config
-	 * @return void
-	 */
-	private function __checkConfig(Model $model, $config = array())
-	{
-		if(empty($config))
-			$this->settings[$model->alias] = Set::merge($this->_defaultSettings, $config);
-
-		if(!isset($this->_modelFields[$model->alias]))
-			$this->_modelFields[$model->alias] = @$model->getColumnTypes();
-
-		if(isset($this->typesFormat[$model->useDbConfig]))
-			return;
-
-		$db =& $model->getDataSource();
-		$this->typesFormat[$model->useDbConfig] = array();
+		$db =& ConnectionManager::getDataSource($this->model->useDbConfig);
 
 		foreach($db->columns as $type => $info)
 		{
 			if(isset($info['format']))
-				$this->typesFormat[$model->useDbConfig][$type] = $info['format'];
+			{
+				$this->typesFormat[$type] = $info['format'];
+			}
 		}
 	}
 
@@ -119,12 +88,11 @@ class LocaleBehavior extends ModelBehavior
 	 *
 	 * @see ModelBehavior::beforeValidate()
 	 */
-	public function beforeValidate(Model &$model)
+	public function beforeValidate(&$model)
 	{
-		parent::beforeValidate($model);
-		$this->_model =& $model;
+		$this->model =& $model;
 
-		$this->__checkConfig($model);
+		parent::beforeValidate($model);
 
 		return $this->localizeData();
 	}
@@ -134,12 +102,11 @@ class LocaleBehavior extends ModelBehavior
 	 *
 	 * @see ModelBehavior::beforeSave()
 	 */
-	public function beforeSave(Model &$model)
+	public function beforeSave(&$model)
 	{
-		parent::beforeSave($model);
-		$this->_model =& $model;
+		$this->model =& $model;
 
-		$this->__checkConfig($model);
+		parent::beforeSave($model);
 
 		return $this->localizeData();
 	}
@@ -151,10 +118,9 @@ class LocaleBehavior extends ModelBehavior
 	 */
 	public function beforeFind(&$model, $query)
 	{
-		parent::beforeFind($model, $query);
-		$this->_model =& $model;
+		$this->model =& $model;
 
-		$this->__checkConfig($model);
+		parent::beforeFind($mode, $query);
 
 		$this->localizeData($query['conditions']);
 
@@ -176,27 +142,27 @@ class LocaleBehavior extends ModelBehavior
 		$status = true;
 
 		// verifica se há dados setados no modelo
-		if(isset($this->_model->data) && !empty($this->_model->data))
+		if(isset($this->model->data) && !empty($this->model->data))
 		{
 			// varre os dados setados
-			foreach($this->_model->data[$this->_model->alias] as $field => $value)
+			foreach($this->model->data[$this->model->name] as $field => $value)
 			{
 				// caso o campo esteja vazio E não tenha um array como valor E o campo faz parte do schema
-				if($this->__isLocalizableField($this->_model, $field))
+				if(!empty($value) && !is_array($value) && isset($this->model->_schema[$field]) && (!$this->settings['ignoreAutomagic'] || ($this->settings['ignoreAutomagic'] && !in_array($field, $this->cakeAutomagicFields))))
 				{
-					switch($this->_modelFields[$this->_model->alias][$field])
+					switch($this->model->_schema[$field]['type'])
 					{
 						case 'date':
 						case 'datetime':
 						case 'time':
 						case 'timestamp':
-							$status = ($status && $this->__dateConvert($this->_model->data[$this->_model->alias][$field], $this->_modelFields[$this->_model->alias][$field]));
+							$status = ($status && $this->__dateConvert($this->model->data[$this->model->name][$field], $this->model->_schema[$field]['type']));
 							break;
 						case 'number':
 						case 'decimal':
 						case 'float':
 						case 'double':
-							$status = ($status && $this->__stringToFloat($this->_model->data[$this->_model->alias][$field]));
+							$status = ($status && $this->__stringToFloat($this->model->data[$this->model->name][$field]));
 							break;
 					}
 				}
@@ -229,9 +195,10 @@ class LocaleBehavior extends ModelBehavior
 						$field = substr($field, $ini + 1);
 				}
 
-				if($this->__isLocalizableField($this->_model, $field, $value))
+				// caso o campo esteja vazio E não tenha um array como valor E o campo faz parte do schema
+				if(!empty($value) && isset($this->model->_schema[$field]) && (!$this->settings['ignoreAutomagic'] || ($this->settings['ignoreAutomagic'] && !in_array($field, $this->cakeAutomagicFields))))
 				{
-					switch($this->_modelFields[$this->_model->alias][$field])
+					switch($this->model->_schema[$field]['type'])
 					{
 						case 'date':
 						case 'datetime':
@@ -239,9 +206,9 @@ class LocaleBehavior extends ModelBehavior
 						case 'timestamp':
 							if(is_array($value))
 								foreach($value as &$v)
-									$status = ($status && $this->__dateConvert($v, $this->_modelFields[$this->_model->alias][$field]));
+									$status = ($status && $this->__dateConvert($v, $this->model->_schema[$field]['type']));
 							else
-								$status = ($status && $this->__dateConvert($value, $this->_modelFields[$this->_model->alias][$field]));
+								$status = ($status && $this->__dateConvert($value, $this->model->_schema[$field]['type']));
 							break;
 						case 'decimal':
 						case 'float':
@@ -264,7 +231,7 @@ class LocaleBehavior extends ModelBehavior
 	 * Converte uma data localizada para padrão de banco de dados (americano)
 	 *
 	 * @param string $value
-	 * @param string $type -> a valid schema date type, like: 'date', 'datetime', 'timestamp' or 'time'
+	 * @param string $type -> a valid schema date type, like: 'date', 'datetime' or 'timestamp'
 	 * @return bool
 	 */
 	private function __dateConvert(&$value, $type = 'date')
@@ -277,7 +244,7 @@ class LocaleBehavior extends ModelBehavior
 		{
 			$d = Unlocalize::setLocale($this->systemLang)->date($value);
 			$dt = new DateTime($d);
-			$value = $dt->format($this->typesFormat[$this->_model->useDbConfig][$type]);
+			$value = $dt->format($this->typesFormat[$type]);
 		}
 		catch(Exception $e)
 		{
@@ -288,54 +255,21 @@ class LocaleBehavior extends ModelBehavior
 	}
 
 	/**
-	 * Converte uma string que representa um número em um float válido
+	 * Convert a numeric value from a localized value to another
+	 * locale.
 	 *
 	 * Ex.:
-	 *  '1.000.000,22' vira '1000000.22'
-	 *  '1.12' continua '1.12'
-	 *  '1,12' vira '1.12'
+	 *  '1.000.000,22' -> '1000000.22'
+	 *  '1.12' -> '1.12'
+	 *  '1,12' -> '1.12'
 	 *
 	 * @param string $value
-	 * @return bool
+	 * @return bool success
 	 */
 	private function __stringToFloat(&$value)
 	{
 		$value = Unlocalize::setLocale($this->systemLang)->decimal($value);
 
-		return true;
-	}
-
-	/**
-	 * Verifica se um determinado campo de um modelo é
-	 * localizável.
-	 *
-	 * @param  Model $model
-	 * @param  string $field
-	 * @return bool
-	 */
-	private function __isLocalizableField($model, $field, $value = null)
-	{
-		// caso não haja configuração do behavior para o modelo
-		if(!isset($this->settings[$model->alias]))
-			return false;
-
-		// caso esteja vazio e setado via modelo
-		if($value === null && isset($model->data[$model->alias][$field]) && empty($model->data[$model->alias][$field]))
-			return false;
-
-		// caso esteja vazio e setado via query
-		if($value !== null && empty($value))
-			return false;
-
-		// caso não faça parte do schema
-		if(!isset($this->_modelFields[$model->alias][$field]))
-			return false;
-
-		// caso seja um campo automágico, e estes seja ignorados
-		if($this->settings[$model->alias]['ignoreAutomagic'] && in_array($field, $this->cakeAutomagicFields))
-			return false;
-
-		// caso contrário é sim localizável
 		return true;
 	}
 }

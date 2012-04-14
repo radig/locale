@@ -1,7 +1,7 @@
 <?php
-App::import('Lib', 'Locale.LocaleException');
-App::import('Lib', 'Locale.Formats');
-App::import('Lib', 'Locale.Utils');
+App::uses('LocaleException', 'Locale.Lib');
+App::uses('Formats', 'Locale.Lib');
+App::uses('Utils', 'Locale.Lib');
 /**
  * Class to "unlocalize" special data like dates, timestamps and numbers
  * to US/ISO format.
@@ -26,6 +26,7 @@ class Unlocalize
 	 * @var string
 	 */
 	static public $currentLocale = 'pt_BR';
+
 
 	/**
 	 * Current instance
@@ -133,6 +134,7 @@ class Unlocalize
 	{
 		if(empty($value))
 			return $value;
+
 
 		$oldLocale = setlocale(LC_NUMERIC, "0");
 		setlocale(LC_NUMERIC, self::$currentLocale);

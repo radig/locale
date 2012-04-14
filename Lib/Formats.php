@@ -1,5 +1,5 @@
 <?php
-App::import('Lib', 'Locale.LocaleException');
+App::uses('LocaleException', 'Locale.Lib');
 /**
  * Manager of supported localize and unlocalize formats
  *
