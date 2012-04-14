@@ -1,4 +1,7 @@
 <?php
+App::import('CORE', 'ConnectionManager');
+App::import('Lib', 'Locale.Unlocalize');
+
 /**
  * Behavior to automagic convert dates, numbers and currency from
  * any localized format to DB format for security store.
@@ -14,16 +17,13 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009-2011, Radig - Soluções em TI, www.radig.com.br
+ * @copyright 2009-2012, Radig - Soluções em TI, www.radig.com.br
  * @link http://www.radig.com.br
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  *
  * @package radig
  * @subpackage radig.l10n.models.behaviors
  */
-
-App::import('CORE', 'ConnectionManager');
-App::import('Lib', 'Locale.Localize');
 class LocaleBehavior extends ModelBehavior
 {
 	/**
@@ -242,7 +242,7 @@ class LocaleBehavior extends ModelBehavior
 
 		try
 		{
-			$value = Localize::setLocale($this->systemLang)->date($value, $this->typesFormat[$type]);
+			$value = Unlocalize::setLocale($this->systemLang)->date($value, $this->typesFormat[$type]);
 		}
 		catch(LocaleException $e)
 		{
@@ -266,7 +266,7 @@ class LocaleBehavior extends ModelBehavior
 	 */
 	private function __stringToFloat(&$value)
 	{
-		$value = Localize::decimal($value);
+		$value = Unlocalize::setLocale($this->systemLang)->decimal($value);
 
 		return true;
 	}

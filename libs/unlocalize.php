@@ -1,25 +1,45 @@
 <?php
-
 /**
- * Class to localize special data like dates, timestamps and numbers
- * in and out different formats.
+ * Class to "unlocalize" special data like dates, timestamps and numbers
+ * to US/ISO format.
  *
+ * PHP version > 5.2.4
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright 2009-2012, Radig - Soluções em TI, www.radig.com.br
+ * @link http://www.radig.com.br
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ *
+ * @package Radig
+ * @subpackage Radig.Locale.Libs
  */
-class Localize
+class Unlocalize
 {
 	/**
 	 * Current locale for input data
 	 *
 	 * @var string
 	 */
-	static public $currentLocale = 'pt-br';
+	static public $currentLocale = 'br';
 
 	/**
 	 * Suported formats
 	 * @var array
 	 */
 	static public $formats = array(
-		'pt-br' => array(
+		'us' => array(
+			'date' => array(
+				'pattern' => '/^(\d{2,4})\/(\d{1,2})\/(\d{1,2})/',
+				'slices' => array('y' => 1, 'm' => 2, 'd' => 3)
+			),
+			'timestamp' => array(
+				'pattern' => '/^(\d{2,4})\/(\d{1,2})\/(\d{1,2}) (\d{2}):(\d{2}):(\d{2})/',
+				'slices' => array('y' => 1, 'm' => 2, 'd' => 3, 'h' => 4, 'i' => 5, 's' => 6)
+			)
+		),
+		'br' => array(
 			'date' => array(
 				'pattern' => '/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/',
 				'slices' => array('y' => 3, 'm' => 2, 'd' => 1)
@@ -103,7 +123,7 @@ class Localize
 	 * @return mixed a string formatted date on Success, original Date on failure or null case
 	 * date is null equivalent
 	 */
-	static public function date($value, $format, $includeTime = false)
+	static public function date($value, $format = null, $includeTime = false)
 	{
 		if(!isset(self::$formats[self::$currentLocale]))
 			throw new LocaleException('Localização não reconhecida pela Lib Localize. Tente adicionar o formato antes de usa-lo.');
@@ -130,6 +150,11 @@ class Localize
 			// transform localized date into iso formated date
 			$iso = preg_replace($currentFormat['pattern'], $final, $value);
 		}
+
+		$iso = self::normalizeDate($iso);
+
+		if($format === null || !is_string($format))
+			return $iso;
 
 		try {
 			$dt = new DateTime($iso);
@@ -182,29 +207,73 @@ class Localize
 	 * Util method to check if a date is the same of null
 	 *
 	 * @param string $value Date
+	 *
 	 * @return bool If is null or not
 	 */
 	static public function isNullDate($value)
 	{
-		return (empty($value) || strpos('0000-00-00', $value) !== false);
+		return (empty($value) || strpos($value, '0000-00-00') !== false);
 	}
 
 	/**
 	 * Check if a date is valid iso format date
 	 *
 	 * @param string $value Date
+	 *
 	 * @return bool If is or not a ISO formated date
 	 */
 	static public function isISODate($value)
 	{
-		$isoPattern = '/^\d{4}-\d{2}-\d{2}/';
-		if(preg_match($isoPattern,$value) === 0)
+		$isoPattern = '/^\d{4}-\d{2}-\d{2}( \d{2}:\d{2}:\d{2})?$/';
+
+		if(preg_match($isoPattern, $value) === 0)
 			return false;
 
-		$month = substr($value, 4, 2);
+		$month = substr($value, 5, 2);
 		if($month < 1 || $month > 12)
 			return false;
 
 		return true;
+	}
+
+	/**
+	 * Normalize a Date string.
+	 *
+	 * 1987-3-1 => 1987-03-01
+	 * 87-3-1 => 1987-03-01
+	 * 09-12-1 => 2009-12-01
+	 * 29-02-1 => 2029-02-01
+	 * 31-02-1 => 2031-02-01
+	 *
+	 * @param string $value Date string in US format
+	 *
+	 * @return string normalized date
+	 */
+	static public function normalizeDate($value)
+	{
+		$date = $value;
+
+		if(strpos($value, ' ') !== false)
+			list($date, $time) = explode(' ', $value);
+
+		$date = explode('-', $date);
+
+		if($date[0] < 99)
+		{
+			if($date[0] > 30)
+				$date[0] = '19' . $date[0];
+			else
+				$date[0] = '20' . $date[0];
+		}
+
+		$date[1] = str_pad($date[1], 2, '0', STR_PAD_LEFT);
+		$date[2] = str_pad($date[2], 2, '0', STR_PAD_LEFT);
+
+		$value = implode('-', $date);
+
+		if(isset($time))
+			$value .= ' ' . $time;
+
+		return $value;
 	}
 }

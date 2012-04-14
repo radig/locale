@@ -1,13 +1,13 @@
 <?php
 /**
- * Testes do Helper Locale
+ * Tests of Locale Helper
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @author        Cauan Cabral <cauan@radig.com.br>, José Agripino <jose@radig.com.br>
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @copyright 2009-2011, Radig - Soluções em TI, www.radig.com.br
+ * @link http://www.radig.com.br
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
 App::import('Helper', 'Locale.Locale');
@@ -44,10 +44,10 @@ class LocaleCase extends CakeTestCase
 		$this->assertEqual($this->Locale->date('2009-04-21'), '21/04/2009');
 		$this->assertEqual($this->Locale->date('invalido'), date('d/m/Y'));
 	}
-	
+
 	/**
 	 * testNullDate
-	 * 
+	 *
 	 * @return void
 	 */
 	public function testNullDate()
@@ -80,7 +80,7 @@ class LocaleCase extends CakeTestCase
 	{
 		$this->assertEqual($this->Locale->dateLiteral('2010-08-26 16:12:40'), 'quinta, 26 de agosto de 2010');
 		$this->assertEqual($this->Locale->dateLiteral('2010-08-26 16:12:40', true), 'quinta, 26 de agosto de 2010, 16:12:40');
-		
+
 		$dateTime = new DateTime();
 		$this->assertEqual($this->Locale->dateLiteral('0000-00-00 00:00:00', false), strftime('%A, %e de %B de %Y', $dateTime->format('U')));
 		$this->assertEqual($this->Locale->dateLiteral('0000-00-00 00:00:00', false, null, true), '');
@@ -89,15 +89,15 @@ class LocaleCase extends CakeTestCase
 	public function testCurrency()
 	{
 		$this->assertEqual($this->Locale->currency('12.45'), 'R$ 12,45');
-		
+
 		$this->assertEqual($this->Locale->currency('1,234.45'), 'R$ 1.234,45');
-		
+
 		$this->assertEqual($this->Locale->currency('1,234,567.45'), 'R$ 1.234.567,45');
 
 		$this->assertEqual($this->Locale->currency('-'), '-');
 	}
-	
-	
+
+
 	public function testUSACurrency() {
 
 		setlocale(LC_ALL, 'en_US');

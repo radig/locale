@@ -1,20 +1,20 @@
 <?php
-/** 
+/**
  * Helper to localized formatting dates, numbers and currency from databases format.
- * 
+ *
  * Based on Juan Basso cake_ptbr plugin: http://github.com/jrbasso/cake_ptbr
- * 
+ *
  * Code comments in brazilian portuguese.
  * -----
  * Helper para formatação localizada de datas, números decimais e valores monetários.
- * 
+ *
  * Baseado no plugin cake_ptbr do Juan Basso: http://github.com/jrbasso/cake_ptbr
- * 
+ *
  * PHP version > 5.2.6
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
- * 
+ *
  * @copyright 2009-2011, Radig - Soluções em TI, www.radig.com.br
  * @link http://www.radig.com.br
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
@@ -27,7 +27,7 @@ class LocaleHelper extends AppHelper
 {
 	/**
 	 * Lista de formatos padrões para datas de acordo com locale
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $_dateFormats = array(
@@ -45,7 +45,7 @@ class LocaleHelper extends AppHelper
 		'numbers' => array(),
 		'dates' => array()
 	);
-	
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -74,11 +74,11 @@ class LocaleHelper extends AppHelper
 		// mescla configurações passadas com configurações de datas para o locale atual
 		$this->_settings['dates'] = array_merge($this->_dateFormats[$this->_settings['locale']], $this->_settings['dates']);
 	}
-	
+
 	/* Datas */
-	
+
 	/**
-	 * 
+	 *
 	 * @param string $d - Uma data
 	 * @param bool $empty - Se deve retornar valor vazio caso uma data não seja fornecida
 	 */
@@ -89,14 +89,14 @@ class LocaleHelper extends AppHelper
 		{
 			return '';
 		}
-		
+
 		$d = $this->__adjustDateTime($d);
-		
+
 		return $d->format($this->_settings['dates']['small']);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param string $dateTime
 	 * @param bool $seconds
 	 * @param bool $empty
@@ -107,22 +107,22 @@ class LocaleHelper extends AppHelper
 		{
 			return '';
 		}
-		
+
 		$dateTime = $this->__adjustDateTime($dateTime);
-		
+
 		$format = $this->_settings['dates']['full'];
-		
+
 		if ($seconds !== true)
 		{
 			// considera que último caracter  do formato representa os segundos
 			$format = substr($format, 0, -2);
 		}
-		
+
 		return $dateTime->format($format);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param string $dateTime
 	 * @param string $displayTime
 	 * @param string $format
@@ -134,7 +134,7 @@ class LocaleHelper extends AppHelper
 		{
 			return '';
 		}
-		
+
 		$dateTime = $this->__adjustDateTime($dateTime);
 
 		if($format == null)
@@ -161,18 +161,18 @@ class LocaleHelper extends AppHelper
 	{
 		// guarda o locale atual para restauração posterior
 		$curLocale = setlocale(LC_MONETARY, "0");
-		
+
 		// garante que o separador de decimal será o ponto (dot) enquanto separador de milhar será vírgula (period)
 		setlocale(LC_MONETARY, 'en_US');
-		
+
 		// remove o separador de milhar (se houver)
 		$value = str_replace(',', '', $value);
-		
+
 		if(empty($value) || !is_numeric($value))
 			return $value;
-		
+
 		$currency = $this->_settings['numbers']['currency_symbol'] . ' ' . $this->__number_format($value, 2, true);
-		
+
 		// restaura locale anterior
 		setlocale(LC_MONETARY, $curLocale);
 
@@ -192,16 +192,16 @@ class LocaleHelper extends AppHelper
 		{
 			$value = $this->__number_format($value, $precision, $thousands);
 		}
-		
+
 		return $value;
 	}
-	
+
 	/** Métodos para uso interno **/
 
 	/**
 	 * Retorna true caso a data passada represente um valor nulo
 	 * - Formato da data é dependente do BD utilizado
-	 * 
+	 *
 	 * @param string $d
 	 */
 	protected function __isNullDate($d)
@@ -211,16 +211,16 @@ class LocaleHelper extends AppHelper
 		{
 			return true;
 		}
-		
+
 		// MySQL null date format
 		if(is_int(strpos($d, '0000-00-00')))
 		{
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Recebe uma string de data e retorna um objeto DateTime para a data
 	 *
@@ -241,7 +241,7 @@ class LocaleHelper extends AppHelper
 		{
 			$dt = new DateTime();
 		}
-		
+
 		return $dt;
 	}
 
@@ -266,7 +266,7 @@ class LocaleHelper extends AppHelper
 
 		// remove o separador de milhar (se houver)
 		$value = str_replace(',', '', $value);
-		
+
 		// separa a parte decimal
 		$parts = explode('.', $value);
 
