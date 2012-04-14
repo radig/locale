@@ -75,7 +75,7 @@ class UnlocalizeCase extends CakeTestCase
 	 */
 	public function testNullDate()
 	{
-		Unlocalize::setLocale('br');
+		Unlocalize::setLocale('pt_BR');
 
 		$this->assertEqual(Unlocalize::date(null), null);
 		$this->assertEqual(Unlocalize::date(''), null);
@@ -91,7 +91,7 @@ class UnlocalizeCase extends CakeTestCase
 	 */
 	public function testLocalizedDate()
 	{
-		Unlocalize::setLocale('br');
+		Unlocalize::setLocale('pt_BR');
 
 		$this->assertEqual(Unlocalize::date('2009-04-21'), '2009-04-21');
 		$this->assertEqual(Unlocalize::date('1987-03-01'), '1987-03-01');
@@ -105,7 +105,7 @@ class UnlocalizeCase extends CakeTestCase
 	 */
 	public function testBrDate()
 	{
-		Unlocalize::setLocale('br');
+		Unlocalize::setLocale('pt_BR');
 
 		$this->assertEqual(Unlocalize::date('21/04/2009'), '2009-04-21');
 		$this->assertEqual(Unlocalize::date('21/4/2009'), '2009-04-21');
@@ -114,11 +114,48 @@ class UnlocalizeCase extends CakeTestCase
 		$this->assertEqual(Unlocalize::date('1/3/1987'), '1987-03-01');
 	}
 
+	/**
+	 * testBrDateTime
+	 *
+	 * @retun void
+	 * @access public
+	 */
+	public function testBrDateTime()
+	{
+		Unlocalize::setLocale('pt_BR');
+
+		$this->assertEqual(Unlocalize::date('21/04/2009 12:03:01', true), '2009-04-21 12:03:01');
+		$this->assertEqual(Unlocalize::date('21/4/2009 23:59:59', true), '2009-04-21 23:59:59');
+
+		$this->assertEqual(Unlocalize::date('01/03/1987 12:03:01', true), '1987-03-01 12:03:01');
+		$this->assertEqual(Unlocalize::date('1/3/1987 23:59:59', true), '1987-03-01 23:59:59');
+	}
+
 	public function testUsDate()
 	{
-		Unlocalize::setLocale('us');
+		Unlocalize::setLocale('en_US');
 
 		$this->assertEqual(Unlocalize::date('2009-04-21'), '2009-04-21');
 		$this->assertEqual(Unlocalize::date('1987-03-01'), '1987-03-01');
+	}
+
+	public function testBrDecimals()
+	{
+		Unlocalize::setLocale('pt_BR');
+
+		$this->assertEqual(Unlocalize::decimal('25,32'), '25.32');
+		$this->assertEqual(Unlocalize::decimal('0,5'), '0.5');
+		$this->assertEqual(Unlocalize::decimal('1.300,52'), '1300.52');
+		$this->assertEqual(Unlocalize::decimal('3.965.300,52'), '3965300.52');
+	}
+
+	public function testUsDecimals()
+	{
+		Unlocalize::setLocale('en_US');
+
+		$this->assertEqual(Unlocalize::decimal('25.32'), '25.32');
+		$this->assertEqual(Unlocalize::decimal('0.5'), '0.5');
+		$this->assertEqual(Unlocalize::decimal('1,300.52'), '1300.52');
+		$this->assertEqual(Unlocalize::decimal('3,965,300.52'), '3965300.52');
 	}
 }

@@ -1,4 +1,5 @@
 <?php
+App::import('Lib', 'Locale.LocaleException');
 /**
  * Class to "unlocalize" special data like dates, timestamps and numbers
  * to US/ISO format.
@@ -22,30 +23,30 @@ class Unlocalize
 	 *
 	 * @var string
 	 */
-	static public $currentLocale = 'br';
+	static public $currentLocale = 'pt_BR';
 
 	/**
 	 * Suported formats
 	 * @var array
 	 */
 	static public $formats = array(
-		'us' => array(
+		'en_US' => array(
 			'date' => array(
-				'pattern' => '/^(\d{2,4})\/(\d{1,2})\/(\d{1,2})/',
+				'pattern' => '/^(\d{2,4})\/(\d{1,2})\/(\d{1,2})$/',
 				'slices' => array('y' => 1, 'm' => 2, 'd' => 3)
 			),
 			'timestamp' => array(
-				'pattern' => '/^(\d{2,4})\/(\d{1,2})\/(\d{1,2}) (\d{2}):(\d{2}):(\d{2})/',
+				'pattern' => '/^(\d{2,4})\/(\d{1,2})\/(\d{1,2}) (\d{2}):(\d{2}):(\d{2})$/',
 				'slices' => array('y' => 1, 'm' => 2, 'd' => 3, 'h' => 4, 'i' => 5, 's' => 6)
 			)
 		),
-		'br' => array(
+		'pt_BR' => array(
 			'date' => array(
-				'pattern' => '/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/',
+				'pattern' => '/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/',
 				'slices' => array('y' => 3, 'm' => 2, 'd' => 1)
 			),
 			'timestamp' => array(
-				'pattern' => '/^(\d{1,2})\/(\d{1,2})\/(\d{2,4}) (\d{2}):(\d{2}):(\d{2})/',
+				'pattern' => '/^(\d{1,2})\/(\d{1,2})\/(\d{2,4}) (\d{2}):(\d{2}):(\d{2})$/',
 				'slices' => array('y' => 3, 'm' => 2, 'd' => 1, 'h' => 4, 'i' => 5, 's' => 6)
 			)
 		)
@@ -117,13 +118,12 @@ class Unlocalize
 	 * Convert a localized date/timestamp to USA format date/timestamp
 	 *
 	 * @param string $value Your localized date
-	 * @param string $format The output date format, the same syntaxe of date() function
 	 * @param bool $includeTime If the input date include time info
 	 *
 	 * @return mixed a string formatted date on Success, original Date on failure or null case
 	 * date is null equivalent
 	 */
-	static public function date($value, $format = null, $includeTime = false)
+	static public function date($value, $includeTime = false)
 	{
 		if(!isset(self::$formats[self::$currentLocale]))
 			throw new LocaleException('Localização não reconhecida pela Lib Localize. Tente adicionar o formato antes de usa-lo.');
@@ -147,24 +147,13 @@ class Unlocalize
 				$final = "\${$slices['y']}-\${$slices['m']}-\${$slices['d']} \${$slices['h']}:\${$slices['i']}:\${$slices['s']}";
 			}
 
-			// transform localized date into iso formated date
+			if(preg_match($currentFormat['pattern'], $value) === 0)
+				throw new LocaleException('Data inválida para localização');
+
 			$iso = preg_replace($currentFormat['pattern'], $final, $value);
 		}
 
-		$iso = self::normalizeDate($iso);
-
-		if($format === null || !is_string($format))
-			return $iso;
-
-		try {
-			$dt = new DateTime($iso);
-			$value = $dt->format($format);
-		}
-		catch(Exception $e) {
-			return $value;
-		}
-
-		return $value;
+		return self::normalizeDate($iso);
 	}
 
 	/**
@@ -179,6 +168,9 @@ class Unlocalize
 	{
 		if(empty($value))
 			return $value;
+
+		$oldLocale = setlocale(LC_NUMERIC, null);
+		setlocale(LC_NUMERIC, self::$currentLocale);
 
 		$v = (string)$value;
 
@@ -199,6 +191,8 @@ class Unlocalize
 		$value = $integer;
 		if($decimal > 0)
 			$value .= '.' . $decimal;
+
+		setlocale(LC_NUMERIC, $oldLocale);
 
 		return $value;
 	}

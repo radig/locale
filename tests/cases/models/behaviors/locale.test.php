@@ -1,5 +1,6 @@
 <?php
 App::import('Behavior', 'Locale');
+App::import('Lib', 'Locale.LocaleException');
 /**
  * Testes do Behavior Locale
  *
@@ -157,17 +158,35 @@ class LocaleTest extends CakeTestCase {
 	public function testSaveLocalizedDataAction()
 	{
 		$result = $this->Employee->save(
-			array('id' => '2', 'birthday' => '01-01-2001', 'salary' => '650,30')
+			array('id' => '2', 'birthday' => '01/01/2001', 'salary' => '650,30')
 		);
 
 		$this->assertTrue($result);
 
 		$result = $this->Employee->save(
-			array('id' => '20', 'birthday' => '01-01-2001', 'salary' => '1.650,30')
+			array('id' => '20', 'birthday' => '01/01/2001', 'salary' => '1.650,30')
 		);
 
 		$this->assertTrue($result);
 		$this->Employee->delete(20);
+	}
+
+	/**
+	 * Testa salvar dados com dados mal-formatados
+	 */
+	public function testSaveWrongDate()
+	{
+		try{
+			$result = $this->Employee->save(
+				array('id' => '2', 'birthday' => '01-01-2001', 'salary' => '650.30')
+			);
+
+			$this->assertFalse($result);
+		}
+		catch(LocaleException $e)
+		{
+			$this->assertEqual($e->getMessage(), 'Data inválida para localização');
+		}
 	}
 
 	/**
@@ -180,7 +199,7 @@ class LocaleTest extends CakeTestCase {
 			array(
 				array('id' => '2', 'birthday' => '01/01/2001', 'salary' => '650,30'),
 				array('id' => '3', 'birthday' => '29/03/1920', 'salary' => '0,99'),
-				array('id' => '4', 'birthday' => '21-04-1975', 'salary' => '0,3')
+				array('id' => '4', 'birthday' => '21/04/1975', 'salary' => '0,3')
 			)
 		);
 
@@ -198,8 +217,8 @@ class LocaleTest extends CakeTestCase {
 			array(
 				array('id' => '2', 'birthday' => '01/01/2001', 'salary' => '650,30'),
 				array('id' => '3', 'birthday' => '29/03/1920', 'salary' => '0,99'),
-				array('id' => '4', 'birthday' => '21-04-1975', 'salary' => '0,3'),
-				array('id' => '5', 'birthday' => '28-02-2001', 'salary' => '123.456,78')
+				array('id' => '4', 'birthday' => '21/04/1975', 'salary' => '0,3'),
+				array('id' => '5', 'birthday' => '28/02/2001', 'salary' => '123.456,78')
 			)
 		);
 

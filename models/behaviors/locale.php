@@ -70,7 +70,7 @@ class LocaleBehavior extends ModelBehavior
 		$this->model =& $model;
 		$this->settings = Set::merge($this->settings, $config);
 
-		$this->systemLang = Configure::read('Language.default');
+		$this->systemLang = substr(setlocale(LC_ALL, null), 0, 5);
 
 		$db =& ConnectionManager::getDataSource($this->model->useDbConfig);
 
@@ -242,9 +242,11 @@ class LocaleBehavior extends ModelBehavior
 
 		try
 		{
-			$value = Unlocalize::setLocale($this->systemLang)->date($value, $this->typesFormat[$type]);
+			$d = Unlocalize::setLocale($this->systemLang)->date($value);
+			$dt = new DateTime($d);
+			$value = $dt->format($this->typesFormat[$type]);
 		}
-		catch(LocaleException $e)
+		catch(Exception $e)
 		{
 			return false;
 		}
