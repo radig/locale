@@ -1,5 +1,7 @@
 <?php
 App::import('Lib', 'Locale.LocaleException');
+App::import('Lib', 'Locale.Formats');
+App::import('Lib', 'Locale.Utils');
 /**
  * Class to "unlocalize" special data like dates, timestamps and numbers
  * to US/ISO format.
@@ -26,34 +28,8 @@ class Unlocalize
 	static public $currentLocale = 'pt_BR';
 
 	/**
-	 * Suported formats
-	 * @var array
-	 */
-	static public $formats = array(
-		'en_US' => array(
-			'date' => array(
-				'pattern' => '/^(\d{2,4})\/(\d{1,2})\/(\d{1,2})$/',
-				'slices' => array('y' => 1, 'm' => 2, 'd' => 3)
-			),
-			'timestamp' => array(
-				'pattern' => '/^(\d{2,4})\/(\d{1,2})\/(\d{1,2}) (\d{2}):(\d{2}):(\d{2})$/',
-				'slices' => array('y' => 1, 'm' => 2, 'd' => 3, 'h' => 4, 'i' => 5, 's' => 6)
-			)
-		),
-		'pt_BR' => array(
-			'date' => array(
-				'pattern' => '/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/',
-				'slices' => array('y' => 3, 'm' => 2, 'd' => 1)
-			),
-			'timestamp' => array(
-				'pattern' => '/^(\d{1,2})\/(\d{1,2})\/(\d{2,4}) (\d{2}):(\d{2}):(\d{2})$/',
-				'slices' => array('y' => 3, 'm' => 2, 'd' => 1, 'h' => 4, 'i' => 5, 's' => 6)
-			)
-		)
-	);
-
-	/**
 	 * Current instance
+	 *
 	 * @var Localize
 	 */
 	private static $_Instance = null;
@@ -63,53 +39,42 @@ class Unlocalize
 	 *
 	 * @return Localize
 	 */
-    public static function getInstance()
-    {
-        if(self::$_Instance === null)
-        {
-            self::$_Instance = new self;
-        }
+	public static function getInstance()
+	{
+		if(self::$_Instance === null)
+			self::$_Instance = new self;
 
-        return self::$_Instance;
-    }
+		return self::$_Instance;
+	}
 
-    /**
-     * Set locale of input data
-     *
-     * @param string $locale Name of locale, the same format of CakePHP Localization
-     *
-     * @return Localize Current instance of that class, for chaining methods
-     */
+	/**
+	 * Set locale of input data
+	 *
+	 * @param string $locale Name of locale, the same format of setlocale php function
+	 *
+	 * @return Localize Current instance of that class, for chaining methods
+	 */
 	static public function setLocale($locale)
 	{
+		if(!setlocale(LC_ALL, $locale))
+			throw new LocaleException("Locale {$locale} não disponível no seu sistema.");
+
 		self::$currentLocale = $locale;
 
 		return self::getInstance();
 	}
 
 	/**
-	 * Include a new format to supported format list.
-	 * You must provide an array like that:
+	 * Wrapper to Formats::addInput.
 	 *
-	 * array(
-	 * 		'date' => array(
-	 * 			'pattern' => '/^\d{1,2}\/\d{1,2}\/\d{2,4}/',
-	 * 			'slices' => array('y' => 3, 'm' => 2, 'd' => 1)
-	 * 		),
-	 * 		'timestamp' => array(
-	 *    		'pattern' => '/^\d{1,2}\/\d{1,2}\/\d{2,4} \d{2}:\d{2}:\d{2}/',
-	 *    		'slices' => array('y' => 3, 'm' => 2, 'd' => 1, 'h' => 4, 'i' => 5, 's' => 6)
-	 *    	)
-	 * )
-	 *
-	 * @param string $locale Name of locale, the same format of CakePHP Localization
+	 * @param string $locale Name of locale, the same format of setlocale php function
 	 * @param string $format An array like in the description
 	 *
 	 * @return Localize Current instance of that class, for chaining methods
 	 */
 	static public function addFormat($locale, $format)
 	{
-		self::$formats[$locale] = $format;
+		Formats::addInput($locale, $format);
 
 		return self::getInstance();
 	}
@@ -125,24 +90,24 @@ class Unlocalize
 	 */
 	static public function date($value, $includeTime = false)
 	{
-		if(!isset(self::$formats[self::$currentLocale]))
+		if(!isset(Formats::$input[self::$currentLocale]))
 			throw new LocaleException('Localização não reconhecida pela Lib Localize. Tente adicionar o formato antes de usa-lo.');
 
-		if(self::isNullDate($value))
+		if(Utils::isNullDate($value))
 			return null;
 
 		$iso = $value;
-		if(!self::isISODate($value))
+		if(!Utils::isISODate($value))
 		{
 			if(!$includeTime)
 			{
-				$currentFormat = self::$formats[self::$currentLocale]['date'];
+				$currentFormat = Formats::$input[self::$currentLocale]['date'];
 				$slices = $currentFormat['slices'];
 				$final = "\${$slices['y']}-\${$slices['m']}-\${$slices['d']}";
 			}
 			else
 			{
-				$currentFormat = self::$formats[self::$currentLocale]['timestamp'];
+				$currentFormat = Formats::$input[self::$currentLocale]['timestamp'];
 				$slices = $currentFormat['slices'];
 				$final = "\${$slices['y']}-\${$slices['m']}-\${$slices['d']} \${$slices['h']}:\${$slices['i']}:\${$slices['s']}";
 			}
@@ -169,7 +134,7 @@ class Unlocalize
 		if(empty($value))
 			return $value;
 
-		$oldLocale = setlocale(LC_NUMERIC, null);
+		$oldLocale = setlocale(LC_NUMERIC, "0");
 		setlocale(LC_NUMERIC, self::$currentLocale);
 
 		$v = (string)$value;
@@ -195,39 +160,6 @@ class Unlocalize
 		setlocale(LC_NUMERIC, $oldLocale);
 
 		return $value;
-	}
-
-	/**
-	 * Util method to check if a date is the same of null
-	 *
-	 * @param string $value Date
-	 *
-	 * @return bool If is null or not
-	 */
-	static public function isNullDate($value)
-	{
-		return (empty($value) || strpos($value, '0000-00-00') !== false);
-	}
-
-	/**
-	 * Check if a date is valid iso format date
-	 *
-	 * @param string $value Date
-	 *
-	 * @return bool If is or not a ISO formated date
-	 */
-	static public function isISODate($value)
-	{
-		$isoPattern = '/^\d{4}-\d{2}-\d{2}( \d{2}:\d{2}:\d{2})?$/';
-
-		if(preg_match($isoPattern, $value) === 0)
-			return false;
-
-		$month = substr($value, 5, 2);
-		if($month < 1 || $month > 12)
-			return false;
-
-		return true;
 	}
 
 	/**

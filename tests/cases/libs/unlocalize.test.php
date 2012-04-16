@@ -31,25 +31,12 @@ class UnlocalizeCase extends CakeTestCase
 	 */
 	public function testAddFormat()
 	{
-		$this->assertEqual(Unlocalize::addFormat('es', array()), Unlocalize::getInstance());
-	}
+		$format = array(
+			'date' => array('pattern' => '', 'slices' => ''),
+			'timestamp' => array('pattern' => '', 'slices' => '')
+		);
 
-	/**
-	 * testisISODate
-	 *
-	 * @return void
-	 */
-	public function testIsISODate()
-	{
-		$this->assertFalse(Unlocalize::isISODate('1987-3-1'));
-		$this->assertFalse(Unlocalize::isISODate('87-3-1'));
-		$this->assertFalse(Unlocalize::isISODate('1987/03/01'));
-		$this->assertFalse(Unlocalize::isISODate('01/03/1987'));
-		$this->assertFalse(Unlocalize::isISODate('1987-23-01'));
-		$this->assertFalse(Unlocalize::isISODate('1987-03-01 04:052:211'));
-
-		$this->assertTrue(Unlocalize::isISODate('1987-03-01'));
-		$this->assertTrue(Unlocalize::isISODate('1987-03-01 04:05:21'));
+		$this->assertEqual(Unlocalize::addFormat('es_ES', $format), Unlocalize::getInstance());
 	}
 
 	/**
