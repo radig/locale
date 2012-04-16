@@ -1,4 +1,8 @@
 <?php
+App::uses('LocaleHelper', 'Locale.View/Helper');
+App::uses('Controller', 'Controller');
+App::uses('View', 'View');
+
 /**
  * Testes do Helper Locale
  *
@@ -9,11 +13,6 @@
  * @author        Cauan Cabral <cauan@radig.com.br>, José Agripino <jose@radig.com.br>
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
-App::uses('LocaleHelper', 'Locale.View/Helper');
-App::uses('Controller', 'Controller');
-App::uses('View', 'View');
-
 class LocaleHelperCase extends CakeTestCase
 {
 	public $Locale = null;
@@ -28,7 +27,6 @@ class LocaleHelperCase extends CakeTestCase
 	{
 		parent::setUp();
 
-		Configure::write('Language.default', 'pt-br');
 		setlocale(LC_ALL, 'pt_BR.utf-8', 'pt_BR', 'pt-br', 'pt_BR.iso-8859-1');
 
 		$this->Controller = new Controller(null);
@@ -44,7 +42,7 @@ class LocaleHelperCase extends CakeTestCase
 	 */
 	public function testDate()
 	{
-		$this->assertEquals($this->Locale->date(), date('d/m/Y'));
+		$this->assertEquals($this->Locale->date(), '');
 		$this->assertEquals($this->Locale->date('2009-04-21'), '21/04/2009');
 		$this->assertEquals($this->Locale->date('invalido'), date('d/m/Y'));
 	}
@@ -56,8 +54,7 @@ class LocaleHelperCase extends CakeTestCase
 	 */
 	public function testNullDate()
 	{
-		$this->assertEquals($this->Locale->date('0000-00-00'), date('d/m/Y'));
-		$this->assertEquals($this->Locale->date('0000-00-00', true), '');
+		$this->assertEquals($this->Locale->date('0000-00-00'), '');
 	}
 
 	/**
@@ -70,8 +67,7 @@ class LocaleHelperCase extends CakeTestCase
 	{
 		$this->assertEquals($this->Locale->dateTime('2010-08-26 16:12:40'), '26/08/2010 16:12:40');
 		$this->assertEquals($this->Locale->dateTime('2010-08-26 16:12:40', false), '26/08/2010 16:12');
-		$this->assertEquals($this->Locale->dateTime('0000-00-00 00:00:00', false), date('d/m/Y H:i'));
-		$this->assertEquals($this->Locale->dateTime('0000-00-00 00:00:00', false, true), '');
+		$this->assertEquals($this->Locale->dateTime('0000-00-00 00:00:00', false), '');
 	}
 
 	/**
@@ -85,9 +81,7 @@ class LocaleHelperCase extends CakeTestCase
 		$this->assertEquals($this->Locale->dateLiteral('2010-08-26 16:12:40'), 'quinta, 26 de agosto de 2010');
 		$this->assertEquals($this->Locale->dateLiteral('2010-08-26 16:12:40', true), 'quinta, 26 de agosto de 2010, 16:12:40');
 
-		$dateTime = new DateTime();
-		$this->assertEquals($this->Locale->dateLiteral('0000-00-00 00:00:00', false), strftime('%A, %e de %B de %Y', $dateTime->format('U')));
-		$this->assertEquals($this->Locale->dateLiteral('0000-00-00 00:00:00', false, null, true), '');
+		$this->assertEquals($this->Locale->dateLiteral('0000-00-00 00:00:00', false), '');
 	}
 
 	public function testCurrency()
@@ -100,8 +94,7 @@ class LocaleHelperCase extends CakeTestCase
 
 	public function testUSACurrency()
 	{
-		setlocale(LC_ALL, 'en_US');
-		$this->Locale = new LocaleHelper($this->View);
+		$this->Locale = new LocaleHelper($this->View, array('locale' => 'en_US'));
 
 		$this->assertEquals($this->Locale->currency('12.45'), '$ 12.45');
 		$this->assertEquals($this->Locale->currency('1,234.45'), '$ 1,234.45');
@@ -125,17 +118,13 @@ class LocaleHelperCase extends CakeTestCase
 	 */
 	public function testLocaleWithParameter()
 	{
-		$this->Locale = new LocaleHelper($this->View, array(
-			'locale' => 'br',
-			'numbers' => array('decimal_point' => '!'))
-		);
+		$this->Locale = new LocaleHelper($this->View, array('locale' => 'pt_BR'));
 
-		$this->assertEquals($this->Locale->date(), date('d/m/Y'));
 		$this->assertEquals($this->Locale->date('2009-04-21'), '21/04/2009');
 		$this->assertEquals($this->Locale->dateTime('2010-08-26 16:12:40'), '26/08/2010 16:12:40');
 		$this->assertEquals($this->Locale->dateTime('2010-08-26 16:12:40', false), '26/08/2010 16:12');
 		$this->assertEquals($this->Locale->dateLiteral('2010-08-26 16:12:40'), 'quinta, 26 de agosto de 2010');
 		$this->assertEquals($this->Locale->dateLiteral('2010-08-26 16:12:40', true), 'quinta, 26 de agosto de 2010, 16:12:40');
-		$this->assertEquals($this->Locale->number('12.53'), '12!53');
+		$this->assertEquals($this->Locale->number('12.53'), '12,53');
 	}
 }
