@@ -13,7 +13,7 @@ você pode usa-lo de forma isolada ou em conjunto com seu próprio código.
 h2. Observações
 
 * Este behavior requer PHP versão >= 5.2.4
-* Compatível com CakePHP 2.0
+* Compatível com CakePHP 2.0 e 2.1
 * Consulte os testes incluído no plugin para ver melhor seu funcionamento
 
 h2. Como usar
@@ -46,7 +46,7 @@ Agora você também pode trabalhar com a normalização de desnormalização de 
 de sua aplicação (como em Shells), bastando para isso carregar as libs Localize e Unlocalize, de acordo
 com suas necessidades.
 
-bc. App::import('Lib', 'Locale.Localize');
+bc. App::uses('Localize', 'Locale.Lib');
 
 Elas são todas estáticas, então você deve usa-las sem se preocupar com instâncias:
 
