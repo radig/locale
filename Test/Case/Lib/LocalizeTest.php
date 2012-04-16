@@ -140,6 +140,7 @@ class LocalizeCase extends CakeTestCase
 	public function testBrDecimals()
 	{
 		Localize::setLocale('pt_BR');
+		$currentLocale = localeconv();
 
 		$this->assertEqual(Localize::number('1'), '1,00');
 		$this->assertEqual(Localize::number('23'), '23,00');
@@ -150,10 +151,10 @@ class LocalizeCase extends CakeTestCase
 		$this->assertEqual(Localize::number('25.32', 0), '25');
 
 		$this->assertEqual(Localize::number('1,300.52'), '1300,52');
-		$this->assertEqual(Localize::number('1,300.52', null, true), '1.300,52');
+		$this->assertEqual(Localize::number('1,300.52', null, true), '1' . $currentLocale['thousands_sep'] . '300,52');
 
 		$this->assertEqual(Localize::number('3,965,300.52'), '3965300,52');
-		$this->assertEqual(Localize::number('3,965,300.52', 1, true), '3.965.300,5');
+		$this->assertEqual(Localize::number('3,965,300.52', 1, true), '3' . $currentLocale['thousands_sep'] . '965' . $currentLocale['thousands_sep'] .'300,5');
 	}
 
 	public function testUsDecimals()

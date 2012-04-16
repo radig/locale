@@ -29,11 +29,9 @@ class LocaleHelperCase extends CakeTestCase
 	{
 		parent::setUp();
 
-		setlocale(LC_ALL, 'pt_BR.utf-8', 'pt_BR', 'pt-br', 'pt_BR.iso-8859-1');
-
 		$this->Controller = new Controller(null);
 		$this->View = new View($this->Controller);
-		$this->Locale = new LocaleHelper($this->View);
+		$this->Locale = new LocaleHelper($this->View, array('locale' => 'pt_BR'));
 	}
 
 	/**
@@ -94,6 +92,17 @@ class LocaleHelperCase extends CakeTestCase
 		$this->assertEquals($this->Locale->currency('-'), '-');
 	}
 
+	public function testNumber()
+	{
+		$this->assertEquals($this->Locale->number('12'), '12,00');
+		$this->assertEquals($this->Locale->number('12', 0), '12');
+		$this->assertEquals($this->Locale->number('12.45'), '12,45');
+		$this->assertEquals($this->Locale->number('12.82319', 4), '12,8231');
+		$currentLocale = localeconv();
+		$this->assertEquals($this->Locale->number('350020.123', 4, true), '350'. $currentLocale['thousands_sep'] .'020,1230');
+		$this->assertEquals($this->Locale->number('-'), '-');
+	}
+
 	public function testUSACurrency()
 	{
 		$this->Locale = new LocaleHelper($this->View, array('locale' => 'en_US'));
@@ -102,14 +111,16 @@ class LocaleHelperCase extends CakeTestCase
 		$this->assertEquals($this->Locale->currency('1,234.45'), '$ 1,234.45');
 	}
 
-	public function testNumber()
+	public function testUSANumber()
 	{
-		$this->assertEquals($this->Locale->number('12'), '12,00'); // teste de inteiro, esperando real
-		$this->assertEquals($this->Locale->number('12', 0), '12'); // teste de inteiro
-		$this->assertEquals($this->Locale->number('12.45'), '12,45'); // teste de real
-		$this->assertEquals($this->Locale->number('12.82319', 4), '12,8231'); // teste de real com precisão 4
-		$this->assertEquals($this->Locale->number('350020.123', 4, true), '350.020,1230'); // teste de real com separador de milhar
-		$this->assertEquals($this->Locale->number('-'), '-'); // teste de um número inválido
+		$this->Locale = new LocaleHelper($this->View, array('locale' => 'en_US'));
+
+		$this->assertEquals($this->Locale->number('12'), '12.00');
+		$this->assertEquals($this->Locale->number('12', 0), '12');
+		$this->assertEquals($this->Locale->number('12.45'), '12.45');
+		$this->assertEquals($this->Locale->number('12.82319', 4), '12.8231');
+		$this->assertEquals($this->Locale->number('350020.123', 4, true), '350,020.1230');
+		$this->assertEquals($this->Locale->number('-'), '-');
 	}
 
 	/**
@@ -120,8 +131,6 @@ class LocaleHelperCase extends CakeTestCase
 	 */
 	public function testLocaleWithParameter()
 	{
-		$this->Locale = new LocaleHelper($this->View, array('locale' => 'pt_BR'));
-
 		$this->assertEquals($this->Locale->date('2009-04-21'), '21/04/2009');
 		$this->assertEquals($this->Locale->dateTime('2010-08-26 16:12:40'), '26/08/2010 16:12:40');
 		$this->assertEquals($this->Locale->dateTime('2010-08-26 16:12:40', false), '26/08/2010 16:12');
