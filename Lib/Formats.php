@@ -13,7 +13,7 @@ App::uses('LocaleException', 'Locale.Lib');
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  *
  * @package Radig
- * @subpackage Radig.Locale.Libs
+ * @subpackage Radig.Locale.Lib
  */
 class Formats
 {

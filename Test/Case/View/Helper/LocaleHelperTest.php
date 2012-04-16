@@ -2,16 +2,18 @@
 App::uses('LocaleHelper', 'Locale.View/Helper');
 App::uses('Controller', 'Controller');
 App::uses('View', 'View');
-
 /**
  * Testes do Helper Locale
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @author        Cauan Cabral <cauan@radig.com.br>, José Agripino <jose@radig.com.br>
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @copyright 2009-2012, Radig - Soluções em TI, www.radig.com.br
+ * @link http://www.radig.com.br
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ *
+ * @package Radig.Locale
+ * @subpackage Radig.Locale.Test.Case.View.Helper
  */
 class LocaleHelperCase extends CakeTestCase
 {

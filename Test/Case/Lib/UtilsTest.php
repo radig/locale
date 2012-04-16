@@ -1,12 +1,12 @@
 <?php
-App::import('Lib', 'Locale.Utils');
+App::uses('Utils', 'Locale.Lib');
 /**
  * Test for Unlocalized Lib
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009-2011, Radig - Soluções em TI, www.radig.com.br
+ * @copyright 2009-2012, Radig - Soluções em TI, www.radig.com.br
  * @link http://www.radig.com.br
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
