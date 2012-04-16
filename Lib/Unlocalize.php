@@ -60,6 +60,9 @@ class Unlocalize
 		if(!setlocale(LC_ALL, $locale))
 			throw new LocaleException("Locale {$locale} não disponível no seu sistema.");
 
+		if(!isset(Formats::$input[self::$currentLocale]))
+			throw new LocaleException("Localização '{$locale}' não possuí formatação definida. Tente adicionar o formato antes de usa-lo.");
+
 		self::$currentLocale = $locale;
 
 		return self::getInstance();
@@ -91,9 +94,6 @@ class Unlocalize
 	 */
 	static public function date($value, $includeTime = false)
 	{
-		if(!isset(Formats::$input[self::$currentLocale]))
-			throw new LocaleException('Localização não reconhecida pela Lib Localize. Tente adicionar o formato antes de usa-lo.');
-
 		if(Utils::isNullDate($value))
 			return null;
 
@@ -135,7 +135,6 @@ class Unlocalize
 		if(empty($value))
 			return $value;
 
-
 		$oldLocale = setlocale(LC_NUMERIC, "0");
 		setlocale(LC_NUMERIC, self::$currentLocale);
 
@@ -152,7 +151,7 @@ class Unlocalize
 			$decimal = substr($v, $decimalPoint + 1);
 
 			$integer = substr($v, 0, $decimalPoint);
-			$integer = preg_replace('/[\.|,]/', '', $integer);
+			$integer = str_replace(array($currentFormat['thousands_sep'], $currentFormat['mon_thousands_sep']), '', $integer);
 		}
 
 		$value = $integer;

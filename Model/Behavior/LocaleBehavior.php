@@ -188,7 +188,6 @@ class LocaleBehavior extends ModelBehavior
 					{
 						case 'date':
 						case 'datetime':
-						case 'time':
 						case 'timestamp':
 							$status = ($status && $this->__dateConvert($this->_model->data[$this->_model->alias][$field], $this->_modelFields[$this->_model->alias][$field]));
 							break;
@@ -235,7 +234,6 @@ class LocaleBehavior extends ModelBehavior
 					{
 						case 'date':
 						case 'datetime':
-						case 'time':
 						case 'timestamp':
 							if(is_array($value))
 								foreach($value as &$v)
@@ -264,7 +262,7 @@ class LocaleBehavior extends ModelBehavior
 	 * Converte uma data localizada para padrão de banco de dados (americano)
 	 *
 	 * @param string $value
-	 * @param string $type -> a valid schema date type, like: 'date', 'datetime', 'timestamp' or 'time'
+	 * @param string $type -> a valid schema date type, like: 'date', 'datetime' or 'timestamp'
 	 * @return bool
 	 */
 	private function __dateConvert(&$value, $type = 'date')
@@ -315,27 +313,21 @@ class LocaleBehavior extends ModelBehavior
 	 */
 	private function __isLocalizableField($model, $field, $value = null)
 	{
-		// caso não haja configuração do behavior para o modelo
 		if(!isset($this->settings[$model->alias]))
 			return false;
 
-		// caso esteja vazio e setado via modelo
 		if($value === null && isset($model->data[$model->alias][$field]) && empty($model->data[$model->alias][$field]))
 			return false;
 
-		// caso esteja vazio e setado via query
 		if($value !== null && empty($value))
 			return false;
 
-		// caso não faça parte do schema
 		if(!isset($this->_modelFields[$model->alias][$field]))
 			return false;
 
-		// caso seja um campo automágico, e estes seja ignorados
 		if($this->settings[$model->alias]['ignoreAutomagic'] && in_array($field, $this->cakeAutomagicFields))
 			return false;
 
-		// caso contrário é sim localizável
 		return true;
 	}
 }

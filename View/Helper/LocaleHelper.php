@@ -106,10 +106,7 @@ class LocaleHelper extends AppHelper
 	 */
 	public function number($value, $precision = 2, $thousands = false)
 	{
-		if(is_numeric($value))
-			$value = Localize::setLocale($this->settings['locale'])
+		return Localize::setLocale($this->settings['locale'])
 				->number($value, $precision, $thousands);
-
-		return $value;
 	}
 }
