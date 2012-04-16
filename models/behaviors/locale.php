@@ -70,7 +70,7 @@ class LocaleBehavior extends ModelBehavior
 		$this->model =& $model;
 		$this->settings = Set::merge($this->settings, $config);
 
-		$this->systemLang = substr(setlocale(LC_ALL, null), 0, 5);
+		$this->systemLang = substr(setlocale(LC_ALL, "0"), 0, 5);
 
 		$db =& ConnectionManager::getDataSource($this->model->useDbConfig);
 

@@ -55,7 +55,7 @@ class LocaleHelper extends AppHelper
 			$this->settings = array_merge($this->_settings, $settings);
 
 		if(empty($this->settings['locale']))
-			$this->settings['locale'] = substr(setlocale(LC_ALL, null), 0, 5);
+			$this->settings['locale'] = substr(setlocale(LC_ALL, "0"), 0, 5);
 	}
 
 	/**
