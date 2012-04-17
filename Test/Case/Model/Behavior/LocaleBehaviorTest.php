@@ -100,6 +100,19 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($result, $expected);
 	}
 
+	public function testFindActionConditionString()
+	{
+		$this->skipIf(!is_a($this->Employee->getDataSource(), 'Mysql'), 'Sintaxe da SQL válida apenas para Mysql');
+
+		$result = $this->Employee->find('all',
+			array('conditions' => array('birthday IS NULL'))
+		);
+
+		$expected = array();
+
+		$this->assertEquals($result, $expected);
+	}
+
 	public function testFindActionWithFloat()
 	{
 		$result = $this->Employee->find('all',

@@ -221,6 +221,10 @@ class LocaleBehavior extends ModelBehavior
 	{
 		$status = true;
 
+		// don't support directly written SQL
+		if(!is_array($query))
+			return true;
+
 		foreach($query as $field => &$value)
 		{
 			if(strtolower($field) === 'or' || strtolower($field) === 'and' || is_numeric($field))
