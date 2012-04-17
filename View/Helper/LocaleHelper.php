@@ -6,7 +6,6 @@ App::uses('Localize', 'Locale.Lib');
  *
  * Based on Juan Basso cake_ptbr plugin: http://github.com/jrbasso/cake_ptbr
  *
- * Code comments in brazilian portuguese.
  * -----
  * Helper para formatação localizada de datas, números decimais e valores monetários.
  *
@@ -27,7 +26,7 @@ App::uses('Localize', 'Locale.Lib');
 class LocaleHelper extends AppHelper
 {
 	/**
-	 * Configurações que sobreescrevem as definições do locale
+	 * All helper default options
 	 *
 	 * @var array
 	 */
@@ -36,12 +35,17 @@ class LocaleHelper extends AppHelper
 	);
 
 	/**
-	 * Configurações em uso
+	 * Current options
 	 *
 	 * @var array
 	 */
 	protected $settings = array();
 
+	/**
+	 *
+	 * @param View $View
+	 * @param array $settings
+	 */
 	public function __construct(View $View, $settings = array())
 	{
 		parent::__construct($View, $settings);
@@ -54,8 +58,11 @@ class LocaleHelper extends AppHelper
 	}
 
 	/**
+	 * Wrapper to Localize::date
 	 *
-	 * @param string $d - Uma data
+	 * @param string $date
+	 *
+	 * @return string Localized date
 	 */
 	public function date($date = null)
 	{
@@ -64,9 +71,12 @@ class LocaleHelper extends AppHelper
 	}
 
 	/**
+	 * Wrapper to Localize::dateTime
 	 *
 	 * @param string $dateTime
 	 * @param bool $seconds
+	 *
+	 * @return string Localized date with time
 	 */
 	public function dateTime($dateTime, $seconds = true)
 	{
@@ -75,10 +85,13 @@ class LocaleHelper extends AppHelper
 	}
 
 	/**
+	 * Wrapper to Localize::dateLiteral
 	 *
 	 * @param string $dateTime
 	 * @param string $displayTime
 	 * @param string $format
+	 *
+	 * @return string Localized date literal
 	 */
 	public function dateLiteral($dateTime, $displayTime = false, $format = null)
 	{
@@ -87,9 +100,11 @@ class LocaleHelper extends AppHelper
 	}
 
 	/**
+	 * Wrapper to Localize::currency
 	 *
 	 * @param number $value
-	 * @return string
+	 *
+	 * @return string Localized currency
 	 */
 	public function currency($value)
 	{
@@ -98,11 +113,13 @@ class LocaleHelper extends AppHelper
 	}
 
 	/**
+	 * Wrapper to Localize::number
 	 *
 	 * @param number $value
 	 * @param int $precision
 	 * @param boolean $thousands
-	 * @return number
+	 *
+	 * @return number Localized numeber
 	 */
 	public function number($value, $precision = 2, $thousands = false)
 	{

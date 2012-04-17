@@ -56,7 +56,7 @@ class Localize
 	 */
 	static public function setLocale($locale)
 	{
-		if(!setlocale(LC_ALL, $locale))
+		if(!setlocale(LC_ALL, array($locale . '.utf-8', $locale)))
 			throw new LocaleException("Locale {$locale} não disponível no seu sistema.");
 
 		self::$currentLocale = $locale;

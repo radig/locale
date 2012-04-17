@@ -1,5 +1,13 @@
 h1. CakePHP Locale
 
+That plugin allow your users to input localized data (like dates and decimals) while
+kept consistency at database-level.
+
+It's also included a Helper to output a non-localized data in users locale format.
+
+Some static libs are delivered in bundle and are used by Helper and Behavior,
+at the same time allow you to work with localized data where you need (like shells).
+----
 Este plugin permite que usuários de seu sistema visualizem e insiram
 dados em formatos locais/regionais ao mesmo tempo que garante a consistência
 dos dados convertendo-o para um formato aceito pelo banco de dados escolhido.
@@ -10,15 +18,16 @@ h2. Autor e Copyright
 * Licença MIT - Isto quer dizer que o código está disponível sem nenhuma garantia, ao mesmo tempo que
 você pode usa-lo de forma isolada ou em conjunto com seu próprio código.
 
-h2. Observações
+h2. Observações/Observations
 
-* Este behavior requer PHP versão >= 5.2.4
-* Compatível com CakePHP 2.0 e 2.1
-* Consulte os testes incluído no plugin para ver melhor seu funcionamento
+* PHP >= 5.2.4
+* CakePHP 2.0 e/and 2.1
+* Consulte os testes incluído no plugin para ver melhor seu funcionamento (Consult unit tests included)
 
-h2. Como usar
+h2. Como usar / How begin
 
 * A única configuração necessária é ter definido o locale da sua aplicação. Caso não tenha feito isso, basta utilizar a função _setlocale_
+* Only configuration is define the locale of application with:
 
 bc. setlocale(LC_ALL, 'pt_BR.utf-8', 'pt_BR', 'pt-br');
 

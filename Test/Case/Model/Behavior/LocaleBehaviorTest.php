@@ -2,7 +2,7 @@
 App::uses('LocaleBehavior', 'Locale.Model/Behavior');
 App::uses('LocaleException', 'Locale.Lib');
 /**
- * Testes do Behavior Locale
+ * Behavior Locale Tests
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
@@ -22,12 +22,12 @@ class Employee extends CakeTestModel
 		'birthday' => array(
 			'rule' => array('date'),
 			'allowEmpty' => false,
-			'requirerd' => true
+			'required' => true
 		),
 		'salary' => array(
 			'rule' => array('numeric'),
 			'allowEmpty' => false,
-			'requirerd' => true
+			'required' => true
 		)
 	);
 
@@ -70,10 +70,6 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->Employee = new Employee();
 	}
 
-	/**
-	 * Testa uma ação de busca, com o critério tendo
-	 * um valor de data localizada
-	 */
 	public function testFindActionWithDate()
 	{
 		$result = $this->Employee->find('all',
@@ -93,10 +89,6 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($result, $expected);
 	}
 
-	/**
-	 * Testa uma ação de busca, com o critério tendo
-	 * um valor de data (inválida) localizada
-	 */
 	public function testFindActionWithBogusDate()
 	{
 		$result = $this->Employee->find('all',
@@ -108,10 +100,6 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($result, $expected);
 	}
 
-	/**
-	 * Testa uma ação de busca, com o critério tendo
-	 * um valor decimal localizado
-	 */
 	public function testFindActionWithFloat()
 	{
 		$result = $this->Employee->find('all',
@@ -131,14 +119,10 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($result, $expected);
 	}
 
-	/**
-	 * Testa uma ação de busca, com o critério sendo um inteiro,
-	 * enquanto o banco espera um valor decimal/float
-	 */
 	public function testFindActionWithFloatWithoutDot()
 	{
 		$result = $this->Employee->find('all',
-			array('conditions' => array('salary' => '559'))
+			array('conditions' => array('salary' => '559.00'))
 		);
 
 		$expected = array(
@@ -146,7 +130,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 				'Employee' => array(
 					'id' => '1',
 					'birthday' => '1987-03-01',
-					'salary' => 559.00
+					'salary' => 559
 				)
 			)
 		);
@@ -154,10 +138,6 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($result, $expected);
 	}
 
-	/**
-	 * Testa o behavio para a ação save, com dados não localizados
-	 * (já no formato alvo - do DB)
-	 */
 	public function testSaveNonLocalizedDataAction()
 	{
 		$result = $this->Employee->save(
@@ -172,11 +152,21 @@ class LocaleBehaviorTest extends CakeTestCase {
 		);
 
 		$this->assertEquals($result, $expected);
+
+		$result = $this->Employee->save(
+			array('id' => '3', 'birthday' => '2001-01-01', 'salary' => 50.00)
+		);
+
+		$expected = array('Employee' => array(
+			'id' => '3',
+			'birthday' => '2001-01-01',
+			'salary' => '50.00'
+			)
+		);
+
+		$this->assertEquals($result, $expected);
 	}
 
-	/**
-	 * Testa o behavior para a ação save, com dados localizados
-	 */
 	public function testSaveLocalizedDataAction()
 	{
 		$result = $this->Employee->save(
@@ -200,9 +190,6 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertTrue(is_array($result));
 	}
 
-	/**
-	 * Testa salvar dados com dados mal-formatados
-	 */
 	public function testSaveWrongDate()
 	{
 		try{
@@ -218,10 +205,6 @@ class LocaleBehaviorTest extends CakeTestCase {
 		}
 	}
 
-	/**
-	 * Testa se o behavior converte todos os dados
-	 * salvos em um saveAll
-	 */
 	public function testSaveAllAction()
 	{
 		$result = $this->Employee->saveAll(
@@ -234,11 +217,6 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($result, true);
 	}
 
-	/**
-	 * Testa se os dados enviados pelo usuário serão
-	 * convertidos do formato local para um formato padrão (do DB)
-	 * e depois recuperados neste formato do DB.
-	 */
 	public function testSavedData()
 	{
 		$result = $this->Employee->saveAll(

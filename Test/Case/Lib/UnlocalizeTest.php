@@ -129,6 +129,7 @@ class UnlocalizeCase extends CakeTestCase
 	{
 		Unlocalize::setLocale('pt_BR');
 
+		$this->assertEqual(Unlocalize::decimal(23.32), '23.32');
 		$this->assertEqual(Unlocalize::decimal('25,32'), '25.32');
 		$this->assertEqual(Unlocalize::decimal('0,5'), '0.5');
 		$this->assertEqual(Unlocalize::decimal('1.300,52'), '1300.52');
@@ -139,6 +140,7 @@ class UnlocalizeCase extends CakeTestCase
 	{
 		Unlocalize::setLocale('en_US');
 
+		$this->assertEqual(Unlocalize::decimal(23.32), '23.32');
 		$this->assertEqual(Unlocalize::decimal('25.32'), '25.32');
 		$this->assertEqual(Unlocalize::decimal('0.5'), '0.5');
 		$this->assertEqual(Unlocalize::decimal('1,300.52'), '1300.52');
