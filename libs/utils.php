@@ -71,4 +71,68 @@ class Utils
 			return new DateTime();
 		}
 	}
+
+	/**
+	 * Replacement function for number_format, with extras:
+	 *  - Use truncate over round
+	 *  - Optional use of thousands
+	 *
+	 * @param mixed $value
+	 * @param int $precision
+	 * @param bool $thousands
+	 * @param string $decimalSep
+	 * @param string $thousandSep
+	 *
+	 * @return mixed String numeric representation in success and False boolean on
+	 * invalid numeric values.
+	 */
+	static public function numberFormat($value, $precision = null, $thousands = false, $decimalSep = '.', $thousandSep = ',')
+	{
+		if($precision === null)
+			$precision = 2;
+
+		$value = (string)$value;
+		$value = str_replace(',', '', $value);
+
+		if(empty($value) || !is_numeric($value))
+			return false;
+
+		$parts = explode('.', $value);
+
+		if(count($parts) == 2)
+		{
+			$int = (string)$parts[0];
+			$dec = str_pad((string)$parts[1], $precision, '0', STR_PAD_RIGHT);
+		}
+		else
+		{
+			$int = (string)$parts[0];
+			$dec = str_repeat('0', $precision);
+		}
+
+		$dec = substr($dec, 0, $precision);
+
+		if($thousands)
+		{
+			$copy = '';
+			for($l = strlen($int) - 1, $c = 0; $l >= 0; $l--, $c++)
+			{
+				$copy = $int[$l] . $copy;
+
+				if($c === 2 && $l > 0)
+				{
+					$c = -1;
+					$copy = $thousandSep . $copy;
+				}
+			}
+			$int = $copy;
+		}
+
+		$number = $int;
+
+		if(!empty($dec))
+			$number .= $decimalSep . $dec;
+
+		return $number;
+	}
 }

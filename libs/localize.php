@@ -56,8 +56,11 @@ class Localize
 	 */
 	static public function setLocale($locale)
 	{
-		if(!setlocale(LC_ALL, $locale))
+		if(!setlocale(LC_ALL, array($locale . '.utf-8', $locale)))
 			throw new LocaleException("Locale {$locale} não disponível no seu sistema.");
+
+		if(!isset(Formats::$output[$locale]))
+			throw new LocaleException("Localização '{$locale}' não possuí formatação definida. Tente adicionar o formato antes de usa-lo.");
 
 		self::$currentLocale = $locale;
 
@@ -146,14 +149,13 @@ class Localize
 	static public function currency($value)
 	{
 		$currentFormat = localeconv();
-		$value = str_replace(',', '', $value);
 
-		if(empty($value) || !is_numeric($value))
+		$number = Utils::numberFormat($value, 2, true, $currentFormat['mon_decimal_point'], $currentFormat['mon_thousands_sep']);
+
+		if($number === false)
 			return $value;
 
-		$currency = $currentFormat['currency_symbol'] . ' ' . self::number($value, 2, true);
-
-		return $currency;
+		return $currentFormat['currency_symbol'] . ' ' . $number;
 	}
 
 	/**
@@ -169,36 +171,12 @@ class Localize
 	 */
 	static function number($value, $precision = null, $thousands = false)
 	{
-		if($precision === null)
-			$precision = 2;
-
 		$currentFormat = localeconv();
 
-		$value = (string)$value;
-		$value = str_replace(',', '', $value);
+		$number = Utils::numberFormat($value, $precision, $thousands, $currentFormat['decimal_point'], $currentFormat['thousands_sep']);
 
-		$parts = explode('.', $value);
-
-		if(count($parts) == 2)
-		{
-			$int = (string)$parts[0];
-			$dec = str_pad((string)$parts[1], $precision, '0', STR_PAD_RIGHT);
-		}
-		else
-		{
-			$int = (string)$parts[0];
-			$dec = str_repeat('0', $precision);
-		}
-
-		$dec = substr($dec, 0, $precision);
-
-		if($thousands)
-			$int = number_format($int, 0, $currentFormat['decimal_point'], $currentFormat['thousands_sep']);
-
-		$number = $int;
-
-		if(!empty($dec))
-			$number .= $currentFormat['decimal_point'] . $dec;
+		if($number === false)
+			return $value;
 
 		return $number;
 	}

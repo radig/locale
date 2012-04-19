@@ -56,8 +56,11 @@ class Unlocalize
 	 */
 	static public function setLocale($locale)
 	{
-		if(!setlocale(LC_ALL, $locale))
+		if(!setlocale(LC_ALL, array($locale . '.utf-8', $locale)))
 			throw new LocaleException("Locale {$locale} não disponível no seu sistema.");
+
+		if(!isset(Formats::$input[$locale]))
+			throw new LocaleException("Localização '{$locale}' não possuí formatação definida. Tente adicionar o formato antes de usa-lo.");
 
 		self::$currentLocale = $locale;
 
@@ -134,12 +137,9 @@ class Unlocalize
 		if(empty($value))
 			return $value;
 
-		$oldLocale = setlocale(LC_NUMERIC, "0");
-		setlocale(LC_NUMERIC, self::$currentLocale);
+		$currentFormat = localeconv();
 
 		$v = (string)$value;
-
-		$currentFormat = localeconv();
 
 		$integer = $v;
 		$decimal = 0;
@@ -150,14 +150,12 @@ class Unlocalize
 			$decimal = substr($v, $decimalPoint + 1);
 
 			$integer = substr($v, 0, $decimalPoint);
-			$integer = preg_replace('/[\.|,]/', '', $integer);
+			$integer = str_replace(array($currentFormat['thousands_sep'], $currentFormat['mon_thousands_sep']), '', $integer);
 		}
 
 		$value = $integer;
 		if($decimal > 0)
 			$value .= '.' . $decimal;
-
-		setlocale(LC_NUMERIC, $oldLocale);
 
 		return $value;
 	}

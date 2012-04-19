@@ -69,4 +69,17 @@ class UnlocalizeCase extends CakeTestCase
 		$this->assertEqual(Utils::initDateTime('2012-04-16'), new DateTime('2012-04-16'));
 		$this->assertEqual(Utils::initDateTime('2012-04-16 09:37:45'), new DateTime('2012-04-16 09:37:45'));
 	}
+
+	public function testNumberFormat()
+	{
+		$this->assertEqual(Utils::numberFormat(1), '1.00');
+		$this->assertEqual(Utils::numberFormat('1.5'), '1.50');
+		$this->assertEqual(Utils::numberFormat(1.5), '1.50');
+		$this->assertEqual(Utils::numberFormat(1.534), '1.53');
+
+		$this->assertEqual(Utils::numberFormat(1.534, 3), '1.534');
+
+		$this->assertEqual(Utils::numberFormat('1,234.56'), '1234.56');
+		$this->assertEqual(Utils::numberFormat('1,234.56', null, true), '1,234.56');
+	}
 }
