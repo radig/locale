@@ -239,19 +239,7 @@ class LocaleBehavior extends ModelBehavior
 				continue;
 			}
 
-			// If condition have Model.field sintax
-			if(strpos($field, '.') !== false)
-			{
-				$ini = strpos($field, '.');
-				$len = strpos($field, ' ');
-
-				$modelName = substr($field, 0, $ini - 1);
-
-				if($len !== false)
-					$field = substr($field, $ini + 1, $len - $ini - 1);
-				else
-					$field = substr($field, $ini + 1);
-			}
+			list($modelName, $field) = Utils::parseModelField($field);
 
 			if($this->__isUnLocalizableField($this->_Model, $field, $value))
 			{
