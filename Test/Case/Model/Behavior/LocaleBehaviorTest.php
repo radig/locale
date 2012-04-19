@@ -280,9 +280,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 
 		$result = $Task->saveAll($task);
 
-		$expected = true;
-
-		$this->assertEquals($result, $expected);
+		$this->assertTrue($result);
 
 		$result = $Task->find('all');
 
@@ -335,7 +333,14 @@ class LocaleBehaviorTest extends CakeTestCase {
 		));
 
 		$expected = array(
-			0 => array(
+			array(
+				'Employee' => array(
+					'id' => 1,
+					'birthday' => '1987-03-01',
+					'salary' => '559'
+					)
+				),
+			array(
 				'Employee' => array(
 					'id' => 2,
 					'birthday' => '1987-09-01',

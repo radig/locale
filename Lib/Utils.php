@@ -135,4 +135,38 @@ class Utils
 
 		return $number;
 	}
+
+	/**
+	 * Extract Model and field name from a conditions
+	 * consult string.
+	 *
+	 * @param string $raw Query correspondent field
+	 * @return array Two position array with Model and field name
+	 * respectively
+	 */
+	static public function parseModelField($raw)
+	{
+		$validField = '/^([a-zA-Z][a-zA-Z0-9]*)(\\.[a-zA-Z][a-zA-Z0-9]*)?/';
+		$matched = array();
+
+		$field = $raw;
+		$modelName = '';
+
+		if(preg_match($validField, $raw, $matched) === 1)
+		{
+			$field = $matched[0];
+
+			// If condition have Model.field sintax
+			if(strpos($field, '.') !== false)
+			{
+				$ini = strpos($field, '.');
+
+				$modelName = substr($field, 0, $ini);
+				$field = substr($field, $ini + 1);
+			}
+
+		}
+
+		return array($modelName, $field);
+	}
 }

@@ -1,6 +1,6 @@
 <?php
 App::uses('Unlocalize', 'Locale.Lib');
-
+App::uses('Utils', 'Locale.Lib');
 /**
  * Behavior to automagic convert dates, numbers and currency from
  * any localized format to DB format for consistency.
@@ -76,8 +76,6 @@ class LocaleBehavior extends ModelBehavior
 			'ignoreAutomagic' => true
 		);
 
-		$this->settings = Set::merge($this->settings, $config);
-
 		$this->systemLang = substr(setlocale(LC_ALL, "0"), 0, 5);
 
 		$this->__checkConfig($_Model, $config);
@@ -90,9 +88,9 @@ class LocaleBehavior extends ModelBehavior
 	 * @param array $config
 	 * @return void
 	 */
-	private function __checkConfig(Model $model, $config = array())
+	private function __checkConfig(Model $model, $config = null)
 	{
-		if(empty($config))
+		if($config !== null || !isset($this->settings[$model->alias]))
 			$this->settings[$model->alias] = Set::merge($this->_defaultSettings, $config);
 
 		if(!isset($this->_modelFields[$model->alias]))
@@ -233,19 +231,7 @@ class LocaleBehavior extends ModelBehavior
 				continue;
 			}
 
-			// If condition have Model.field sintax
-			if(strpos($field, '.') !== false)
-			{
-				$ini = strpos($field, '.');
-				$len = strpos($field, ' ');
-
-				$modelName = substr($field, 0, $ini - 1);
-
-				if($len !== false)
-					$field = substr($field, $ini + 1, $len - $ini - 1);
-				else
-					$field = substr($field, $ini + 1);
-			}
+			list($modelName, $field) = Utils::parseModelField($field);
 
 			if($this->__isUnLocalizableField($this->_Model, $field, $value))
 			{

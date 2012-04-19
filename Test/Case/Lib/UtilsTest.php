@@ -85,4 +85,21 @@ class UtilsCase extends CakeTestCase
 		$this->assertEqual(Utils::numberFormat('1,234.56'), '1234.56');
 		$this->assertEqual(Utils::numberFormat('1,234.56', null, true), '1,234.56');
 	}
+
+	public function testParseModelField()
+	{
+		$this->assertEqual(Utils::parseModelField('ModelName.field'), array('ModelName', 'field'));
+		$this->assertEqual(Utils::parseModelField('Model0Name.field'), array('Model0Name', 'field'));
+		$this->assertEqual(Utils::parseModelField('ModelName.field <'), array('ModelName', 'field'));
+		$this->assertEqual(Utils::parseModelField('ModelName.field >='), array('ModelName', 'field'));
+		$this->assertEqual(Utils::parseModelField('ModelName.field %'), array('ModelName', 'field'));
+
+		$this->assertEqual(Utils::parseModelField('field'), array('', 'field'));
+		$this->assertEqual(Utils::parseModelField('field <'), array('', 'field'));
+		$this->assertEqual(Utils::parseModelField('field >='), array('', 'field'));
+		$this->assertEqual(Utils::parseModelField('field %'), array('', 'field'));
+
+		// Invalid formats
+		$this->assertEqual(Utils::parseModelField('Model_Name.field'), array('', 'Model'));
+	}
 }
