@@ -154,7 +154,6 @@ class LocaleBehavior extends ModelBehavior
 					{
 						case 'date':
 						case 'datetime':
-						case 'time':
 						case 'timestamp':
 							$status = ($status && $this->__dateConvert($this->model->data[$this->model->name][$field], $this->model->_schema[$field]['type']));
 							break;
@@ -202,7 +201,6 @@ class LocaleBehavior extends ModelBehavior
 					{
 						case 'date':
 						case 'datetime':
-						case 'time':
 						case 'timestamp':
 							if(is_array($value))
 								foreach($value as &$v)
@@ -243,6 +241,10 @@ class LocaleBehavior extends ModelBehavior
 		try
 		{
 			$d = Unlocalize::setLocale($this->systemLang)->date($value);
+
+            if(empty($d))
+                return $value;
+
 			$dt = new DateTime($d);
 			$value = $dt->format($this->typesFormat[$type]);
 		}
