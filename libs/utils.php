@@ -161,7 +161,7 @@ class Utils
 			{
 				$ini = strpos($field, '.');
 
-				$modelName = substr($field, 0, $ini - 1);
+				$modelName = substr($field, 0, $ini);
 				$field = substr($field, $ini + 1);
 			}
 
