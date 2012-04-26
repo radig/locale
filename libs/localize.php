@@ -145,6 +145,13 @@ class Localize
 	 */
 	static public function currency($value)
 	{
+		if(!is_string($value))
+		{
+			setlocale(LC_NUMERIC, 'en_US');
+			$value = (string)$value;
+			setlocale(LC_NUMERIC, self::$currentLocale);
+		}
+
 		$currentFormat = localeconv();
 		$value = str_replace(',', '', $value);
 
@@ -171,6 +178,13 @@ class Localize
 	{
 		if($precision === null)
 			$precision = 2;
+
+		if(!is_string($value))
+		{
+			setlocale(LC_NUMERIC, 'en_US');
+			$value = (string)$value;
+			setlocale(LC_NUMERIC, self::$currentLocale);
+		}
 
 		$currentFormat = localeconv();
 

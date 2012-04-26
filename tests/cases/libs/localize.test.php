@@ -116,6 +116,9 @@ class LocalizeCase extends CakeTestCase
 	{
 		Localize::setLocale('pt_BR');
 
+		$val = 12.21;
+
+		$this->assertEqual(Localize::currency($val), 'R$ 12,21');
 		$this->assertEqual(Localize::currency('12.45'), 'R$ 12,45');
 		$this->assertEqual(Localize::currency('1,234.45'), 'R$ 1.234,45');
 		$this->assertEqual(Localize::currency('1,234,567.45'), 'R$ 1.234.567,45');
