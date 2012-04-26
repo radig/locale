@@ -82,11 +82,12 @@ class Utils
 	 * @param bool $thousands
 	 * @param string $decimalSep
 	 * @param string $thousandSep
+	 * @param bool $round If round or truncate decimal part number
 	 *
 	 * @return mixed String numeric representation in success and False boolean on
 	 * invalid numeric values.
 	 */
-	static public function numberFormat($value, $precision = null, $thousands = false, $decimalSep = '.', $thousandSep = ',')
+	static public function numberFormat($value, $precision = null, $thousands = false, $decimalSep = '.', $thousandSep = ',', $round = false)
 	{
 		if($precision === null)
 			$precision = 2;
@@ -117,7 +118,15 @@ class Utils
 			$dec = str_repeat('0', $precision);
 		}
 
-		$dec = substr($dec, 0, $precision);
+		if($round)
+		{
+			$dec = round('0.' . $dec, $precision);
+			$dec = substr($dec, 2, $precision);
+		}
+		else
+		{
+			$dec = substr($dec, 0, $precision);
+		}
 
 		if($thousands)
 		{

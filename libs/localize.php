@@ -150,7 +150,7 @@ class Localize
 	{
 		$currentFormat = localeconv();
 
-		$number = Utils::numberFormat($value, 2, true, $currentFormat['mon_decimal_point'], $currentFormat['mon_thousands_sep']);
+		$number = Utils::numberFormat($value, 2, true, $currentFormat['mon_decimal_point'], $currentFormat['mon_thousands_sep'], true);
 
 		if($number === false)
 			return $value;
