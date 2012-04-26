@@ -86,6 +86,15 @@ class UtilsCase extends CakeTestCase
 		$this->assertEqual(Utils::numberFormat('1,234.56', null, true), '1,234.56');
 	}
 
+	public function testLocalizedNumberFormat()
+	{
+		setlocale(LC_NUMERIC, "pt_BR");
+		$val = 12.21;
+
+		$this->assertEqual((string)$val, '12,21');
+		$this->assertEqual(Utils::numberFormat($val), '12.21');
+	}
+
 	public function testParseModelField()
 	{
 		$this->assertEqual(Utils::parseModelField('ModelName.field'), array('ModelName', 'field'));

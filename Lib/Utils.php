@@ -91,7 +91,14 @@ class Utils
 		if($precision === null)
 			$precision = 2;
 
-		$value = (string)$value;
+		if(!is_string($value))
+		{
+			$oldLocale = setlocale(LC_NUMERIC, "");
+			setlocale(LC_NUMERIC, 'en_US');
+			$value = (string)$value;
+			setlocale(LC_NUMERIC, $oldLocale);
+		}
+
 		$value = str_replace(',', '', $value);
 
 		if(empty($value) || !is_numeric($value))
