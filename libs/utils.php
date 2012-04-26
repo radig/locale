@@ -71,4 +71,109 @@ class Utils
 			return new DateTime();
 		}
 	}
+
+	/**
+	 * Replacement function for number_format, with extras:
+	 *  - Use truncate over round
+	 *  - Optional use of thousands
+	 *
+	 * @param mixed $value
+	 * @param int $precision
+	 * @param bool $thousands
+	 * @param string $decimalSep
+	 * @param string $thousandSep
+	 *
+	 * @return mixed String numeric representation in success and False boolean on
+	 * invalid numeric values.
+	 */
+	static public function numberFormat($value, $precision = null, $thousands = false, $decimalSep = '.', $thousandSep = ',')
+	{
+		if($precision === null)
+			$precision = 2;
+
+		if(!is_string($value))
+		{
+			$oldLocale = setlocale(LC_NUMERIC, "");
+			setlocale(LC_NUMERIC, 'en_US');
+			$value = (string)$value;
+			setlocale(LC_NUMERIC, $oldLocale);
+		}
+
+		$value = str_replace(',', '', $value);
+
+		if(empty($value) || !is_numeric($value))
+			return false;
+
+		$parts = explode('.', $value);
+
+		if(count($parts) == 2)
+		{
+			$int = (string)$parts[0];
+			$dec = str_pad((string)$parts[1], $precision, '0', STR_PAD_RIGHT);
+		}
+		else
+		{
+			$int = (string)$parts[0];
+			$dec = str_repeat('0', $precision);
+		}
+
+		$dec = substr($dec, 0, $precision);
+
+		if($thousands)
+		{
+			$copy = '';
+			for($l = strlen($int) - 1, $c = 0; $l >= 0; $l--, $c++)
+			{
+				$copy = $int[$l] . $copy;
+
+				if($c === 2 && $l > 0)
+				{
+					$c = -1;
+					$copy = $thousandSep . $copy;
+				}
+			}
+			$int = $copy;
+		}
+
+		$number = $int;
+
+		if(!empty($dec))
+			$number .= $decimalSep . $dec;
+
+		return $number;
+	}
+
+	/**
+	 * Extract Model and field name from a conditions
+	 * consult string.
+	 *
+	 * @param string $raw Query correspondent field
+	 * @return array Two position array with Model and field name
+	 * respectively
+	 */
+	static public function parseModelField($raw)
+	{
+		$validField = '/^([a-zA-Z][a-zA-Z0-9]*)(\\.[a-zA-Z][a-zA-Z0-9]*)?/';
+		$matched = array();
+
+		$field = $raw;
+		$modelName = '';
+
+		if(preg_match($validField, $raw, $matched) === 1)
+		{
+			$field = $matched[0];
+
+			// If condition have Model.field sintax
+			if(strpos($field, '.') !== false)
+			{
+				$ini = strpos($field, '.');
+
+				$modelName = substr($field, 0, $ini);
+				$field = substr($field, $ini + 1);
+			}
+
+		}
+
+		return array($modelName, $field);
+	}
 }
