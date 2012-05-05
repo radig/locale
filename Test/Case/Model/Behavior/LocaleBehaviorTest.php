@@ -41,8 +41,8 @@ class Task extends CakeTestModel
 	public $validate = array(
 		'term' => array(
 			'rule' => array('date'),
-			'allowEmpty' => false,
-			'required' => true
+			'allowEmpty' => true,
+			'required' => false
 		),
 		'title' => array(
 			'rule' => array('minLength', 4),
@@ -178,6 +178,26 @@ class LocaleBehaviorTest extends CakeTestCase {
 		);
 
 		$this->assertEquals($result, $expected);
+	}
+
+	public function testSaveNullDate()
+	{
+		$this->Task = new Task();
+
+		$result = $this->Task->save(
+			array('id' => 5, 'title' => 'bla bla', 'term' => null, 'employee_id' => 1)
+		);
+
+		$expected = array(
+			'Task' => array(
+				'id' => '5',
+				'title' => 'bla bla',
+				'term' => null,
+				'employee_id' => 1
+			)
+		);
+
+		$this->assertEquals($expected, $result);
 	}
 
 	public function testSaveLocalizedDataAction()
