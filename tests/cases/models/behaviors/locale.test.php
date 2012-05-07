@@ -38,8 +38,8 @@ class Task extends CakeTestModel
 	public $validate = array(
 		'term' => array(
 			'rule' => array('date'),
-			'allowEmpty' => false,
-			'required' => true
+			'allowEmpty' => true,
+			'required' => false
 		),
 		'title' => array(
 			'rule' => array('minLength', 4),
@@ -169,6 +169,26 @@ class LocaleTest extends CakeTestCase {
 
 		$this->assertTrue($result);
 		$this->Employee->delete(20);
+	}
+
+	public function testSaveNullDate()
+	{
+		$this->Task = new Task();
+
+		$result = $this->Task->save(
+			array('id' => 5, 'title' => 'bla bla', 'term' => null, 'employee_id' => 1)
+		);
+
+		$expected = array(
+			'Task' => array(
+				'id' => '5',
+				'title' => 'bla bla',
+				'term' => null,
+				'employee_id' => 1
+			)
+		);
+
+		$this->assertEqual($expected, $result);
 	}
 
 	/**
@@ -349,9 +369,19 @@ class LocaleTest extends CakeTestCase {
 
 	public function testFindWithNullDate()
 	{
+		$nullEquivalent = '0000-00-00';
+
+		$ds = $this->Employee->getDatasource();
+		$type = strtolower($ds->description);
+
+		if(strpos($type, 'mysql') === false)
+		{
+			$nullEquivalent = null;
+		}
+
 		$result = $this->Employee->find('all', array(
 			'conditions' => array(
-				'birthday' => '0000-00-00'
+				'birthday' => $nullEquivalent
 			)
 		));
 
@@ -362,9 +392,19 @@ class LocaleTest extends CakeTestCase {
 
 	public function testFindArrayOfDates()
 	{
+		$nullEquivalent = '0000-00-00';
+
+		$ds = $this->Employee->getDatasource();
+		$type = strtolower($ds->description);
+
+		if(strpos($type, 'mysql') === false)
+		{
+			$nullEquivalent = null;
+		}
+
 		$result = $this->Employee->find('all', array(
 			'conditions' => array(
-				'birthday' => array('0000-00-00', '1987-01-11')
+				'birthday' => array($nullEquivalent, '1987-01-11')
 			)
 		));
 
