@@ -277,7 +277,7 @@ class LocaleBehavior extends ModelBehavior
 
 		try
 		{
-			$d = Unlocalize::setLocale($this->systemLang)->date($value);
+			$d = Unlocalize::setLocale($this->systemLang)->date($value, ($type != 'date'));
 
 			if(empty($d))
 				return true;

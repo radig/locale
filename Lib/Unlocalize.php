@@ -194,7 +194,12 @@ class Unlocalize
 		$value = implode('-', $date);
 
 		if(isset($time))
+		{
+			if(strlen($time) === 6)
+				$time .= '00';
+
 			$value .= ' ' . $time;
+		}
 
 		return $value;
 	}

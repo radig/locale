@@ -115,6 +115,8 @@ class UnlocalizeCase extends CakeTestCase
 
 		$this->assertEqual(Unlocalize::date('01/03/1987 12:03:01', true), '1987-03-01 12:03:01');
 		$this->assertEqual(Unlocalize::date('1/3/1987 23:59:59', true), '1987-03-01 23:59:59');
+
+		$this->assertEqual(Unlocalize::date('1/3/1987 23:59', true), '1987-03-01 23:59:00');
 	}
 
 	public function testUsDate()
