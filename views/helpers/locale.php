@@ -54,8 +54,22 @@ class LocaleHelper extends AppHelper
 		if(isset($settings) && is_array($settings))
 			$this->settings = array_merge($this->_settings, $settings);
 
-		if(empty($this->settings['locale']))
+		if(!empty($this->settings['locale']))
+			return;
+
+		$os = strtolower(php_uname('s'));
+
+		if(strpos($os, 'windows') === false)
+		{
 			$this->settings['locale'] = substr(setlocale(LC_ALL, "0"), 0, 5);
+			return;
+		}
+
+		$winLocale = explode('.', setlocale(LC_CTYPE, "0"));
+		$locale = array_search($winLocale[0], Formats::$windowsLocaleMap);
+
+		if($locale !== false)
+			$this->settings['locale'] = $locale;
 	}
 
 	/**
