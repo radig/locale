@@ -17,6 +17,12 @@ App::uses('LocaleException', 'Locale.Lib');
  */
 class Formats
 {
+	static public $windowsLocaleMap = array(
+		'pt_BR' => 'Portuguese_Brazil',
+		'en_US' => 'English_United States'
+	);
+
+
 	/**
 	 * Suported input formats
 	 *

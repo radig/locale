@@ -76,7 +76,20 @@ class LocaleBehavior extends ModelBehavior
 			'ignoreAutomagic' => true
 		);
 
-		$this->systemLang = substr(setlocale(LC_ALL, "0"), 0, 5);
+		$os = strtolower(php_uname('s'));
+
+		if(strpos($os, 'windows') === false)
+			$this->systemLang = substr(setlocale(LC_ALL, "0"), 0, 5);
+		else
+		{
+			$winLocale = explode('.', setlocale(LC_CTYPE, "0"));
+			$locale = array_search($winLocale[0], Formats::$windowsLocaleMap);
+
+			if($locale !== false)
+				$this->systemLang = $locale;
+			else
+				$this->systemLang = null;
+		}
 
 		$this->__checkConfig($_Model, $config);
 	}
