@@ -121,7 +121,7 @@ class Utils
 		if($round)
 		{
 			$dec = round('0.' . $dec, $precision);
-			$dec = substr($dec, 2, $precision);
+			$dec = str_pad(substr($dec, 2, $precision), $precision, '0', STR_PAD_RIGHT);;
 		}
 		else
 		{

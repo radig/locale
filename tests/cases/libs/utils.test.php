@@ -84,6 +84,8 @@ class UnlocalizeCase extends CakeTestCase
 
 		$this->assertEqual(Utils::numberFormat('1,234.56'), '1234.56');
 		$this->assertEqual(Utils::numberFormat('1,234.56', null, true), '1,234.56');
+
+		$this->assertEqual(Utils::numberFormat('0.5', 2, true, '.', ',', true), '0.50');
 	}
 
 	public function testLocalizedNumberFormat()
