@@ -1,6 +1,7 @@
 <?php
 App::uses('Unlocalize', 'Locale.Lib');
 App::uses('Utils', 'Locale.Lib');
+App::uses('Formats', 'Locale.Lib');
 /**
  * Behavior to automagic convert dates, numbers and currency from
  * any localized format to DB format for consistency.

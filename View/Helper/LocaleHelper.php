@@ -1,6 +1,7 @@
 <?php
 App::uses('AppHelper', 'View/Helper');
 App::uses('Localize', 'Locale.Lib');
+App::uses('Formats', 'Locale.Lib');
 /**
  * Helper to localized formatting dates, numbers and currency from databases format.
  *
