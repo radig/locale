@@ -2,6 +2,7 @@
 App::import('CORE', 'ConnectionManager');
 App::import('Lib', 'Locale.Unlocalize');
 App::import('Lib', 'Locale.Utils');
+App::import('Lib', 'Locale.Formats');
 /**
  * Behavior to automagic convert dates, numbers and currency from
  * any localized format to DB format for security store.
