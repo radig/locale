@@ -71,7 +71,7 @@ class LocaleBehavior extends ModelBehavior
 	 *
 	 * @see ModelBehavior::setup()
 	 */
-	public function setup(Model &$_Model, $config = array())
+	public function setup(Model $_Model, $config = array())
 	{
 		$this->settings = array(
 			'ignoreAutomagic' => true
@@ -113,7 +113,7 @@ class LocaleBehavior extends ModelBehavior
 		if(isset($this->typesFormat[$model->useDbConfig]))
 			return;
 
-		$db =& $model->getDataSource();
+		$db = $model->getDataSource();
 		$this->typesFormat[$model->useDbConfig] = array();
 
 		foreach($db->columns as $type => $info)
@@ -127,10 +127,10 @@ class LocaleBehavior extends ModelBehavior
 	 *
 	 * @see ModelBehavior::beforeValidate()
 	 */
-	public function beforeValidate(Model &$model)
+	public function beforeValidate(Model $model)
 	{
 		parent::beforeValidate($model);
-		$this->_Model =& $model;
+		$this->_Model = $model;
 
 		$this->__checkConfig($model);
 
@@ -141,10 +141,10 @@ class LocaleBehavior extends ModelBehavior
 	 *
 	 * @see ModelBehavior::beforeSave()
 	 */
-	public function beforeSave(Model &$model)
+	public function beforeSave(Model $model)
 	{
 		parent::beforeSave($model);
-		$this->_Model =& $model;
+		$this->_Model = $model;
 
 		$this->__checkConfig($model);
 
@@ -155,10 +155,10 @@ class LocaleBehavior extends ModelBehavior
 	 *
 	 * @see ModelBehavior::beforeFind()
 	 */
-	public function beforeFind(&$model, $query)
+	public function beforeFind(Model $model, $query)
 	{
 		parent::beforeFind($model, $query);
-		$this->_Model =& $model;
+		$this->_Model = $model;
 
 		$this->__checkConfig($model);
 
