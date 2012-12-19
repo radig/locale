@@ -40,7 +40,7 @@ class LocaleHelper extends AppHelper
 	 *
 	 * @var array
 	 */
-	protected $settings = array();
+	public $settings = array();
 
 	/**
 	 *
