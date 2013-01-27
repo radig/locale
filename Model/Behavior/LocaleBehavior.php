@@ -16,12 +16,12 @@ App::uses('Formats', 'Locale.Lib');
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009-2012, Radig - Soluções em TI, www.radig.com.br
+ * @copyright 2009-2013, Radig - Soluções em TI, www.radig.com.br
  * @link http://www.radig.com.br
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  *
- * @package Radig.Locale
- * @subpackage Radig.Locale.Model.Behavior
+ * @package Plugin.Locale
+ * @subpackage Plugin.Locale.Model.Behavior
  */
 class LocaleBehavior extends ModelBehavior
 {
@@ -71,25 +71,24 @@ class LocaleBehavior extends ModelBehavior
 	 *
 	 * @see ModelBehavior::setup()
 	 */
-	public function setup(Model $_Model, $config = array())
-	{
+	public function setup(Model $_Model, $config = array()) {
 		$this->settings = array(
 			'ignoreAutomagic' => true
 		);
 
 		$os = strtolower(php_uname('s'));
 
-		if(strpos($os, 'windows') === false)
+		if (strpos($os, 'windows') === false) {
 			$this->systemLang = substr(setlocale(LC_ALL, "0"), 0, 5);
-		else
-		{
+		} else {
 			$winLocale = explode('.', setlocale(LC_CTYPE, "0"));
 			$locale = array_search($winLocale[0], Formats::$windowsLocaleMap);
 
-			if($locale !== false)
+			$this->systemLang = null;
+
+			if($locale !== false) {
 				$this->systemLang = $locale;
-			else
-				$this->systemLang = null;
+			}
 		}
 
 		$this->__checkConfig($_Model, $config);
@@ -102,24 +101,26 @@ class LocaleBehavior extends ModelBehavior
 	 * @param array $config
 	 * @return void
 	 */
-	private function __checkConfig(Model $model, $config = null)
-	{
-		if($config !== null || !isset($this->settings[$model->alias]))
+	private function __checkConfig(Model $model, $config = null) {
+		if ($config !== null || !isset($this->settings[$model->alias])) {
 			$this->settings[$model->alias] = Set::merge($this->_defaultSettings, $config);
+		}
 
-		if(!isset($this->_modelFields[$model->alias]))
+		if (!isset($this->_modelFields[$model->alias])) {
 			$this->_modelFields[$model->alias] = @$model->getColumnTypes();
+		}
 
-		if(isset($this->typesFormat[$model->useDbConfig]))
+		if (isset($this->typesFormat[$model->useDbConfig])) {
 			return;
+		}
 
 		$db = $model->getDataSource();
 		$this->typesFormat[$model->useDbConfig] = array();
 
-		foreach($db->columns as $type => $info)
-		{
-			if(isset($info['format']))
+		foreach($db->columns as $type => $info) {
+			if(isset($info['format'])) {
 				$this->typesFormat[$model->useDbConfig][$type] = $info['format'];
+			}
 		}
 	}
 
@@ -127,8 +128,7 @@ class LocaleBehavior extends ModelBehavior
 	 *
 	 * @see ModelBehavior::beforeValidate()
 	 */
-	public function beforeValidate(Model $model)
-	{
+	public function beforeValidate(Model $model) {
 		parent::beforeValidate($model);
 		$this->_Model = $model;
 
@@ -141,8 +141,7 @@ class LocaleBehavior extends ModelBehavior
 	 *
 	 * @see ModelBehavior::beforeSave()
 	 */
-	public function beforeSave(Model $model)
-	{
+	public function beforeSave(Model $model) {
 		parent::beforeSave($model);
 		$this->_Model = $model;
 
@@ -155,8 +154,7 @@ class LocaleBehavior extends ModelBehavior
 	 *
 	 * @see ModelBehavior::beforeFind()
 	 */
-	public function beforeFind(Model $model, $query)
-	{
+	public function beforeFind(Model $model, $query) {
 		parent::beforeFind($model, $query);
 		$this->_Model = $model;
 
@@ -175,15 +173,12 @@ class LocaleBehavior extends ModelBehavior
 	 *
 	 * @return bool $status True if sucess, false otherwise.
 	 */
-	public function localizeData(&$query = null)
-	{
-		if(isset($this->_Model->data) && !empty($this->_Model->data))
-		{
+	public function localizeData(&$query = null) {
+		if (isset($this->_Model->data) && !empty($this->_Model->data)) {
 			return $this->__modelLocalize();
 		}
 
-		if(!empty($query) && is_array($query))
-		{
+		if (!empty($query) && is_array($query)) {
 			return $this->__queryLocalize($query);
 		}
 
@@ -195,16 +190,12 @@ class LocaleBehavior extends ModelBehavior
 	 *
 	 * @return bool $success
 	 */
-	private function __modelLocalize()
-	{
+	private function __modelLocalize() {
 		$status = true;
 
-		foreach($this->_Model->data[$this->_Model->alias] as $field => $value)
-		{
-			if($this->__isUnLocalizableField($this->_Model, $field))
-			{
-				switch($this->_modelFields[$this->_Model->alias][$field])
-				{
+		foreach ($this->_Model->data[$this->_Model->alias] as $field => $value) {
+			if ($this->__isUnLocalizableField($this->_Model, $field)) {
+				switch ($this->_modelFields[$this->_Model->alias][$field]) {
 					case 'date':
 					case 'datetime':
 					case 'timestamp':
@@ -229,28 +220,24 @@ class LocaleBehavior extends ModelBehavior
 	 * @param array $query Model->find conditions
 	 * @return bool $success
 	 */
-	private function __queryLocalize(&$query)
-	{
+	private function __queryLocalize(&$query) {
 		$status = true;
 
 		// don't support directly written SQL
-		if(!is_array($query))
+		if (!is_array($query)) {
 			return true;
+		}
 
-		foreach($query as $field => &$value)
-		{
-			if(strtolower($field) === 'or' || strtolower($field) === 'and' || is_numeric($field))
-			{
+		foreach ($query as $field => &$value) {
+			if (strtolower($field) === 'or' || strtolower($field) === 'and' || is_numeric($field)) {
 				$status = $status && $this->__queryLocalize($value);
 				continue;
 			}
 
 			list($modelName, $field) = Utils::parseModelField($field);
 
-			if($this->__isUnLocalizableField($this->_Model, $field, $value))
-			{
-				switch($this->_modelFields[$this->_Model->alias][$field])
-				{
+			if ($this->__isUnLocalizableField($this->_Model, $field, $value)) {
+				switch ($this->_modelFields[$this->_Model->alias][$field]) {
 					case 'date':
 					case 'datetime':
 					case 'timestamp':
@@ -283,24 +270,23 @@ class LocaleBehavior extends ModelBehavior
 	 * @param string $type A valid schema date type, like: 'date', 'datetime' or 'timestamp'
 	 * @return bool $success
 	 */
-	private function __dateConvert(&$value, $type = 'date')
-	{
+	private function __dateConvert(&$value, $type = 'date') {
 		// both have same string format
-		if($type == 'datetime')
+		if ($type == 'datetime') {
 			$type = 'timestamp';
+		}
 
-		try
-		{
+		try {
 			$d = Unlocalize::setLocale($this->systemLang)->date($value, ($type != 'date'));
 
-			if(empty($d))
+			if(empty($d)) {
 				return true;
+			}
 
 			$dt = new DateTime($d);
 			$value = $dt->format($this->typesFormat[$this->_Model->useDbConfig][$type]);
 		}
-		catch(Exception $e)
-		{
+		catch (Exception $e) {
 			return false;
 		}
 
@@ -317,8 +303,7 @@ class LocaleBehavior extends ModelBehavior
 	 *
 	 * @return string $value
 	 */
-	private function __decimal(&$value)
-	{
+	private function __decimal(&$value) {
 		$value = Unlocalize::setLocale($this->systemLang)->decimal($value);
 
 		return true;
@@ -331,22 +316,26 @@ class LocaleBehavior extends ModelBehavior
 	 * @param string $field
 	 * @return bool
 	 */
-	private function __isUnLocalizableField($model, $field, $value = null)
-	{
-		if(!isset($this->settings[$model->alias]))
+	private function __isUnLocalizableField($model, $field, $value = null) {
+		if (!isset($this->settings[$model->alias])) {
 			return false;
+		}
 
-		if($value === null && isset($model->data[$model->alias][$field]) && empty($model->data[$model->alias][$field]))
+		if ($value === null && isset($model->data[$model->alias][$field]) && empty($model->data[$model->alias][$field])) {
 			return false;
+		}
 
-		if($value !== null && empty($value))
+		if ($value !== null && empty($value)) {
 			return false;
+		}
 
-		if(!isset($this->_modelFields[$model->alias][$field]))
+		if (!isset($this->_modelFields[$model->alias][$field])) {
 			return false;
+		}
 
-		if($this->settings[$model->alias]['ignoreAutomagic'] && in_array($field, $this->cakeAutomagicFields))
+		if ($this->settings[$model->alias]['ignoreAutomagic'] && in_array($field, $this->cakeAutomagicFields)) {
 			return false;
+		}
 
 		return true;
 	}

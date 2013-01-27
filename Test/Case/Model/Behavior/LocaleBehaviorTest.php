@@ -7,82 +7,74 @@ App::uses('LocaleException', 'Locale.Lib');
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009-2012, Radig - Soluções em TI, www.radig.com.br
+ * @copyright 2009-2013, Radig - Soluções em TI, www.radig.com.br
  * @link http://www.radig.com.br
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  *
- * @package Radig.Locale
- * @subpackage Radig.Locale.Test.Case.Model.Behavior
+ * @package Plugin.Locale
+ * @subpackage Plugin.Locale.Test.Case.Model.Behavior
  */
-if(!class_exists('Employee'))
+
+class Employee extends CakeTestModel
 {
-	class Employee extends CakeTestModel
-	{
-		public $name = 'Employee';
+	public $name = 'Employee';
 
-		public $validate = array(
-			'birthday' => array(
-				'rule' => array('date'),
-				'allowEmpty' => false,
-				'required' => true
-			),
-			'salary' => array(
-				'rule' => array('numeric'),
-				'allowEmpty' => false,
-				'required' => true
-			)
-		);
+	public $validate = array(
+		'birthday' => array(
+			'rule' => array('date'),
+			'allowEmpty' => false,
+			'required' => true
+		),
+		'salary' => array(
+			'rule' => array('numeric'),
+			'allowEmpty' => false,
+			'required' => true
+		)
+	);
 
-		public $actsAs = array('Locale.Locale');
-	}
+	public $actsAs = array('Locale.Locale');
 }
 
-if(!class_exists('Task'))
+class Task extends CakeTestModel
 {
-	class Task extends CakeTestModel
-	{
-		public $name = 'Task';
+	public $name = 'Task';
 
-		public $validate = array(
-			'term' => array(
-				'rule' => array('date'),
-				'allowEmpty' => true,
-				'required' => false
-			),
-			'title' => array(
-				'rule' => array('minLength', 4),
-				'allowEmpty' => false,
-				'required' => true
-			)
-		);
+	public $validate = array(
+		'term' => array(
+			'rule' => array('date'),
+			'allowEmpty' => true,
+			'required' => false
+		),
+		'title' => array(
+			'rule' => array('minLength', 4),
+			'allowEmpty' => false,
+			'required' => true
+		)
+	);
 
-		public $belongsTo = array('Employee');
+	public $belongsTo = array('Employee');
 
-		public $actsAs = array('Locale.Locale');
-	}
+	public $actsAs = array('Locale.Locale');
 }
 
-if(!class_exists('Event'))
+class Event extends CakeTestModel
 {
-	class Event extends CakeTestModel
-	{
-		public $name = 'Event';
+	public $name = 'Event';
 
-		public $validate = array(
-			'when' => array(
-				'rule' => array('datetime'),
-				'allowEmpty' => true,
-				'required' => false
-			),
-			'title' => array(
-				'rule' => array('minLength', 4),
-				'allowEmpty' => false,
-				'required' => true
-			)
-		);
+	public $validate = array(
+		'when' => array(
+			'rule' => array('datetime'),
+			'allowEmpty' => true,
+			'required' => false
+		),
+		'title' => array(
+			'rule' => array('minLength', 4),
+			'allowEmpty' => false,
+			'required' => true
+		)
+	);
 
-		public $actsAs = array('Locale.Locale');
-	}
+	public $actsAs = array('Locale.Locale');
 }
 
 class LocaleBehaviorTest extends CakeTestCase {
@@ -91,30 +83,32 @@ class LocaleBehaviorTest extends CakeTestCase {
 
 	public $plugin = 'Locale';
 
+	public $oldLocale = null;
+
 	public $fixtures = array(
 		'plugin.locale.employee',
 		'plugin.locale.task',
 		'plugin.locale.event'
 	);
 
-	public function setUp()
-	{
+	public function setUp() {
 		parent::setUp();
 
-		$this->Employee = ClassRegistry::init('Employee');
+		$this->oldLocale = setlocale(LC_ALL, "0");
+		setlocale(LC_ALL, "pt_BR");
 	}
 
-	public function tearDown()
-	{
+	public function tearDown() {
 		parent::tearDown();
 
-		unset($this->Employee);
+		setlocale(LC_ALL, $this->oldLocale);
+
 		ClassRegistry::flush();
 	}
 
-	public function testFindActionWithDate()
-	{
-		$result = $this->Employee->find('all',
+	public function testFindActionWithDate() {
+		$Employee = ClassRegistry::init('Employee');
+		$result = $Employee->find('all',
 			array('conditions' => array('birthday' => '01/03/1987'))
 		);
 
@@ -131,9 +125,9 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($result, $expected);
 	}
 
-	public function testFindActionWithBogusDate()
-	{
-		$result = $this->Employee->find('all',
+	public function testFindActionWithBogusDate() {
+		$Employee = ClassRegistry::init('Employee');
+		$result = $Employee->find('all',
 			array('conditions' => array('birthday' => '21/23/1987'))
 		);
 
@@ -142,11 +136,11 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($result, $expected);
 	}
 
-	public function testFindActionConditionString()
-	{
-		$this->skipIf(!is_a($this->Employee->getDataSource(), 'Mysql'), 'Sintaxe da SQL válida apenas para Mysql');
+	public function testFindActionConditionString() {
+		$Employee = ClassRegistry::init('Employee');
+		$this->skipIf(!is_a($Employee->getDataSource(), 'Mysql'), 'Sintaxe da SQL válida apenas para Mysql');
 
-		$result = $this->Employee->find('all',
+		$result = $Employee->find('all',
 			array('conditions' => array('birthday IS NULL'))
 		);
 
@@ -155,9 +149,9 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($result, $expected);
 	}
 
-	public function testFindActionWithFloat()
-	{
-		$result = $this->Employee->find('all',
+	public function testFindActionWithFloat() {
+		$Employee = ClassRegistry::init('Employee');
+		$result = $Employee->find('all',
 			array('conditions' => array('salary' => '559.00'))
 		);
 
@@ -174,9 +168,9 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($result, $expected);
 	}
 
-	public function testFindActionWithFloatWithoutDot()
-	{
-		$result = $this->Employee->find('all',
+	public function testFindActionWithFloatWithoutDot() {
+		$Employee = ClassRegistry::init('Employee');
+		$result = $Employee->find('all',
 			array('conditions' => array('salary' => '559.00'))
 		);
 
@@ -193,9 +187,9 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($result, $expected);
 	}
 
-	public function testSaveNonLocalizedDataAction()
-	{
-		$result = $this->Employee->save(
+	public function testSaveNonLocalizedDataAction() {
+		$Employee = ClassRegistry::init('Employee');
+		$result = $Employee->save(
 			array('id' => '2', 'birthday' => '2001-01-01', 'salary' => '650.30')
 		);
 
@@ -208,7 +202,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 
 		$this->assertEquals($result, $expected);
 
-		$result = $this->Employee->save(
+		$result = $Employee->save(
 			array('id' => '3', 'birthday' => '2001-01-01', 'salary' => 50.00)
 		);
 
@@ -222,11 +216,10 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($result, $expected);
 	}
 
-	public function testSaveNullDate()
-	{
-		$this->Task = new Task();
+	public function testSaveNullDate() {
+		$Task = ClassRegistry::init('Task');
 
-		$result = $this->Task->save(
+		$result = $Task->save(
 			array('id' => 5, 'title' => 'bla bla', 'term' => null, 'employee_id' => 1)
 		);
 
@@ -239,12 +232,12 @@ class LocaleBehaviorTest extends CakeTestCase {
 			)
 		);
 
-		$this->assertEquals($expected, $result);
+		$this->assertEquals($result, $expected);
 	}
 
-	public function testSaveLocalizedDataAction()
-	{
-		$result = $this->Employee->save(
+	public function testSaveLocalizedDataAction() {
+		$Employee = ClassRegistry::init('Employee');
+		$result = $Employee->save(
 			array('id' => '2', 'birthday' => '01/01/2001', 'salary' => '650,30')
 		);
 
@@ -258,31 +251,25 @@ class LocaleBehaviorTest extends CakeTestCase {
 
 		$this->assertEquals($result, $expected);
 
-		$result = $this->Employee->save(
+		$result = $Employee->save(
 			array('id' => '20', 'birthday' => '01/01/2001', 'salary' => '1.650,30')
 		);
 
 		$this->assertTrue(is_array($result));
 	}
 
-	public function testSaveWrongDate()
-	{
-		try{
-			$result = $this->Employee->save(
-				array('id' => '2', 'birthday' => '01-01-2001', 'salary' => '650.30')
-			);
+	public function testSaveWrongDate() {
+		$Employee = ClassRegistry::init('Employee');
+		$result = $Employee->save(
+			array('id' => '2', 'birthday' => '01-01-2001', 'salary' => '650.30')
+		);
 
-			$this->assertFalse($result);
-		}
-		catch(LocaleException $e)
-		{
-			$this->assertEqual($e->getMessage(), 'Data inválida para localização');
-		}
+		$this->assertFalse($result);
 	}
 
-	public function testSaveAllAction()
-	{
-		$result = $this->Employee->saveAll(
+	public function testSaveAllAction() {
+		$Employee = ClassRegistry::init('Employee');
+		$result = $Employee->saveAll(
 			array(
 				array('id' => '2', 'birthday' => '01/01/2001', 'salary' => '650,30'),
 				array('id' => '3', 'birthday' => '29/03/1920', 'salary' => '0,99'),
@@ -292,9 +279,9 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($result, true);
 	}
 
-	public function testSavedData()
-	{
-		$result = $this->Employee->saveAll(
+	public function testSavedData() {
+		$Employee = ClassRegistry::init('Employee');
+		$result = $Employee->saveAll(
 			array(
 				array('id' => '2', 'birthday' => '01/01/2001', 'salary' => '650,30'),
 				array('id' => '3', 'birthday' => '29/03/1920', 'salary' => '0,99'),
@@ -305,7 +292,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 
 		$this->assertEquals($result, true);
 
-		$saved = $this->Employee->find('all', array('conditions' => array('id' => array(2,3,4,5))));
+		$saved = $Employee->find('all', array('conditions' => array('id' => array(2,3,4,5))));
 		$expected = array(
 			array(
 				'Employee' => array('id' => '2', 'birthday' => '2001-01-01', 'salary' => '650.3')
@@ -324,11 +311,11 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($saved, $expected);
 	}
 
-	public function testModelRelation()
-	{
-		$Task = new Task();
+	public function testModelRelation() {
+		$Employee = ClassRegistry::init('Employee');
+		$Task = ClassRegistry::init('Task');
 
-		$employee = $this->Employee->find('first');
+		$employee = $Employee->find('first');
 
 		$employee['Employee']['salary'] = '3640,30';
 
@@ -376,13 +363,11 @@ class LocaleBehaviorTest extends CakeTestCase {
 		);
 
 		$this->assertEquals($expected, $result);
-
-		unset($Task);
 	}
 
-	public function testFindWithRecursiveConditions()
-	{
-		$result = $this->Employee->find('all', array(
+	public function testFindWithRecursiveConditions() {
+		$Employee = ClassRegistry::init('Employee');
+		$result = $Employee->find('all', array(
 			'conditions' => array(
 				'or' => array(
 					'and' => array(
@@ -414,8 +399,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-	public function testSaveDateTime()
-	{
+	public function testSaveDateTime() {
 		$Event = ClassRegistry::init('Event');
 		$result = $Event->save(array('id' => 2, 'title' => 'My Event Title', 'when' => '09/06/2012 18:30'));
 
@@ -441,12 +425,9 @@ class LocaleBehaviorTest extends CakeTestCase {
 		);
 
 		$this->assertEquals($expected, $result);
-
-		unset($Event);
 	}
 
-	public function testFindDateTime()
-	{
+	public function testFindDateTime() {
 		$Event = ClassRegistry::init('Event');
 
 		$Event->save(array('id' => 2, 'title' => 'My Event Title', 'when' => '09/06/2012 18:30'));
@@ -468,13 +449,11 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$result = $Event->find('first', array('conditions' => array('when' => '09/06/2012 18:30:00')));
 
 		$this->assertEquals($expected, $result);
-
-		unset($Event);
 	}
 
-	public function testFindWithNullDate()
-	{
-		$result = $this->Employee->find('all', array(
+	public function testFindWithNullDate() {
+		$Employee = ClassRegistry::init('Employee');
+		$result = $Employee->find('all', array(
 			'conditions' => array(
 				'birthday' => '0000-00-00'
 			)
@@ -485,9 +464,9 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-	public function testFindArrayOfDates()
-	{
-		$result = $this->Employee->find('all', array(
+	public function testFindArrayOfDates() {
+		$Employee = ClassRegistry::init('Employee');
+		$result = $Employee->find('all', array(
 			'conditions' => array(
 				'birthday' => array('0000-00-00', '1987-01-11')
 			)
@@ -498,9 +477,9 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-	public function testFindArrayOfFloats()
-	{
-		$result = $this->Employee->find('all', array(
+	public function testFindArrayOfFloats() {
+		$Employee = ClassRegistry::init('Employee');
+		$result = $Employee->find('all', array(
 			'conditions' => array(
 				'salary' => array('665', '444')
 			)
