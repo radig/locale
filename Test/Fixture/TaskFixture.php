@@ -1,8 +1,8 @@
 <?php
 class TaskFixture extends CakeTestFixture {
-	var $name = 'Task';
+	public $name = 'Task';
 
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'title' => array('type' => 'string', 'null' => false),
 		'term' => array('type'=>'date', 'null' => true),
@@ -10,7 +10,7 @@ class TaskFixture extends CakeTestFixture {
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
 	);
 
-	var $records = array(
+	public $records = array(
 		array(
 			'id'  => 100,
 			'title' => 'The Mayan Prophecy',
