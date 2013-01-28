@@ -42,8 +42,9 @@ class Unlocalize
 	 */
 	public static function getInstance()
 	{
-		if(self::$_Instance === null)
+		if(self::$_Instance === null) {
 			self::$_Instance = new self;
+		}
 
 		return self::$_Instance;
 	}
@@ -55,13 +56,21 @@ class Unlocalize
 	 *
 	 * @return Localize Current instance of that class, for chaining methods
 	 */
-	static public function setLocale($locale)
-	{
-		if(!setlocale(LC_ALL, array($locale . '.utf-8', $locale, Formats::$windowsLocaleMap[$locale])))
-			throw new LocaleException("Locale {$locale} não disponível no seu sistema.");
+	static public function setLocale($locale) {
+		$locales = array($locale . '.utf-8', $locale . '.UTF-8', $locale);
 
-		if(!isset(Formats::$input[self::$currentLocale]))
+		$os = strtolower(php_uname('s'));
+		if (strpos($os, 'windows') !== false) {
+			$locales = array(Formats::$windowsLocaleMap[$locale]);
+		}
+
+		if (!setlocale(LC_ALL, $locales)) {
+			throw new LocaleException("Locale {$locale} não disponível no seu sistema.");
+		}
+
+		if (!isset(Formats::$input[$locale])) {
 			throw new LocaleException("Localização '{$locale}' não possuí formatação definida. Tente adicionar o formato antes de usa-lo.");
+		}
 
 		self::$currentLocale = $locale;
 
@@ -76,8 +85,7 @@ class Unlocalize
 	 *
 	 * @return Localize Current instance of that class, for chaining methods
 	 */
-	static public function addFormat($locale, $format)
-	{
+	static public function addFormat($locale, $format) {
 		Formats::addInput($locale, $format);
 
 		return self::getInstance();
@@ -92,29 +100,25 @@ class Unlocalize
 	 * @return mixed a string formatted date on Success, original Date on failure or null case
 	 * date is null equivalent
 	 */
-	static public function date($value, $includeTime = false)
-	{
+	static public function date($value, $includeTime = false) {
 		if(Utils::isNullDate($value))
 			return null;
 
 		$iso = $value;
-		if(!Utils::isISODate($value))
-		{
-			if(!$includeTime)
-			{
+		if (!Utils::isISODate($value)) {
+			if (!$includeTime) {
 				$currentFormat = Formats::$input[self::$currentLocale]['date'];
 				$slices = $currentFormat['slices'];
 				$final = "\${$slices['y']}-\${$slices['m']}-\${$slices['d']}";
-			}
-			else
-			{
+			} else {
 				$currentFormat = Formats::$input[self::$currentLocale]['timestamp'];
 				$slices = $currentFormat['slices'];
 				$final = "\${$slices['y']}-\${$slices['m']}-\${$slices['d']} \${$slices['h']}:\${$slices['i']}:\${$slices['s']}";
 			}
 
-			if(preg_match($currentFormat['pattern'], $value) === 0)
+			if (preg_match($currentFormat['pattern'], $value) === 0) {
 				throw new LocaleException('Data inválida para localização');
+			}
 
 			$iso = preg_replace($currentFormat['pattern'], $final, $value);
 		}
@@ -130,10 +134,10 @@ class Unlocalize
 	 *
 	 * @return string $value
 	 */
-	static public function decimal($value)
-	{
-		if(empty($value))
+	static public function decimal($value) {
+		if (empty($value)) {
 			return $value;
+		}
 
 		$currentFormat = localeconv();
 
@@ -143,8 +147,7 @@ class Unlocalize
 		$decimal = 0;
 
 		$decimalPoint = strrpos($v, $currentFormat['decimal_point']);
-		if($decimalPoint !== false)
-		{
+		if($decimalPoint !== false) {
 			$decimal = substr($v, $decimalPoint + 1);
 
 			$integer = substr($v, 0, $decimalPoint);
@@ -152,8 +155,9 @@ class Unlocalize
 		}
 
 		$value = $integer;
-		if($decimal > 0)
+		if($decimal > 0) {
 			$value .= '.' . $decimal;
+		}
 
 		return $value;
 	}
@@ -171,21 +175,21 @@ class Unlocalize
 	 *
 	 * @return string normalized date
 	 */
-	static public function normalizeDate($value)
-	{
+	static public function normalizeDate($value) {
 		$date = $value;
 
-		if(strpos($value, ' ') !== false)
+		if (strpos($value, ' ') !== false) {
 			list($date, $time) = explode(' ', $value);
+		}
 
 		$date = explode('-', $date);
 
-		if($date[0] < 99)
-		{
-			if($date[0] > 30)
+		if ($date[0] < 99) {
+			if ($date[0] > 30) {
 				$date[0] = '19' . $date[0];
-			else
+			} else {
 				$date[0] = '20' . $date[0];
+			}
 		}
 
 		$date[1] = str_pad($date[1], 2, '0', STR_PAD_LEFT);
@@ -193,10 +197,10 @@ class Unlocalize
 
 		$value = implode('-', $date);
 
-		if(isset($time))
-		{
-			if(strlen($time) === 6)
+		if (isset($time)) {
+			if (strlen($time) === 6) {
 				$time .= '00';
+			}
 
 			$value .= ' ' . $time;
 		}

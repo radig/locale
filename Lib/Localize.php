@@ -39,10 +39,10 @@ class Localize
 	 *
 	 * @return Localize
 	 */
-	public static function getInstance()
-	{
-		if(self::$_Instance === null)
+	public static function getInstance() {
+		if(self::$_Instance === null) {
 			self::$_Instance = new self;
+		}
 
 		return self::$_Instance;
 	}
@@ -54,10 +54,17 @@ class Localize
 	 *
 	 * @return Localize Current instance of that class, for chaining methods
 	 */
-	static public function setLocale($locale)
-	{
-		if(!setlocale(LC_ALL, array($locale . '.utf-8', $locale, Formats::$windowsLocaleMap[$locale])))
+	static public function setLocale($locale) {
+		$locales = array($locale . '.utf-8', $locale . '.UTF-8', $locale);
+
+		$os = strtolower(php_uname('s'));
+		if (strpos($os, 'windows') !== false) {
+			$locales = array(Formats::$windowsLocaleMap[$locale]);
+		}
+
+		if (!setlocale(LC_ALL, $locales)) {
 			throw new LocaleException("Locale {$locale} não disponível no seu sistema.");
+		}
 
 		self::$currentLocale = $locale;
 
@@ -72,8 +79,7 @@ class Localize
 	 *
 	 * @return Localize Current instance of that class, for chaining methods
 	 */
-	static public function addFormat($locale, $format)
-	{
+	static public function addFormat($locale, $format) {
 		Formats::addOutput($locale, $format);
 
 		return self::getInstance();
@@ -83,10 +89,10 @@ class Localize
 	 *
 	 * @return string
 	 */
-	static public function date($value)
-	{
-		if(Utils::isNullDate($value))
+	static public function date($value) {
+		if (Utils::isNullDate($value)) {
 			return '';
+		}
 
 		$dateTime = Utils::initDateTime($value);
 
@@ -100,16 +106,17 @@ class Localize
 	 *
 	 * @return string Localized date time
 	 */
-	static public function dateTime($value, $seconds = true)
-	{
-		if(Utils::isNullDate($value))
+	static public function dateTime($value, $seconds = true) {
+		if (Utils::isNullDate($value)) {
 			return '';
+		}
 
 		$dateTime = Utils::initDateTime($value);
 		$format = Formats::$output[self::$currentLocale]['full'];
 
-		if ($seconds !== true)
+		if ($seconds !== true) {
 			$format = substr($format, 0, -2);
+		}
 
 		return $dateTime->format($format);
 	}
@@ -122,17 +129,18 @@ class Localize
 	 */
 	static public function dateLiteral($value, $displayTime = false, $format = null)
 	{
-		if(Utils::isNullDate($value))
+		if(Utils::isNullDate($value)) {
 			return '';
+		}
 
 		$dateTime = Utils::initDateTime($value);
 
-		if($format === null)
-		{
-			if($displayTime)
+		if ($format === null) {
+			$format = Formats::$output[self::$currentLocale]['literal'];
+
+			if ($displayTime) {
 				$format = Formats::$output[self::$currentLocale]['literalWithTime'];
-			else
-				$format = Formats::$output[self::$currentLocale]['literal'];
+			}
 		}
 
 		return strftime($format, $dateTime->format('U'));
@@ -143,14 +151,14 @@ class Localize
 	 * @param number $value
 	 * @return string
 	 */
-	static public function currency($value)
-	{
+	static public function currency($value) {
 		$currentFormat = localeconv();
 
 		$number = Utils::numberFormat($value, 2, true, $currentFormat['mon_decimal_point'], $currentFormat['mon_thousands_sep']);
 
-		if($number === false)
+		if ($number === false) {
 			return $value;
+		}
 
 		return $currentFormat['currency_symbol'] . ' ' . $number;
 	}
@@ -164,14 +172,14 @@ class Localize
 	 *
 	 * @return numeric
 	 */
-	static function number($value, $precision = null, $thousands = false)
-	{
+	static function number($value, $precision = null, $thousands = false) {
 		$currentFormat = localeconv();
 
 		$number = Utils::numberFormat($value, $precision, $thousands, $currentFormat['decimal_point'], $currentFormat['thousands_sep']);
 
-		if($number === false)
+		if ($number === false) {
 			return $value;
+		}
 
 		return $number;
 	}

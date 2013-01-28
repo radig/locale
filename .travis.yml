@@ -8,7 +8,6 @@ env:
   - CAKE_VERSION=master DB=mysql
 
 before_install:
-  - sudo apt-get install -qq locales
   - sudo locale-gen --no-purge --lang pt_BR
 
 before_script:
