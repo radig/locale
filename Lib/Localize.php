@@ -18,8 +18,7 @@ App::uses('Utils', 'Locale.Lib');
  * @package Radig
  * @subpackage Radig.Locale.Lib
  */
-class Localize
-{
+class Localize {
 	/**
 	 * Current locale for output data
 	 *
@@ -40,7 +39,7 @@ class Localize
 	 * @return Localize
 	 */
 	public static function getInstance() {
-		if(self::$_Instance === null) {
+		if (self::$_Instance === null) {
 			self::$_Instance = new self;
 		}
 

@@ -15,8 +15,7 @@ App::uses('LocaleException', 'Locale.Lib');
  * @package Radig
  * @subpackage Radig.Locale.Lib
  */
-class Formats
-{
+class Formats {
 	static public $windowsLocaleMap = array(
 		'pt_BR' => 'Portuguese_Brazil',
 		'en_US' => 'English_United States'
@@ -89,16 +88,15 @@ class Formats
 	 * @param string $locale A locale string, like used in setlocale function
 	 * @param array $formats array
 	 */
-	static public function addInput($locale, $formats)
-	{
+	static public function addInput($locale, $formats) {
 		$requireds = array('date', 'timestamp');
 
-		foreach($requireds as $required)
-		{
+		foreach($requireds as $required) {
 			if(array_key_exists($required, $formats) === true &&
 				isset($formats[$required]['pattern']) &&
-				isset($formats[$required]['slices']))
+				isset($formats[$required]['slices'])) {
 					continue;
+			}
 
 			throw new LocaleException('Você deve fornecer todas as chaves do formato para usa-lo.');
 		}
@@ -120,14 +118,13 @@ class Formats
 	 * @param string $locale A locale string, like used in setlocale function
 	 * @param array $formats array
 	 */
-	static public function addOutput($locale, $formats)
-	{
+	static public function addOutput($locale, $formats) {
 		$requireds = array('small', 'literal', 'literalWithTime', 'full');
 
-		foreach($requireds as $required)
-		{
-			if(array_key_exists($required, $formats) === false)
+		foreach($requireds as $required) {
+			if(array_key_exists($required, $formats) === false) {
 				throw new LocaleException('Você deve fornecer todas as chaves do formato para usa-lo.');
+			}
 		}
 
 		self::$output[$locale] = $formats;

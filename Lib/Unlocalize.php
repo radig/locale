@@ -18,8 +18,7 @@ App::uses('Utils', 'Locale.Lib');
  * @package Radig
  * @subpackage Radig.Locale.Lib
  */
-class Unlocalize
-{
+class Unlocalize {
 	/**
 	 * Current locale for input data
 	 *
@@ -40,9 +39,8 @@ class Unlocalize
 	 *
 	 * @return Localize
 	 */
-	public static function getInstance()
-	{
-		if(self::$_Instance === null) {
+	public static function getInstance() {
+		if (self::$_Instance === null) {
 			self::$_Instance = new self;
 		}
 
@@ -101,8 +99,9 @@ class Unlocalize
 	 * date is null equivalent
 	 */
 	static public function date($value, $includeTime = false) {
-		if(Utils::isNullDate($value))
+		if (Utils::isNullDate($value)) {
 			return null;
+		}
 
 		$iso = $value;
 		if (!Utils::isISODate($value)) {
@@ -147,7 +146,7 @@ class Unlocalize
 		$decimal = 0;
 
 		$decimalPoint = strrpos($v, $currentFormat['decimal_point']);
-		if($decimalPoint !== false) {
+		if ($decimalPoint !== false) {
 			$decimal = substr($v, $decimalPoint + 1);
 
 			$integer = substr($v, 0, $decimalPoint);
@@ -155,7 +154,7 @@ class Unlocalize
 		}
 
 		$value = $integer;
-		if($decimal > 0) {
+		if ($decimal > 0) {
 			$value .= '.' . $decimal;
 		}
 

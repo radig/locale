@@ -15,8 +15,7 @@ App::uses('View', 'View');
  * @package Radig.Locale
  * @subpackage Radig.Locale.Test.Case.View.Helper
  */
-class LocaleHelperCase extends CakeTestCase
-{
+class LocaleHelperCase extends CakeTestCase {
 	public $Locale = null;
 
 	/**
@@ -25,8 +24,7 @@ class LocaleHelperCase extends CakeTestCase
 	 * @retun void
 	 * @access public
 	 */
-	public function setUp()
-	{
+	public function setUp() {
 		parent::setUp();
 
 		$this->Controller = new Controller(null);
@@ -40,8 +38,7 @@ class LocaleHelperCase extends CakeTestCase
 	 * @retun void
 	 * @access public
 	 */
-	public function testDate()
-	{
+	public function testDate() {
 		$this->assertEquals($this->Locale->date(), '');
 		$this->assertEquals($this->Locale->date('2009-04-21'), '21/04/2009');
 		$this->assertEquals($this->Locale->date('invalido'), date('d/m/Y'));
@@ -52,8 +49,7 @@ class LocaleHelperCase extends CakeTestCase
 	 *
 	 * @return void
 	 */
-	public function testNullDate()
-	{
+	public function testNullDate() {
 		$this->assertEquals($this->Locale->date('0000-00-00'), '');
 	}
 
@@ -63,8 +59,7 @@ class LocaleHelperCase extends CakeTestCase
 	 * @retun void
 	 * @access public
 	 */
-	public function testDateTime()
-	{
+	public function testDateTime() {
 		$this->assertEquals($this->Locale->dateTime('2010-08-26 16:12:40'), '26/08/2010 16:12:40');
 		$this->assertEquals($this->Locale->dateTime('2010-08-26 16:12:40', false), '26/08/2010 16:12');
 		$this->assertEquals($this->Locale->dateTime('0000-00-00 00:00:00', false), '');
@@ -76,24 +71,21 @@ class LocaleHelperCase extends CakeTestCase
 	 * @retun void
 	 * @access public
 	 */
-	public function testDateLiteral()
-	{
+	public function testDateLiteral() {
 		$this->assertEquals($this->Locale->dateLiteral('2010-08-26 16:12:40'), 'quinta, 26 de agosto de 2010');
 		$this->assertEquals($this->Locale->dateLiteral('2010-08-26 16:12:40', true), 'quinta, 26 de agosto de 2010, 16:12:40');
 
 		$this->assertEquals($this->Locale->dateLiteral('0000-00-00 00:00:00', false), '');
 	}
 
-	public function testCurrency()
-	{
+	public function testCurrency() {
 		$this->assertEquals($this->Locale->currency('12.45'), 'R$ 12,45');
 		$this->assertEquals($this->Locale->currency('1,234.45'), 'R$ 1.234,45');
 		$this->assertEquals($this->Locale->currency('1,234,567.45'), 'R$ 1.234.567,45');
 		$this->assertEquals($this->Locale->currency('-'), '-');
 	}
 
-	public function testNumber()
-	{
+	public function testNumber() {
 		$this->assertEquals($this->Locale->number('12'), '12,00');
 		$this->assertEquals($this->Locale->number('12', 0), '12');
 		$this->assertEquals($this->Locale->number('12.45'), '12,45');
@@ -103,16 +95,14 @@ class LocaleHelperCase extends CakeTestCase
 		$this->assertEquals($this->Locale->number('-'), '-');
 	}
 
-	public function testUSACurrency()
-	{
+	public function testUSACurrency() {
 		$this->Locale = new LocaleHelper($this->View, array('locale' => 'en_US'));
 
 		$this->assertEquals($this->Locale->currency('12.45'), '$ 12.45');
 		$this->assertEquals($this->Locale->currency('1,234.45'), '$ 1,234.45');
 	}
 
-	public function testUSANumber()
-	{
+	public function testUSANumber() {
 		$this->Locale = new LocaleHelper($this->View, array('locale' => 'en_US'));
 
 		$this->assertEquals($this->Locale->number('12'), '12.00');
@@ -129,8 +119,7 @@ class LocaleHelperCase extends CakeTestCase
 	 * @retun void
 	 * @access public
 	 */
-	public function testLocaleWithParameter()
-	{
+	public function testLocaleWithParameter() {
 		$this->assertEquals($this->Locale->date('2009-04-21'), '21/04/2009');
 		$this->assertEquals($this->Locale->dateTime('2010-08-26 16:12:40'), '26/08/2010 16:12:40');
 		$this->assertEquals($this->Locale->dateTime('2010-08-26 16:12:40', false), '26/08/2010 16:12');
