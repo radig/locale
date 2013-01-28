@@ -102,7 +102,6 @@ class LocaleBehaviorTest extends CakeTestCase {
 		parent::tearDown();
 
 		setlocale(LC_ALL, $this->oldLocale);
-
 		ClassRegistry::flush();
 	}
 
