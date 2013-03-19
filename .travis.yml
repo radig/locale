@@ -11,8 +11,6 @@ before_install:
   - sudo locale-gen --no-purge --lang pt_BR
 
 before_script:
-  - locale -a
-  - locale
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
   - git clone --depth 1 git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp && git checkout $CAKE_VERSION
   - cp -R ../locale app/Plugin/Locale
