@@ -79,7 +79,7 @@ class LocaleBehavior extends ModelBehavior
 		$os = strtolower(php_uname('s'));
 
 		if (strpos($os, 'windows') === false) {
-			$this->systemLang = substr(setlocale(LC_ALL, "0"), 0, 5);
+			$this->systemLang = substr(setlocale(LC_CTYPE, "0"), 0, 5);
 		} else {
 			$winLocale = explode('.', setlocale(LC_CTYPE, "0"));
 			$locale = array_search($winLocale[0], Formats::$windowsLocaleMap);
