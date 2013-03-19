@@ -71,7 +71,7 @@ class Localize {
 	}
 
 	/**
-	 * Wrapper to Formats::addOutpu.
+	 * Wrapper to Formats::addOutput.
 	 *
 	 * @param string $locale Name of locale, the same format of setlocale php function
 	 * @param string $format An array like in the description

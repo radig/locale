@@ -61,7 +61,8 @@ class LocaleHelper extends AppHelper
 
 		if(strpos($os, 'windows') === false)
 		{
-			$this->settings['locale'] = substr(setlocale(LC_ALL, "0"), 0, 5);
+			$this->settings['locale'] = substr(setlocale(LC_CTYPE, "0"), 0, 5);
+
 			return;
 		}
 
@@ -81,7 +82,8 @@ class LocaleHelper extends AppHelper
 	 */
 	public function date($date = null)
 	{
-		return Localize::setLocale($this->settings['locale'])
+		return Localize::getInstance()
+				->setLocale($this->settings['locale'])
 				->date($date);
 	}
 
@@ -95,7 +97,8 @@ class LocaleHelper extends AppHelper
 	 */
 	public function dateTime($dateTime, $seconds = true)
 	{
-		return Localize::setLocale($this->settings['locale'])
+		return Localize::getInstance()
+				->setLocale($this->settings['locale'])
 				->dateTime($dateTime, $seconds);
 	}
 
@@ -110,7 +113,8 @@ class LocaleHelper extends AppHelper
 	 */
 	public function dateLiteral($dateTime, $displayTime = false, $format = null)
 	{
-		return Localize::setLocale($this->settings['locale'])
+		return Localize::getInstance()
+				->setLocale($this->settings['locale'])
 				->dateLiteral($dateTime, $displayTime, $format);
 	}
 
@@ -123,7 +127,8 @@ class LocaleHelper extends AppHelper
 	 */
 	public function currency($value)
 	{
-		return Localize::setLocale($this->settings['locale'])
+		return Localize::getInstance()
+				->setLocale($this->settings['locale'])
 				->currency($value);
 	}
 
@@ -138,7 +143,8 @@ class LocaleHelper extends AppHelper
 	 */
 	public function number($value, $precision = 2, $thousands = false)
 	{
-		return Localize::setLocale($this->settings['locale'])
+		return Localize::getInstance()
+				->setLocale($this->settings['locale'])
 				->number($value, $precision, $thousands);
 	}
 }
