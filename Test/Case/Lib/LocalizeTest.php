@@ -6,7 +6,7 @@ App::uses('Localize', 'Locale.Lib');
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009-2012, Radig - Soluções em TI, www.radig.com.br
+ * @copyright 2009-2013, Radig - Soluções em TI, www.radig.com.br
  * @link http://www.radig.com.br
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -37,7 +37,10 @@ class LocalizeCase extends CakeTestCase
 			'full' => ''
 		);
 
-		$this->assertEqual(Localize::addFormat('es_ES', $format), Localize::getInstance());
+		Localize::addFormat('es_ES', $format);
+		$this->assertEqual($format, Localize::getFormat('es_ES'));
+
+		$this->assertNull(Localize::getFormat('en_ES'));
 	}
 
 	/**
@@ -95,11 +98,14 @@ class LocalizeCase extends CakeTestCase
 	{
 		Localize::setLocale('pt_BR');
 
+		$this->assertEqual(Localize::dateTime(null), '');
+
 		$this->assertEqual(Localize::dateTime('2009-04-21 12:03:01'), '21/04/2009 12:03:01');
 		$this->assertEqual(Localize::dateTime('2009-4-21 23:59:59'), '21/04/2009 23:59:59');
 
 		$this->assertEqual(Localize::dateTime('1987-03-01 12:03:01'), '01/03/1987 12:03:01');
 		$this->assertEqual(Localize::dateTime('1987-3-1 23:59:59', true), '01/03/1987 23:59:59');
+		$this->assertEqual(Localize::dateTime('1987-3-1 23:59:59', false), '01/03/1987 23:59');
 	}
 
 	public function testDateLiteral()

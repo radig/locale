@@ -117,8 +117,8 @@ class LocaleBehavior extends ModelBehavior
 		$db = $model->getDataSource();
 		$this->typesFormat[$model->useDbConfig] = array();
 
-		foreach($db->columns as $type => $info) {
-			if(isset($info['format'])) {
+		foreach ($db->columns as $type => $info) {
+			if (isset($info['format'])) {
 				$this->typesFormat[$model->useDbConfig][$type] = $info['format'];
 			}
 		}

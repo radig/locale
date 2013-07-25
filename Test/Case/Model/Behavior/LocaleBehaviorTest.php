@@ -124,15 +124,18 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($result, $expected);
 	}
 
+	/**
+	 * Test will raise a exception in PDO layer.
+	 * Behavior don't change invalid date values
+	 *
+	 * @expectedException PdoException
+	 * @return void
+	 */
 	public function testFindActionWithBogusDate() {
 		$Employee = ClassRegistry::init('Employee');
 		$result = $Employee->find('all',
 			array('conditions' => array('birthday' => '21/23/1987'))
 		);
-
-		$expected = array();
-
-		$this->assertEquals($result, $expected);
 	}
 
 	public function testFindActionConditionString() {
@@ -450,6 +453,13 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+	/**
+	 * Test will raise a exception in PDO layer.
+	 * Behavior don't change invalid date values
+	 *
+	 * @expectedException PdoException
+	 * @return void
+	 */
 	public function testFindWithNullDate() {
 		$Employee = ClassRegistry::init('Employee');
 		$result = $Employee->find('all', array(
@@ -463,6 +473,13 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+	/**
+	 * Test will raise a exception in PDO layer.
+	 * Behavior don't change invalid date values
+	 *
+	 * @expectedException PdoException
+	 * @return void
+	 */
 	public function testFindArrayOfDates() {
 		$Employee = ClassRegistry::init('Employee');
 		$result = $Employee->find('all', array(

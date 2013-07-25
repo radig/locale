@@ -3,12 +3,12 @@ App::uses('LocaleException', 'Locale.Lib');
 /**
  * Manager of supported localize and unlocalize formats
  *
- * PHP version > 5.2.4
+ * PHP version > 5.3
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009-2012, Radig - Soluções em TI, www.radig.com.br
+ * @copyright 2009-2013, Radig - Soluções em TI, www.radig.com.br
  * @link http://www.radig.com.br
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  *
@@ -91,8 +91,8 @@ class Formats {
 	static public function addInput($locale, $formats) {
 		$requireds = array('date', 'timestamp');
 
-		foreach($requireds as $required) {
-			if(array_key_exists($required, $formats) === true &&
+		foreach ($requireds as $required) {
+			if (array_key_exists($required, $formats) === true &&
 				isset($formats[$required]['pattern']) &&
 				isset($formats[$required]['slices'])) {
 					continue;
@@ -121,8 +121,8 @@ class Formats {
 	static public function addOutput($locale, $formats) {
 		$requireds = array('small', 'literal', 'literalWithTime', 'full');
 
-		foreach($requireds as $required) {
-			if(array_key_exists($required, $formats) === false) {
+		foreach ($requireds as $required) {
+			if (array_key_exists($required, $formats) === false) {
 				throw new LocaleException('Você deve fornecer todas as chaves do formato para usa-lo.');
 			}
 		}

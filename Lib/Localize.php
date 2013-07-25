@@ -6,12 +6,12 @@ App::uses('Utils', 'Locale.Lib');
  * Class to "localize" special data like dates, timestamps and numbers
  * from US/ISO format.
  *
- * PHP version > 5.2.4
+ * PHP version > 5.3
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009-2012, Radig - Soluções em TI, www.radig.com.br
+ * @copyright 2009-2013, Radig - Soluções em TI, www.radig.com.br
  * @link http://www.radig.com.br
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  *
@@ -25,26 +25,6 @@ class Localize {
 	 * @var string
 	 */
 	static public $currentLocale = 'pt_BR';
-
-	/**
-	 * Current instance
-	 *
-	 * @var Localize
-	 */
-	private static $_Instance = null;
-
-	/**
-	 * Singleton implementation
-	 *
-	 * @return Localize
-	 */
-	public static function getInstance() {
-		if (self::$_Instance === null) {
-			self::$_Instance = new self;
-		}
-
-		return self::$_Instance;
-	}
 
 	/**
 	 * Set locale of output data
@@ -67,7 +47,7 @@ class Localize {
 
 		self::$currentLocale = $locale;
 
-		return self::getInstance();
+		return new static;
 	}
 
 	/**
@@ -80,8 +60,21 @@ class Localize {
 	 */
 	static public function addFormat($locale, $format) {
 		Formats::addOutput($locale, $format);
+		return new static;
+	}
 
-		return self::getInstance();
+	/**
+	 * Try read $locale Format. If not exist, return NULL
+	 *
+	 * @param  array $locale Name of locale, the same format of setlocale php function
+	 * @return mixed array if exist, null otherwise
+	 */
+	static public function getFormat($locale) {
+		if (isset(Formats::$output[$locale])) {
+			return Formats::$output[$locale];
+		}
+
+		return null;
 	}
 
 	/**
@@ -128,7 +121,7 @@ class Localize {
 	 */
 	static public function dateLiteral($value, $displayTime = false, $format = null)
 	{
-		if(Utils::isNullDate($value)) {
+		if (Utils::isNullDate($value)) {
 			return '';
 		}
 

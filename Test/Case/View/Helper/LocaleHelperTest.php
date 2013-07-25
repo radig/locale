@@ -8,7 +8,7 @@ App::uses('View', 'View');
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009-2012, Radig - Soluções em TI, www.radig.com.br
+ * @copyright 2009-2013, Radig - Soluções em TI, www.radig.com.br
  * @link http://www.radig.com.br
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  *
@@ -30,6 +30,14 @@ class LocaleHelperCase extends CakeTestCase {
 		$this->Controller = new Controller(null);
 		$this->View = new View($this->Controller);
 		$this->Locale = new LocaleHelper($this->View, array('locale' => 'pt_BR'));
+	}
+
+	public function testConstruct() {
+		$this->Locale = new LocaleHelper($this->View, array());
+		$this->assertNotEquals($this->Locale->settings, array('locale' => ''));
+
+		$this->Locale = new LocaleHelper($this->View, array('locale' => 'pt_BR'));
+		$this->assertEquals($this->Locale->settings, array('locale' => 'pt_BR'));
 	}
 
 	/**

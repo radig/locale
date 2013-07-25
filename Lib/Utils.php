@@ -2,7 +2,7 @@
 /**
  * Generic methods for decimals/dates format
  *
- * PHP version > 5.2.4
+ * PHP version > 5.3
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.

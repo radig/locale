@@ -6,7 +6,7 @@ App::uses('Unlocalize', 'Locale.Lib');
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009-2012, Radig - Soluções em TI, www.radig.com.br
+ * @copyright 2009-2013, Radig - Soluções em TI, www.radig.com.br
  * @link http://www.radig.com.br
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -35,7 +35,9 @@ class UnlocalizeCase extends CakeTestCase
 			'timestamp' => array('pattern' => '', 'slices' => '')
 		);
 
-		$this->assertEqual(Unlocalize::addFormat('es_ES', $format), Unlocalize::getInstance());
+		Unlocalize::addFormat('es_ES', $format);
+		$this->assertEqual($format, Unlocalize::getFormat('es_ES'));
+		$this->assertNull(Unlocalize::getFormat('en_ES'));
 	}
 
 	/**
@@ -131,6 +133,8 @@ class UnlocalizeCase extends CakeTestCase
 	{
 		Unlocalize::setLocale('pt_BR');
 
+		$this->assertEqual(Unlocalize::decimal(null), null);
+		$this->assertEqual(Unlocalize::decimal(''), '');
 		$this->assertEqual(Unlocalize::decimal(23.32), '23.32');
 		$this->assertEqual(Unlocalize::decimal('25,32'), '25.32');
 		$this->assertEqual(Unlocalize::decimal('0,5'), '0.5');
@@ -142,6 +146,8 @@ class UnlocalizeCase extends CakeTestCase
 	{
 		Unlocalize::setLocale('en_US');
 
+		$this->assertEqual(Unlocalize::decimal(null), null);
+		$this->assertEqual(Unlocalize::decimal(''), '');
 		$this->assertEqual(Unlocalize::decimal(23.32), '23.32');
 		$this->assertEqual(Unlocalize::decimal('25.32'), '25.32');
 		$this->assertEqual(Unlocalize::decimal('0.5'), '0.5');
