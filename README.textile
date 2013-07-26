@@ -1,4 +1,4 @@
-h1. CakePHP Locale !https://travis-ci.org/radig/locale.png?branch=master(Build Status)!
+h1. CakePHP Locale [!https://travis-ci.org/radig/locale.png?branch=master(Build Status)!](https://travis-ci.org/radig/locale)
 
 That plugin allow your users to input localized data (like dates and decimals) while
 kept consistency at database-level.
