@@ -140,6 +140,9 @@ class UnlocalizeCase extends CakeTestCase
 		$this->assertEqual(Unlocalize::decimal('0,5'), '0.5');
 		$this->assertEqual(Unlocalize::decimal('1.300,52'), '1300.52');
 		$this->assertEqual(Unlocalize::decimal('3.965.300,52'), '3965300.52');
+
+		// Invalid decimal
+		$this->assertEqual(Unlocalize::decimal('3,abc'), '3.abc');
 	}
 
 	public function testUsDecimals()
@@ -153,5 +156,8 @@ class UnlocalizeCase extends CakeTestCase
 		$this->assertEqual(Unlocalize::decimal('0.5'), '0.5');
 		$this->assertEqual(Unlocalize::decimal('1,300.52'), '1300.52');
 		$this->assertEqual(Unlocalize::decimal('3,965,300.52'), '3965300.52');
+
+		// Invalid decimal
+		$this->assertEqual(Unlocalize::decimal('3.abc'), '3.abc');
 	}
 }

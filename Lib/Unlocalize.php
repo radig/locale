@@ -147,7 +147,7 @@ class Unlocalize {
 		}
 
 		$value = $integer;
-		if ($decimal > 0) {
+		if ($decimal > 0 || !is_numeric($decimal)) {
 			$value .= '.' . $decimal;
 		}
 
