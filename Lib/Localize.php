@@ -78,6 +78,7 @@ class Localize {
 	}
 
 	/**
+	 * Format a ISO date as localized date string
 	 *
 	 * @return string
 	 */
@@ -92,6 +93,7 @@ class Localize {
 	}
 
 	/**
+	 * Format a ISO date and time as localized date and time string
 	 *
 	 * @param string $value Date string value
 	 * @param bool $seconds Include seconds?
@@ -114,6 +116,7 @@ class Localize {
 	}
 
 	/**
+	 * Format a ISO date as localized human-friendly date string
 	 *
 	 * @param string $dateTime
 	 * @param string $displayTime
@@ -139,40 +142,49 @@ class Localize {
 	}
 
 	/**
+	 * Format float/integer as currency
 	 *
 	 * @param number $value
 	 * @return string
 	 */
 	static public function currency($value) {
-		$currentFormat = localeconv();
-
-		$number = Utils::numberFormat($value, 2, true, $currentFormat['mon_decimal_point'], $currentFormat['mon_thousands_sep']);
-
-		if ($number === false) {
+		if (!is_numeric($value)) {
 			return $value;
 		}
 
-		return $currentFormat['currency_symbol'] . ' ' . $number;
+		$formatter = new NumberFormatter(self::$currentLocale, NumberFormatter::CURRENCY);
+		$symbolCode = $formatter->getTextAttribute(NumberFormatter::CURRENCY_CODE);
+
+		return $formatter->formatCurrency($value, $symbolCode);
 	}
 
 	/**
+	 * Format float/integer as a localized decimal/integer
 	 *
+	 * Just for BC, $precision default is 2. Will be removed in future version.
 	 *
 	 * @param numeric $value
-	 * @param int $precision If null, precision is set with 2 decimals
-	 * @param bool $thousands
+	 * @param int $precision DEPRECATED
+	 * @param bool $thousands DEPRECATED
 	 *
 	 * @return numeric
 	 */
 	static function number($value, $precision = null, $thousands = false) {
-		$currentFormat = localeconv();
-
-		$number = Utils::numberFormat($value, $precision, $thousands, $currentFormat['decimal_point'], $currentFormat['thousands_sep']);
-
-		if ($number === false) {
+		if (!is_numeric($value)) {
 			return $value;
 		}
 
-		return $number;
+		$formatter = new NumberFormatter(self::$currentLocale, NumberFormatter::DECIMAL);
+
+		if ($precision === null) {
+			$precision = 2;
+		}
+		$formatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $precision);
+
+		if (!$thousands) {
+			$formatter->setAttribute(NumberFormatter::GROUPING_SIZE, 0);
+		}
+
+		return $formatter->format($value);
 	}
 }

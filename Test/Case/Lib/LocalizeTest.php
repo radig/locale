@@ -121,10 +121,10 @@ class LocalizeCase extends CakeTestCase
 	{
 		Localize::setLocale('pt_BR');
 
-		$this->assertEqual(Localize::currency('12.45'), 'R$ 12,45');
-		$this->assertEqual(Localize::currency('0.50'), 'R$ 0,50');
-		$this->assertEqual(Localize::currency('1,234.45'), 'R$ 1.234,45');
-		$this->assertEqual(Localize::currency('1,234,567.45'), 'R$ 1.234.567,45');
+		$this->assertEqual(Localize::currency('12.45'), 'R$12,45');
+		$this->assertEqual(Localize::currency('0.50'), 'R$0,50');
+		$this->assertEqual(Localize::currency('1234.45'), 'R$1.234,45');
+		$this->assertEqual(Localize::currency('1234567.45'), 'R$1.234.567,45');
 		$this->assertEqual(Localize::currency('-'), '-');
 	}
 
@@ -132,9 +132,9 @@ class LocalizeCase extends CakeTestCase
 	{
 		Localize::setLocale('en_US');
 
-		$this->assertEqual(Localize::currency('12.45'), '$ 12.45');
-		$this->assertEqual(Localize::currency('0.50'), '$ 0.50');
-		$this->assertEqual(Localize::currency('1,234.45'), '$ 1,234.45');
+		$this->assertEqual(Localize::currency('12.45'), '$12.45');
+		$this->assertEqual(Localize::currency('0.50'), '$0.50');
+		$this->assertEqual(Localize::currency('1234.45'), '$1,234.45');
 	}
 
 	public function testUsDate()
@@ -158,11 +158,11 @@ class LocalizeCase extends CakeTestCase
 		$this->assertEqual(Localize::number('25.32', 1), '25,3');
 		$this->assertEqual(Localize::number('25.32', 0), '25');
 
-		$this->assertEqual(Localize::number('1,300.52'), '1300,52');
-		$this->assertEqual(Localize::number('1,300.52', null, true), '1' . $currentLocale['thousands_sep'] . '300,52');
+		$this->assertEqual(Localize::number('1300.52'), '1300,52');
+		$this->assertEqual(Localize::number('1300.52', null, true), '1' . $currentLocale['thousands_sep'] . '300,52');
 
-		$this->assertEqual(Localize::number('3,965,300.52'), '3965300,52');
-		$this->assertEqual(Localize::number('3,965,300.52', 1, true), '3' . $currentLocale['thousands_sep'] . '965' . $currentLocale['thousands_sep'] .'300,5');
+		$this->assertEqual(Localize::number('3965300.52'), '3965300,52');
+		$this->assertEqual(Localize::number('3965300.52', 1, true), '3' . $currentLocale['thousands_sep'] . '965' . $currentLocale['thousands_sep'] .'300,5');
 	}
 
 	public function testUsDecimals()
@@ -177,10 +177,10 @@ class LocalizeCase extends CakeTestCase
 		$this->assertIdentical(Localize::number('25.32', 1), '25.3');
 		$this->assertIdentical(Localize::number('25.32', 0), '25');
 
-		$this->assertIdentical(Localize::number('1,300.52'), '1300.52');
-		$this->assertIdentical(Localize::number('1,300.52', null, true), '1,300.52');
+		$this->assertIdentical(Localize::number('1300.52'), '1300.52');
+		$this->assertIdentical(Localize::number('1300.52', null, true), '1,300.52');
 
-		$this->assertIdentical(Localize::number('3,965,300.52'), '3965300.52');
-		$this->assertIdentical(Localize::number('3,965,300.52', 1, true), '3,965,300.5');
+		$this->assertIdentical(Localize::number('3965300.52'), '3965300.52');
+		$this->assertIdentical(Localize::number('3965300.52', 1, true), '3,965,300.5');
 	}
 }
