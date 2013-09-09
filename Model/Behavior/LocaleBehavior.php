@@ -79,7 +79,7 @@ class LocaleBehavior extends ModelBehavior
 		$os = strtolower(php_uname('s'));
 
 		if (strpos($os, 'windows') === false) {
-			$this->systemLang = substr(setlocale(LC_CTYPE, "0"), 0, 5);
+			$this->systemLang = substr(setlocale(LC_ALL, "0"), 0, 5);
 		} else {
 			$winLocale = explode('.', setlocale(LC_CTYPE, "0"));
 			$locale = array_search($winLocale[0], Formats::$windowsLocaleMap);
@@ -117,8 +117,8 @@ class LocaleBehavior extends ModelBehavior
 		$db = $model->getDataSource();
 		$this->typesFormat[$model->useDbConfig] = array();
 
-		foreach ($db->columns as $type => $info) {
-			if (isset($info['format'])) {
+		foreach($db->columns as $type => $info) {
+			if(isset($info['format'])) {
 				$this->typesFormat[$model->useDbConfig][$type] = $info['format'];
 			}
 		}
@@ -128,8 +128,8 @@ class LocaleBehavior extends ModelBehavior
 	 *
 	 * @see ModelBehavior::beforeValidate()
 	 */
-	public function beforeValidate(Model $model) {
-		parent::beforeValidate($model);
+	public function beforeValidate(Model $model, $options = array()) {
+		parent::beforeValidate($model, $options);
 		$this->_Model = $model;
 
 		$this->__checkConfig($model);
@@ -141,8 +141,8 @@ class LocaleBehavior extends ModelBehavior
 	 *
 	 * @see ModelBehavior::beforeSave()
 	 */
-	public function beforeSave(Model $model) {
-		parent::beforeSave($model);
+	public function beforeSave(Model $model, $options = array()) {
+		parent::beforeSave($model, $options);
 		$this->_Model = $model;
 
 		$this->__checkConfig($model);
