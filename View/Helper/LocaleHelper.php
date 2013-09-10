@@ -47,11 +47,9 @@ class LocaleHelper extends AppHelper
 	 * @param View $View
 	 * @param array $settings
 	 */
-	public function __construct(View $View, $settings = array())
-	{
+	public function __construct(View $View, $settings = array()) {
 		parent::__construct($View, $settings);
 
-<<<<<<< Updated upstream
 		if (isset($settings) && is_array($settings)) {
 			$this->settings = array_merge($this->_settings, $settings);
 		}
@@ -61,35 +59,17 @@ class LocaleHelper extends AppHelper
 		}
 
 		$os = strtolower(php_uname('s'));
-		if(strpos($os, 'windows') === false) {
+		if (strpos($os, 'windows') === false) {
 			$this->settings['locale'] = substr(setlocale(LC_CTYPE, "0"), 0, 5);
-=======
-		if(isset($settings) && is_array($settings))
-			$this->settings = array_merge($this->_settings, $settings);
-
-		if(!empty($this->settings['locale']))
-			return;
-
-		$os = strtolower(php_uname('s'));
-
-		if(strpos($os, 'windows') === false)
-		{
-			$this->settings['locale'] = substr(setlocale(LC_ALL, "0"), 0, 5);
->>>>>>> Stashed changes
 			return;
 		}
 
 		$winLocale = explode('.', setlocale(LC_CTYPE, "0"));
 		$locale = array_search($winLocale[0], Formats::$windowsLocaleMap);
 
-<<<<<<< Updated upstream
 		if ($locale !== false) {
 			$this->settings['locale'] = $locale;
 		}
-=======
-		if($locale !== false)
-			$this->settings['locale'] = $locale;
->>>>>>> Stashed changes
 	}
 
 	/**
@@ -99,8 +79,7 @@ class LocaleHelper extends AppHelper
 	 *
 	 * @return string Localized date
 	 */
-	public function date($date = null)
-	{
+	public function date($date = null) {
 		return Localize::setLocale($this->settings['locale'])
 				->date($date);
 	}
@@ -113,8 +92,7 @@ class LocaleHelper extends AppHelper
 	 *
 	 * @return string Localized date with time
 	 */
-	public function dateTime($dateTime, $seconds = true)
-	{
+	public function dateTime($dateTime, $seconds = true) {
 		return Localize::setLocale($this->settings['locale'])
 				->dateTime($dateTime, $seconds);
 	}
@@ -128,8 +106,7 @@ class LocaleHelper extends AppHelper
 	 *
 	 * @return string Localized date literal
 	 */
-	public function dateLiteral($dateTime, $displayTime = false, $format = null)
-	{
+	public function dateLiteral($dateTime, $displayTime = false, $format = null) {
 		return Localize::setLocale($this->settings['locale'])
 				->dateLiteral($dateTime, $displayTime, $format);
 	}
@@ -141,8 +118,7 @@ class LocaleHelper extends AppHelper
 	 *
 	 * @return string Localized currency
 	 */
-	public function currency($value)
-	{
+	public function currency($value) {
 		return Localize::setLocale($this->settings['locale'])
 				->currency($value);
 	}
@@ -156,8 +132,7 @@ class LocaleHelper extends AppHelper
 	 *
 	 * @return number Localized numeber
 	 */
-	public function number($value, $precision = 2, $thousands = false)
-	{
+	public function number($value, $precision = 2, $thousands = false) {
 		return Localize::setLocale($this->settings['locale'])
 				->number($value, $precision, $thousands);
 	}
