@@ -17,12 +17,12 @@ App::uses('Formats', 'Locale.Lib');
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009-2013, Radig - Soluções em TI, www.radig.com.br
+ * @copyright Radig - Soluções em TI, www.radig.com.br
  * @link http://www.radig.com.br
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  *
- * @package radig
- * @subpackage radig.l10n.views.helpers
+ * @package radig.Locale
+ * @subpackage View.Helper
  */
 class LocaleHelper extends AppHelper
 {
@@ -51,6 +51,7 @@ class LocaleHelper extends AppHelper
 	{
 		parent::__construct($View, $settings);
 
+<<<<<<< Updated upstream
 		if (isset($settings) && is_array($settings)) {
 			$this->settings = array_merge($this->_settings, $settings);
 		}
@@ -62,15 +63,33 @@ class LocaleHelper extends AppHelper
 		$os = strtolower(php_uname('s'));
 		if(strpos($os, 'windows') === false) {
 			$this->settings['locale'] = substr(setlocale(LC_CTYPE, "0"), 0, 5);
+=======
+		if(isset($settings) && is_array($settings))
+			$this->settings = array_merge($this->_settings, $settings);
+
+		if(!empty($this->settings['locale']))
+			return;
+
+		$os = strtolower(php_uname('s'));
+
+		if(strpos($os, 'windows') === false)
+		{
+			$this->settings['locale'] = substr(setlocale(LC_ALL, "0"), 0, 5);
+>>>>>>> Stashed changes
 			return;
 		}
 
 		$winLocale = explode('.', setlocale(LC_CTYPE, "0"));
 		$locale = array_search($winLocale[0], Formats::$windowsLocaleMap);
 
+<<<<<<< Updated upstream
 		if ($locale !== false) {
 			$this->settings['locale'] = $locale;
 		}
+=======
+		if($locale !== false)
+			$this->settings['locale'] = $locale;
+>>>>>>> Stashed changes
 	}
 
 	/**

@@ -14,14 +14,14 @@ dos dados convertendo-o para um formato aceito pelo banco de dados escolhido.
 
 h2. Autor e Copyright
 
-* *Copyright 2009-2012,* "*Radig - Soluções em TI*":http://www.radig.com.br
+* *Copyright 2009-2013,* "*Radig - Soluções em TI*":http://www.radig.com.br
 * Licença MIT - Isto quer dizer que o código está disponível sem nenhuma garantia, ao mesmo tempo que
 você pode usa-lo de forma isolada ou em conjunto com seu próprio código.
 
 
 h2. Observações/Observations
 
-* PHP >= 5.2.4
+* PHP >= 5.3
 * CakePHP 2.x
 * Consulte os testes incluído no plugin para ver melhor seu funcionamento (Consult unit tests included)
 

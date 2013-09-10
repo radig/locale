@@ -16,12 +16,12 @@ App::uses('Formats', 'Locale.Lib');
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright 2009-2013, Radig - Soluções em TI, www.radig.com.br
+ * @copyright Radig - Soluções em TI, www.radig.com.br
  * @link http://www.radig.com.br
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  *
- * @package Plugin.Locale
- * @subpackage Plugin.Locale.Model.Behavior
+ * @package radig.Locale
+ * @subpackage Model.Behavior
  */
 class LocaleBehavior extends ModelBehavior
 {
@@ -86,7 +86,7 @@ class LocaleBehavior extends ModelBehavior
 
 			$this->systemLang = null;
 
-			if($locale !== false) {
+			if ($locale !== false) {
 				$this->systemLang = $locale;
 			}
 		}
@@ -117,8 +117,8 @@ class LocaleBehavior extends ModelBehavior
 		$db = $model->getDataSource();
 		$this->typesFormat[$model->useDbConfig] = array();
 
-		foreach($db->columns as $type => $info) {
-			if(isset($info['format'])) {
+		foreach ($db->columns as $type => $info) {
+			if (isset($info['format'])) {
 				$this->typesFormat[$model->useDbConfig][$type] = $info['format'];
 			}
 		}
@@ -241,20 +241,25 @@ class LocaleBehavior extends ModelBehavior
 					case 'date':
 					case 'datetime':
 					case 'timestamp':
-						if(is_array($value))
-							foreach($value as &$v)
-								$status = ($status && $this->__dateConvert($v, $this->_modelFields[$this->_Model->alias][$field]));
-						else
+						if (!is_array($value)) {
 							$status = ($status && $this->__dateConvert($value, $this->_modelFields[$this->_Model->alias][$field]));
+						}
+
+						foreach ($value as &$v) {
+							$status = ($status && $this->__dateConvert($v, $this->_modelFields[$this->_Model->alias][$field]));
+						}
 						break;
 					case 'decimal':
 					case 'float':
 					case 'double':
-						if(is_array($value))
-							foreach($value as &$v)
-								$status = ($status && $this->__decimal($v));
-						else
+						if (!is_array($value)) {
 							$status = ($status && $this->__decimal($value));
+						}
+
+						foreach ($value as &$v) {
+							$status = ($status && $this->__decimal($v));
+						}
+							
 						break;
 				}
 			}
@@ -279,14 +284,13 @@ class LocaleBehavior extends ModelBehavior
 		try {
 			$d = Unlocalize::setLocale($this->systemLang)->date($value, ($type != 'date'));
 
-			if(empty($d)) {
+			if (empty($d)) {
 				return true;
 			}
 
 			$dt = new DateTime($d);
 			$value = $dt->format($this->typesFormat[$this->_Model->useDbConfig][$type]);
-		}
-		catch (Exception $e) {
+		} catch (Exception $e) {
 			return false;
 		}
 
