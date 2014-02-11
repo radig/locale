@@ -243,6 +243,7 @@ class LocaleBehavior extends ModelBehavior
 					case 'timestamp':
 						if (!is_array($value)) {
 							$status = ($status && $this->__dateConvert($value, $this->_modelFields[$this->_Model->alias][$field]));
+							continue;
 						}
 
 						foreach ($value as &$v) {
@@ -254,12 +255,13 @@ class LocaleBehavior extends ModelBehavior
 					case 'double':
 						if (!is_array($value)) {
 							$status = ($status && $this->__decimal($value));
+							continue;
 						}
 
 						foreach ($value as &$v) {
 							$status = ($status && $this->__decimal($v));
 						}
-							
+
 						break;
 				}
 			}

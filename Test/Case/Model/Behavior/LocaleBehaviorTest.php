@@ -95,7 +95,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 		parent::setUp();
 
 		$this->oldLocale = setlocale(LC_ALL, "0");
-		setlocale(LC_ALL, "pt_BR");
+		setlocale(LC_ALL, array('pt_BR.utf-8', 'pt_BR', 'pt-br'));
 	}
 
 	public function tearDown() {
@@ -125,10 +125,8 @@ class LocaleBehaviorTest extends CakeTestCase {
 	}
 
 	/**
-	 * Test will raise a exception in PDO layer.
 	 * Behavior don't change invalid date values
 	 *
-	 * @expectedException PdoException
 	 * @return void
 	 */
 	public function testFindActionWithBogusDate() {
@@ -136,6 +134,8 @@ class LocaleBehaviorTest extends CakeTestCase {
 		$result = $Employee->find('all',
 			array('conditions' => array('birthday' => '21/23/1987'))
 		);
+
+		$this->assertEquals($result, array());
 	}
 
 	public function testFindActionConditionString() {
@@ -454,10 +454,8 @@ class LocaleBehaviorTest extends CakeTestCase {
 	}
 
 	/**
-	 * Test will raise a exception in PDO layer.
 	 * Behavior don't change invalid date values
 	 *
-	 * @expectedException PdoException
 	 * @return void
 	 */
 	public function testFindWithNullDate() {
@@ -474,10 +472,8 @@ class LocaleBehaviorTest extends CakeTestCase {
 	}
 
 	/**
-	 * Test will raise a exception in PDO layer.
 	 * Behavior don't change invalid date values
 	 *
-	 * @expectedException PdoException
 	 * @return void
 	 */
 	public function testFindArrayOfDates() {
