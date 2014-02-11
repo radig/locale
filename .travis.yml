@@ -16,6 +16,10 @@ before_script:
   - git clone --depth 1 git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp && git checkout $CAKE_VERSION
   - cp -R ../locale app/Plugin/Locale
   - echo "<?php
+    setlocale(LC_ALL, 'pt_BR.utf-8', 'pt_BR', 'pt-br');
+    CakePlugin::loadAll();
+  " >> ./app/Config/bootstrap.php
+  - echo "<?php
     class DATABASE_CONFIG {
     public \$default = array(
       'datasource' => 'Database/Mysql',
