@@ -9,7 +9,7 @@ env:
   - CAKE_VERSION=master DB=mysql
 
 before_install:
-  - sudo locale-gen --no-purge --lang pt_BR
+  - sudo locale-gen --no-purge --lang pt_BR.UTF-8
 
 before_script:
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
