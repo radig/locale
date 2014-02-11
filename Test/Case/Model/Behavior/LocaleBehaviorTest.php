@@ -131,6 +131,11 @@ class LocaleBehaviorTest extends CakeTestCase {
 	 */
 	public function testFindActionWithBogusDate() {
 		$Employee = ClassRegistry::init('Employee');
+
+		if (!is_a($Employee->getDataSource(), 'Mysql')) {
+			$this->setExpectedException('PdoException');
+		}
+
 		$result = $Employee->find('all',
 			array('conditions' => array('birthday' => '21/23/1987'))
 		);
@@ -294,6 +299,11 @@ class LocaleBehaviorTest extends CakeTestCase {
 
 		$this->assertEquals($result, true);
 
+		$floatSQLVal = '123456.78';
+		if (is_a($Employee->getDataSource(), 'Mysql')) {
+			$floatSQLVal = '123457';
+		}
+
 		$saved = $Employee->find('all', array('conditions' => array('id' => array(2,3,4,5))));
 		$expected = array(
 			array(
@@ -306,7 +316,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 				'Employee' => array('id' => '4', 'birthday' => '1975-04-21', 'salary' => '0.3'),
 			),
 			array(
-				'Employee' => array('id' => '5', 'birthday' => '2001-02-28', 'salary' => '123457')
+				'Employee' => array('id' => '5', 'birthday' => '2001-02-28', 'salary' => $floatSQLVal)
 			)
 		);
 
@@ -460,6 +470,11 @@ class LocaleBehaviorTest extends CakeTestCase {
 	 */
 	public function testFindWithNullDate() {
 		$Employee = ClassRegistry::init('Employee');
+
+		if (!is_a($Employee->getDataSource(), 'Mysql')) {
+			$this->setExpectedException('PdoException');
+		}
+
 		$result = $Employee->find('all', array(
 			'conditions' => array(
 				'birthday' => '0000-00-00'
@@ -478,6 +493,11 @@ class LocaleBehaviorTest extends CakeTestCase {
 	 */
 	public function testFindArrayOfDates() {
 		$Employee = ClassRegistry::init('Employee');
+
+		if (!is_a($Employee->getDataSource(), 'Mysql')) {
+			$this->setExpectedException('PdoException');
+		}
+
 		$result = $Employee->find('all', array(
 			'conditions' => array(
 				'birthday' => array('0000-00-00', '1987-01-11')
