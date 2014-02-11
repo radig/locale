@@ -18,7 +18,7 @@ before_script:
   - echo "<?php
     setlocale(LC_ALL, 'pt_BR.utf-8', 'pt_BR', 'pt-br');
     CakePlugin::loadAll();
-  " >> ./app/Config/bootstrap.php
+    " >> ./app/Config/bootstrap.php
   - echo "<?php
     class DATABASE_CONFIG {
     public \$default = array(
