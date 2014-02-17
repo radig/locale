@@ -6,7 +6,7 @@ kept consistency at database-level.
 It's also included a Helper to output a non-localized data in users locale format.
 
 Some static libs are delivered in bundle and are used by Helper and Behavior,
-at the same time allow you to work with localized data where you need (like shells).
+at the same time allow you to work with localized data where you need (like shell).
 ----
 Este plugin permite que usuários de seu sistema visualizem e insiram
 dados em formatos locais/regionais ao mesmo tempo que garante a consistência
@@ -14,14 +14,14 @@ dos dados convertendo-o para um formato aceito pelo banco de dados escolhido.
 
 h2. Autor e Copyright
 
-* *Copyright 2009-2013,* "*Radig - Soluções em TI*":http://www.radig.com.br
+* *Copyright 2009-2014,* "*Radig - Soluções em TI*":http://www.radig.com.br
 * Licença MIT - Isto quer dizer que o código está disponível sem nenhuma garantia, ao mesmo tempo que
 você pode usa-lo de forma isolada ou em conjunto com seu próprio código.
 
 
 h2. Observações/Observations
 
-* PHP >= 5.3
+* PHP >= 5.4
 * CakePHP 2.x
 * Consulte os testes incluído no plugin para ver melhor seu funcionamento (Consult unit tests included)
 
@@ -63,3 +63,22 @@ Elas são todas estáticas, então você deve usa-las sem se preocupar com inst�
 bc. $localizada = Localize::date('2012-04-16');
 
 Desta forma, a variável _$localizada_ armazenará _"16/04/2012"_ caso seu locale esteja definido para pt_BR
+
+h3. Resolvendo problemas
+
+h4. '[Notice] Undefined index C: ...'
+
+Este erro ocorre quando o locale que você configurou no seu bootstrap não está disponível em seu SO. No caso do
+pt_BR, ele não costuma vir habilitado no Ubuntu Server (e me parece que no Desktop também). Para resolver o problema
+você possuí pelo menos duas alternativas:
+
+Em uma linha (pode funcionar em outras distros):
+
+bc. sudo locale-gen --no-purge --lang pt_BR
+
+Deixando para o SO gerenciar:
+
+# @sudo vi /var/lib/locales/supported.d/local@
+# Acrescente o locale *pt_BR.UTF-8 UTF-8*
+# @sudo dpkg-reconfigure locales@
+# Reinicie o Apache/PHP-FPM
