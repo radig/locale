@@ -52,9 +52,7 @@ bc. echo $this->Locale->dateTime('2010-08-26');
 
 h3. Além do Behavior e Helper...
 
-Agora você também pode trabalhar com a normalização de desnormalização de dados em diferentes contextos
-de sua aplicação (como em Shells), bastando para isso carregar as libs Localize e Unlocalize, de acordo
-com suas necessidades.
+Agora você também pode trabalhar com a normalização de desnormalização de dados em diferentes contextos de sua aplicação (como em Shells), bastando para isso carregar as libs Localize e Unlocalize, de acordo com suas necessidades.
 
 bc. App::uses('Localize', 'Locale.Lib');
 
@@ -68,9 +66,7 @@ h3. Resolvendo problemas
 
 h4. '[Notice] Undefined index C: ...'
 
-Este erro ocorre quando o locale que você configurou no seu bootstrap não está disponível em seu SO. No caso do
-pt_BR, ele não costuma vir habilitado no Ubuntu Server (e me parece que no Desktop também). Para resolver o problema
-você possuí pelo menos duas alternativas:
+Este erro ocorre quando o locale que você configurou no seu bootstrap não está disponível em seu SO. No caso do pt_BR, ele não costuma vir habilitado no Ubuntu Server (e me parece que no Desktop também). Para resolver o problema você possuí pelo menos duas alternativas:
 
 Em uma linha (pode funcionar em outras distros):
 
