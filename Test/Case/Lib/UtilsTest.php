@@ -90,7 +90,7 @@ class UtilsCase extends CakeTestCase
 
 	public function testLocalizedNumberFormat()
 	{
-		setlocale(LC_NUMERIC, "pt_BR");
+		setlocale(LC_ALL, 'pt_BR.utf-8', 'pt_BR', 'pt-br', 'portuguese');
 		$val = 12.21;
 
 		$this->assertEqual((string)$val, '12,21');

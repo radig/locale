@@ -30,13 +30,13 @@ h2. Como usar / How begin
 * A única configuração necessária é ter definido o locale da sua aplicação. Caso não tenha feito isso, basta utilizar a função _setlocale_
 * Only configuration is define the locale of application with:
 
-bc. setlocale(LC_ALL, 'pt_BR.utf-8', 'pt_BR', 'pt-br');
+bc. setlocale(LC_ALL, 'pt_BR.utf-8', 'pt_BR', 'pt-br', 'portuguese');
 
 h3. Utilizando o Behavior
 
 * Basta definir, no model que deseja ativa-lo, a seguinte linha:
 
-bc. $actsAs = array('Locale.Locale');
+bc. $actsAs = ['Locale.Locale'];
 
 * A partir daí o behavior vai converter seus dados antes da validação e antes de salvar.
 
@@ -44,7 +44,7 @@ h3. Utilizando o Helper
 
 * Nos controladores de interesse, adicione o helper _Locale.Locale_, deixando similar a linha abaixo:
 
-bc. $helpers = array('Locale.Locale');
+bc. $helpers = ['Locale.Locale'];
 
 * Agora nas views de seu controlador, você pode chamar o helper, como abaixo:
 
@@ -78,3 +78,12 @@ Deixando para o SO gerenciar:
 # Acrescente o locale *pt_BR.UTF-8 UTF-8*
 # @sudo dpkg-reconfigure locales@
 # Reinicie o Apache/PHP-FPM
+
+h4. 'Notice (8): Undefined index: [APP\Plugin\Locale\Lib\Localize.php, line 41]'
+
+Outro erro relacionado ao locale do sistema que já foi reportado na [issue #2]:https://github.com/radig/locale/issues/2
+e ocorre sempre na primeira execução do script (antes de haver cache de APC/Arquivo...).
+
+A solução consiste em incluir o locale 'portuguese' quando configurar o setlocale.
+
+bc. setlocale(LC_ALL, 'pt_BR.utf-8', 'pt_BR', 'pt-br', 'portuguese');

@@ -95,7 +95,7 @@ class LocaleBehaviorTest extends CakeTestCase {
 		parent::setUp();
 
 		$this->oldLocale = setlocale(LC_ALL, "0");
-		setlocale(LC_ALL, array('pt_BR.utf-8', 'pt_BR', 'pt-br'));
+		setlocale(LC_ALL, 'pt_BR.utf-8', 'pt_BR', 'pt-br', 'portuguese');
 	}
 
 	public function tearDown() {

@@ -90,7 +90,7 @@ class Utils {
 		}
 
 		if (!is_string($value)) {
-			$oldLocale = setlocale(LC_NUMERIC, "");
+			$oldLocale = setlocale(LC_NUMERIC, "0");
 			setlocale(LC_NUMERIC, 'en_US');
 			$value = (string)$value;
 			setlocale(LC_NUMERIC, $oldLocale);
