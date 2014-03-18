@@ -92,7 +92,7 @@ class Utils {
 		if (!is_string($value)) {
 			$oldLocale = setlocale(LC_NUMERIC, "0");
 			setlocale(LC_NUMERIC, 'en_US');
-			$value = (string)$value;
+			$value = number_format($value, $precision);
 			setlocale(LC_NUMERIC, $oldLocale);
 		}
 
