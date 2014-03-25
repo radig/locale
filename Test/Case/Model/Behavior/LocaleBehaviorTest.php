@@ -23,12 +23,14 @@ class Employee extends CakeTestModel
 		'birthday' => array(
 			'rule' => array('date'),
 			'allowEmpty' => false,
-			'required' => true
+			'required' => true,
+			'message' => 'invalid date'
 		),
 		'salary' => array(
 			'rule' => array('numeric'),
 			'allowEmpty' => false,
-			'required' => true
+			'required' => true,
+			'message' => 'invalid numeric'
 		)
 	);
 
@@ -272,6 +274,15 @@ class LocaleBehaviorTest extends CakeTestCase {
 		);
 
 		$this->assertFalse($result);
+		$this->assertEquals(array('birthday' => array('invalid date')), $Employee->validationErrors);
+
+		// test with a invalid date (month = 14)
+		$result = $Employee->save(
+			array('id' => '2', 'birthday' => '2001/14/01', 'salary' => '650.30')
+		);
+
+		$this->assertFalse($result);
+		$this->assertEquals(array('birthday' => array('invalid date')), $Employee->validationErrors);
 	}
 
 	public function testSaveAllAction() {

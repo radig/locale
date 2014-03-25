@@ -133,8 +133,10 @@ class LocaleBehavior extends ModelBehavior
 		$this->_Model = $model;
 
 		$this->__checkConfig($model);
+		$this->localizeData();
 
-		return $this->localizeData();
+		// always allow model validation occours
+		return true;
 	}
 
 	/**
