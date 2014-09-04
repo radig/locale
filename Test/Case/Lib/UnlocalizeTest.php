@@ -125,39 +125,43 @@ class UnlocalizeCase extends CakeTestCase
 	{
 		Unlocalize::setLocale('en_US');
 
-		$this->assertEqual(Unlocalize::date('2009-04-21'), '2009-04-21');
-		$this->assertEqual(Unlocalize::date('1987-03-01'), '1987-03-01');
+		$this->assertEqual('2009-04-21', Unlocalize::date('2009-04-21'));
+		$this->assertEqual('1987-03-01', Unlocalize::date('1987-03-01'));
 	}
 
 	public function testBrDecimals()
 	{
 		Unlocalize::setLocale('pt_BR');
 
-		$this->assertEqual(Unlocalize::decimal(null), null);
-		$this->assertEqual(Unlocalize::decimal(''), '');
-		$this->assertEqual(Unlocalize::decimal(23.32), '23.32');
-		$this->assertEqual(Unlocalize::decimal('25,32'), '25.32');
-		$this->assertEqual(Unlocalize::decimal('0,5'), '0.5');
-		$this->assertEqual(Unlocalize::decimal('1.300,52'), '1300.52');
-		$this->assertEqual(Unlocalize::decimal('3.965.300,52'), '3965300.52');
+		$this->assertSame(null, Unlocalize::decimal(null));
+		$this->assertSame('', Unlocalize::decimal(''));
+		$this->assertSame('0', Unlocalize::decimal('0'));
+		$this->assertSame('1', Unlocalize::decimal('1'));
+		$this->assertSame('23.32', Unlocalize::decimal(23.32));
+		$this->assertSame('25.32', Unlocalize::decimal('25,32'));
+		$this->assertSame('0.5', Unlocalize::decimal('0,5'));
+		$this->assertSame('1300.52', Unlocalize::decimal('1.300,52'));
+		$this->assertSame('3965300.52', Unlocalize::decimal('3.965.300,52'));
 
 		// Invalid decimal
-		$this->assertEqual(Unlocalize::decimal('3,abc'), '3.abc');
+		$this->assertEqual('3.abc', Unlocalize::decimal('3,abc'));
 	}
 
 	public function testUsDecimals()
 	{
 		Unlocalize::setLocale('en_US');
 
-		$this->assertEqual(Unlocalize::decimal(null), null);
-		$this->assertEqual(Unlocalize::decimal(''), '');
-		$this->assertEqual(Unlocalize::decimal(23.32), '23.32');
-		$this->assertEqual(Unlocalize::decimal('25.32'), '25.32');
-		$this->assertEqual(Unlocalize::decimal('0.5'), '0.5');
-		$this->assertEqual(Unlocalize::decimal('1,300.52'), '1300.52');
-		$this->assertEqual(Unlocalize::decimal('3,965,300.52'), '3965300.52');
+		$this->assertSame(null, Unlocalize::decimal(null));
+		$this->assertSame('', Unlocalize::decimal(''));
+		$this->assertSame('0', Unlocalize::decimal('0'));
+		$this->assertSame('1', Unlocalize::decimal('1'));
+		$this->assertSame('23.32', Unlocalize::decimal(23.32));
+		$this->assertSame('25.32', Unlocalize::decimal('25.32'));
+		$this->assertSame('0.5', Unlocalize::decimal('0.5'));
+		$this->assertSame('1300.52', Unlocalize::decimal('1,300.52'));
+		$this->assertSame('3965300.52', Unlocalize::decimal('3,965,300.52'));
 
 		// Invalid decimal
-		$this->assertEqual(Unlocalize::decimal('3.abc'), '3.abc');
+		$this->assertEqual('3.abc', Unlocalize::decimal('3.abc'));
 	}
 }

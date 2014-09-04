@@ -127,7 +127,7 @@ class Unlocalize {
 	 * @return string $value
 	 */
 	static public function decimal($value) {
-		if (empty($value)) {
+		if (empty($value) && !is_numeric($value)) {
 			return $value;
 		}
 
