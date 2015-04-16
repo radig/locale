@@ -24,7 +24,7 @@ before_script:
   - git clone https://github.com/FriendsOfCake/travis.git --depth 1 ../travis
   - ../travis/before_script.sh
   - sh -c "if [ -n \"$CAKE_VERSION\" ]; then ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ../cakephp/vendors/PHPUnit; fi"
-  - echo "setlocale(LC_ALL, 'pt_BR.utf8', 'pt_BR', 'pt-br', 'portuguese');" >> ./app/Config/bootstrap.php
+  - echo "setlocale(LC_ALL, 'pt_BR.utf8', 'pt_BR', 'pt-br', 'portuguese');" >> ../app/Config/bootstrap.php
 
 script:
   - ../travis/script.sh
